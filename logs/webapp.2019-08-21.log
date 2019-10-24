@@ -1,0 +1,2 @@
+2019-08-21  11:27:13.037 [https-jsse-nio-8443-exec-4] ERROR com.jinglun.guard.systemManage.service.impl.ParametercontrolServiceImpl - 公共参数接口调用出错
+2019-08-21  11:28:16.122 [https-jsse-nio-8443-exec-9] ERROR com.jinglun.guard.devicemanage.service.impl.DeviceServiceImpl - 设备列表接口调用出错

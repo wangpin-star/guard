@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>公司管理</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <base href="/"/>
+    <link rel="stylesheet" href="/layui/css/layui.css">
+    <style>
+    </style>
+</head>
+<body>
+
+    <div style="width:100%;height:46px;background-color: #f2f2f2">
+        <form class="layui-form">
+            <div style="margin-bottom: 8px;">
+               <!--  <div class="layui-inline" style="margin-top:8px;margin-left: 16px;width: 12.5%;">
+                    <input class="layui-input" style="height: 30px;line-height: 30px;" id="searchContent" placeholder="搜索...">
+                </div>
+                <button type="button" onmouseover="changeImg(this,2)" onmouseout="changeImg(this,1)" onmousedown="changeImg(this,3)" onmouseup="changeImg(this,2)" class="select-on layui-btn layui-btn" style="padding:0 0px;border: none;height: 30px;line-height: 30px;background-color: #f2f2f2;color: black;margin-top: 4px;" id="doSearch"><img imgName="searchImg" src="/css/img/searchImg1.png">    </img></button> -->
+                <div style="margin-top:8px;float:right;margin-right:40px">
+                    <button type="button" onmouseover="changeImg(this,2)" onmouseout="changeImg(this,1)" onmousedown="changeImg(this,3)" onmouseup="changeImg(this,2)" class="select-on  layui-btn1" style="border: none;height: 30px;line-height: 30px;background-color: #f2f2f2;" id="addCompany"><img imgName="addCompany" style="margin-bottom: 4px;margin-right: 8px;" src="/css/img/addCompany1.png">    </img>新增公司</button>
+                </div>
+            </div>
+        </form>
+    </div>
+  <!--  width:87%;margin-left:12.3%; -->
+    <div style="width:100%;float: left">
+        <table class="layui-hide" id="companyList" lay-filter="companyList"></table>
+    </div>
+ <div id="motaikunag" style="display: none;">
+       <div style="margin-left:75px">
+        <img id="npcImg" > 
+        </div>
+</div>
+<script type="text/html" id="barDemo">
+    <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="ecode">二维码</a>
+</script>
+<script type="text/javascript" src="/js/jquery.min.js"></script>
+<script type="text/javascript" src="/layui/layui.js" charset="utf-8"></script>
+<script type="text/javascript" src="/js/ajaxFilter.js"></script>
+<script>
+    $(function () {
+        window.parent.$("#toCompanyManageLi").siblings("li").removeClass("layui-this");
+        window.parent.$("#toCompanyManageLi").addClass("layui-this");
+    });
+    function gotourl(url){
+    	document.location.href = url;
+    }
+    //图标的鼠标移入/移出/点击切换图标
+    function changeImg(obj,status) {
+        var imgName = $(obj).find("img").attr("imgName");
+        $(obj).find("img").attr("src","/css/img/" + imgName + status + ".png");
+    }
+
+    layui.use(['table','layer','form'], function() {
+        var table = layui.table
+            ,layer = layui.layer
+            ,form = layui.form;
+        var parentHeight = document.documentElement.clientHeight;
+        var height = parentHeight-75;
+        var count=[[${count}]];
+        table.render({
+            elem: '#companyList'
+            ,url:'/companyManage/selectCompanyList'
+            ,title: '公司列表'
+            ,height:height
+            ,limit:20
+            ,cols: [
+                [
+                    {field:'name', title:'公司名称'}
+                    ,{field:'loginname', title:'关联员工'}
+                    ,{field:'rolename', title:'角色名称'}
+                    ,{field:'description', title:'备注'
+                    	,templet: function(d){
+                        	var description="";
+                        	if(null!=d.description&&d.description!=undefined
+                        			&&d.description!='"null"'){
+                        		description=d.description;
+                        	}
+                        	else{
+                        		description="无";
+                        	}
+                        	
+                        	return description;
+                            
+                          } 
+                    }
+                    ,{fixed: 'right', title:'操作', toolbar: '#barDemo'}
+                ]
+            ]
+            ,page: true
+        });
+        table.on('tool(companyList)', function(obj) {
+            var data = obj.data;
+            var companyId = data.face_library_id;
+            if (obj.event === 'edit') {
+                var url = encodeURI('/companyManage/toEditCompany?companyId='+companyId+'&userId='+data.userid
+                		+'&userFaceId='+data.userfaceid);
+                layer.open({
+                    type: 2,
+                    title: '公司信息',
+                    shadeClose: false,
+                    shade:[0.2, '#000000'],
+                    skin: 'yourclass',
+                    area: ['700px', "600px"],
+                    content: url,
+                    success:function(layero,index){
+  	              	  var body = layer.getChildFrame('body', index);
+  	              	  var iframeWindow = layero.find('iframe')[0].contentWindow;
+  	              	  body.find('#companyName').attr("value",data.name);
+  	              	  body.find('#companyAddress').attr("value",data.addr);
+  	              	  if(data.description=='"null"'){
+  	              		data.description="";
+  	              	  }
+  	              	  body.find('#remarks').val(data.description);
+  	              	  /* body.find('#loginName').attr("value",data.loginname);
+  	                  body.find('#loginpass').attr("value",data.passwd);
+  	                  body.find('#ackpass').attr("value",data.passwd); */
+  	              	 iframeWindow.layui.form.render();
+  	                } 
+                });
+            }
+            
+            if(obj.event === 'del'){
+           	 layer.confirm('是否删除此公司',{btn:['是','否'],icon:3,title:"提示"} ,function(index){
+                	$.ajax({ 
+              	        url:"/companyManage/delCompanyUser",
+              			type:'get',
+              			 data:{
+           	        	 'companyId':data.face_library_id,
+           	        	 'userId':data.userid
+           	             },
+            			async:false,	
+            			success: function(result) {
+              				if(result==0){
+              					layer.alert("公司删除成功", {
+    	           					title:"提示",
+    	           					icon: 1
+    	           					},function(){
+    	           						layer.closeAll();
+    	                               	location.reload();
+    	                           });
+        					}
+        					if(result==1){
+        						layer.alert('公司删除失败', {
+    	               		    		  title:"提示",
+    	               		    		  icon: 2
+    	               		    	});
+        					}
+        	         },
+        	         error: function() {
+        	        	 layer.alert("公司删除出错 ");
+        	        	 
+        	         }
+            		});
+                  });
+              }
+            if(obj.event === 'ecode'){
+            	var img=document.getElementById("npcImg");
+            	 var name = encodeURIComponent(data.name);
+            	img.src = '/companyManage/getQRCode?companyName='+name;
+            	layer.msg('二维码加载中...', {icon: 16});
+            	img.onload = function () {
+            		layer.closeAll();
+            		layer.open({
+                    	type:1,//类型
+                        area:['400px','400px'],//定义宽和高
+                        title:'开通二维码 ',//题目 
+                        btn: ['保存至本地','取消 '],
+                        shadeClose: false,
+                        skin: 'yourclass',
+                        shade:[0.2, '#000000'],
+                        content:$('#motaikunag')//打开的内容
+                        ,cancel: function(){ 
+                        	layer.closeAll();
+                        	} 
+                        	
+                        ,yes: function(){
+                        	layer.closeAll();
+                        	gotourl('/companyManage/downloadQRCode?companyName='+name);
+                        	
+                          }
+                        ,btn2: function(){
+                            layer.closeAll();
+                          }
+                        
+                    }); 
+            	}  
+              }
+        });
+
+        $("#addCompany").click(function () {
+        	if(count>=10){
+        		layer.alert('公司最多添加10个', {icon: 0,title:"提示"},function(index){
+				    layer.close(index);
+			   });
+        	}
+        	else{
+        		layer.open({
+                    type: 2,
+                    title: '公司信息',
+                    shadeClose: false,
+                    shade:[0.2, '#000000'],
+                    skin: 'yourclass',
+                    area: ['700px', '600px'],
+                    content: '/companyManage/toAddCompany?companyId=0'
+                });
+        	}
+            
+        });
+    });
+</script>
+</body>
+</html>

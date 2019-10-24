@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <meta charset="UTF-8">
+    <title>部门管理</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <base href="/"/>
+    <link rel="stylesheet" href="/layui2.5.1/css/layui.css">
+    <style>
+        .layui-tree-icon {
+            border: none;
+        }
+        .layui-tree-iconClick .layui-icon{
+            font-size: 14px;
+        }
+        .fontSize14{
+            font-size: 14px;
+        }
+    </style>
+
+    <style>
+        .icon1 {
+            background-image: url(/css/img/depart.png);
+            display: inline-block;
+            /*i标签是行内元素必须设置他的display属性才能设置宽高*/
+            width: 20px;
+            height: 25px;
+        }
+        .layui-icon-addition:before {
+            content: "\e602";
+        }
+
+        .layui-icon-subtraction:before {
+            content: "\e61a";
+        }
+        .layui-icon-group:before {
+            display: none;
+        }
+        .layui-tree-txt{
+            margin-left: -7px;
+        }
+    </style><!-- 图标样式 进度条字体样式 -->
+
+</head>
+<body>
+<div class="layui-body" style="left: 11.5%;width:88.5%;">
+    <div id="departTree" class="demo-tree"></div>
+</div>
+<script type="text/javascript" src="/js/jquery.min.js"></script>
+<script type="text/javascript" src="/layui2.5.1/layui.js" charset="utf-8"></script>
+<script type="text/javascript" src="/js/ajaxFilter.js"></script>
+<script type="text/javascript" th:inline="javascript" >
+  var user=[[${user}]];
+</script>
+<script type="text/javascript">
+
+    function setIcon() {
+        $(".layui-tree-iconClick").each(function () { //根据图标父元素data-key设置样式
+            var level = $(this).parents(".layui-tree-set").attr("level");
+            if (level==" 1") {//空格1，空格加层级。
+                $(this).css("height","25px");
+                var btnGroup=$(this).parent().siblings(".layui-tree-btnGroup");
+                btnGroup.children(".layui-icon-edit").hide();
+                btnGroup.children(".layui-icon-delete").hide();
+                $(this).siblings(".layui-tree-txt").css("margin-left","0px");
+                $(this).children("i").removeClass();
+                $(this).children("i").addClass("icon1");
+            }
+        });
+    }
+
+</script>
+<!-- 节点自定义图标操作，必须在加载部门树之后调用 -->
+
+
+<script>
+    //最大组织结构
+    var max = "[[${max}]]";
+    //把导航高亮变为部门管理
+    $(function () {
+        window.parent.$("#toDepartManageLi").siblings("li").removeClass("layui-this");
+        window.parent.$("#toDepartManageLi").addClass("layui-this");
+    });
+    layui.use(['tree','layer'], function() {
+        var tree = layui.tree
+            ,layer = layui.layer;
+        $.ajax({
+            url: "/departManage/selectDepartTreeByAuth",
+            type: "post",
+            contentType : 'application/json',
+            dataType: 'json',
+            async: false,
+            success: function(data) {
+                var dataArr = new Array();
+                dataArr.push(data);
+                tree.render({
+                    elem: '#departTree'
+                    ,data: dataArr
+                    ,key: "depart_id"//修改为depart_id，之前是id
+                    ,edit: ['add', 'update', 'del'] //操作节点的图标
+                    ,defaultNodeName: ""
+                    ,click: function(obj) {
+                    }
+                    ,operate: function(obj) {
+                        var type = obj.type; //操作类型：add、edit、del
+                        var data = obj.data; //当前节点的数据
+                        var elem = obj.elem; //当前节点元素
+                        var departId = obj.elem.attr("data-key");//当前节点的departId
+                        var parentId = data.parentId;//当前节点的父部门departId
+                        
+                        //父部门id若没有则设置为0
+                        if (parentId == undefined || parentId == "") {
+                            parentId = 0;
+                        }
+                        if (type === 'add') { //增加节点
+                            //判断是否到达最大组织结构
+                            if (parseInt(max) >= parseInt(data.level)) {
+                                return -1;
+                            } else {
+                                return -2;
+                            }
+                        } else if (type === 'update') { //修改节点
+                            if (departId == -1) {
+                                departId = 0;
+                            }
+                            var param = {
+                                parent_depart_id:parentId,
+                                depart_id:departId,
+                                depart_name:elem.find('.layui-tree-txt').html()//部门名称
+                            };
+                            var result = 0;
+                            $.ajax({
+                                url: "/departManage/departInfoUpload",
+                                type: "post",
+                                data: param,
+                                async: false,
+                                success: function(data) {
+                                    result = parseInt(data);
+                                }
+                            });
+                            return result;
+                        } else if (type === 'del') {
+                            var param = {
+                                parent_depart_id:parentId,
+                                depart_id:departId
+                            };
+                            var result = false;
+                            $.ajax({
+                                url: "/departManage/departInfoDelete",
+                                type: "post",
+                                data: param,
+                                async: false,
+                                success: function(data) {
+                                    if (data == "0") {
+                                        result = true;
+                                    } else if (data == "-1") {
+                                        layer.alert("删除失败,请重试",{icon:2,title:"提示"},function(index) {
+                                            layer.close(index);
+                                        });
+                                    }
+                                },
+                                error:function () {
+                                    layer.alert("删除失败,请重试",{icon:2,title:"提示"},function(index) {
+                                        layer.close(index);
+                                    });
+                                }
+                            });
+                            return result;
+                        }
+                    }
+                });
+                setIcon();
+                //点击首节点,使之为默认展开
+                $(".layui-tree-main:first").click();
+            },
+            error: function() {
+                layer.alert('部门目录树加载出错',{icon: 2,title:"提示"},function (index) {
+                    layer.close(index);
+                });
+            }
+        });
+    });
+</script>
+</body>
+</html>

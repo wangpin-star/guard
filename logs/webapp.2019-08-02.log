@@ -1,0 +1,108 @@
+2019-08-02  10:46:33.874 [restartedMain] WARN  org.apache.catalina.core.ContainerBase.[Tomcat].[localhost].[/] - Cannot deserialize session attribute [org.apache.shiro.subject.support.DefaultSubjectContext_PRINCIPALS_SESSION_KEY] for session [421D2BD20825C186E22E5E8506285F6F]
+2019-08-02  10:47:52.997 [restartedMain] WARN  org.apache.catalina.core.ContainerBase.[Tomcat].[localhost].[/] - Cannot deserialize session attribute [org.apache.shiro.subject.support.DefaultSubjectContext_PRINCIPALS_SESSION_KEY] for session [421D2BD20825C186E22E5E8506285F6F]
+2019-08-02  10:49:02.447 [restartedMain] WARN  org.apache.catalina.core.ContainerBase.[Tomcat].[localhost].[/] - Cannot deserialize session attribute [org.apache.shiro.subject.support.DefaultSubjectContext_PRINCIPALS_SESSION_KEY] for session [421D2BD20825C186E22E5E8506285F6F]
+2019-08-02  10:50:42.094 [https-jsse-nio-8443-exec-3] ERROR o.a.catalina.core.ContainerBase.[Tomcat].[localhost].[/].[dispatcherServlet] - Servlet.service() for servlet [dispatcherServlet] in context with path [] threw exception [Request processing failed; nested exception is java.lang.NullPointerException] with root cause
+java.lang.NullPointerException: null
+	at com.jinglun.guard.privilege.service.impl.RoleServiceImpl.getMenuTree(RoleServiceImpl.java:31)
+	at com.jinglun.guard.privilege.controller.RoleController.toaddRole(RoleController.java:55)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(Unknown Source)
+	at java.lang.reflect.Method.invoke(Unknown Source)
+	at org.springframework.web.method.support.InvocableHandlerMethod.doInvoke(InvocableHandlerMethod.java:189)
+	at org.springframework.web.method.support.InvocableHandlerMethod.invokeForRequest(InvocableHandlerMethod.java:138)
+	at org.springframework.web.servlet.mvc.method.annotation.ServletInvocableHandlerMethod.invokeAndHandle(ServletInvocableHandlerMethod.java:102)
+	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.invokeHandlerMethod(RequestMappingHandlerAdapter.java:895)
+	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.handleInternal(RequestMappingHandlerAdapter.java:800)
+	at org.springframework.web.servlet.mvc.method.AbstractHandlerMethodAdapter.handle(AbstractHandlerMethodAdapter.java:87)
+	at org.springframework.web.servlet.DispatcherServlet.doDispatch(DispatcherServlet.java:1038)
+	at org.springframework.web.servlet.DispatcherServlet.doService(DispatcherServlet.java:942)
+	at org.springframework.web.servlet.FrameworkServlet.processRequest(FrameworkServlet.java:1005)
+	at org.springframework.web.servlet.FrameworkServlet.doGet(FrameworkServlet.java:897)
+	at javax.servlet.http.HttpServlet.service(HttpServlet.java:634)
+	at org.springframework.web.servlet.FrameworkServlet.service(FrameworkServlet.java:882)
+	at javax.servlet.http.HttpServlet.service(HttpServlet.java:741)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:231)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:166)
+	at org.apache.tomcat.websocket.server.WsFilter.doFilter(WsFilter.java:53)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:193)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:166)
+	at org.apache.shiro.web.servlet.ProxiedFilterChain.doFilter(ProxiedFilterChain.java:61)
+	at org.apache.shiro.web.servlet.AdviceFilter.executeChain(AdviceFilter.java:108)
+	at org.apache.shiro.web.servlet.AdviceFilter.doFilterInternal(AdviceFilter.java:137)
+	at org.apache.shiro.web.servlet.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:125)
+	at org.apache.shiro.web.servlet.ProxiedFilterChain.doFilter(ProxiedFilterChain.java:66)
+	at org.apache.shiro.web.servlet.AbstractShiroFilter.executeChain(AbstractShiroFilter.java:449)
+	at org.apache.shiro.web.servlet.AbstractShiroFilter$1.call(AbstractShiroFilter.java:365)
+	at org.apache.shiro.subject.support.SubjectCallable.doCall(SubjectCallable.java:90)
+	at org.apache.shiro.subject.support.SubjectCallable.call(SubjectCallable.java:83)
+	at org.apache.shiro.subject.support.DelegatingSubject.execute(DelegatingSubject.java:383)
+	at org.apache.shiro.web.servlet.AbstractShiroFilter.doFilterInternal(AbstractShiroFilter.java:362)
+	at org.apache.shiro.web.servlet.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:125)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:193)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:166)
+	at org.springframework.web.filter.RequestContextFilter.doFilterInternal(RequestContextFilter.java:99)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:107)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:193)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:166)
+	at org.springframework.web.filter.FormContentFilter.doFilterInternal(FormContentFilter.java:92)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:107)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:193)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:166)
+	at org.springframework.web.filter.HiddenHttpMethodFilter.doFilterInternal(HiddenHttpMethodFilter.java:93)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:107)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:193)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:166)
+	at org.springframework.web.filter.CharacterEncodingFilter.doFilterInternal(CharacterEncodingFilter.java:200)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:107)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:193)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:166)
+	at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:200)
+	at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:96)
+	at org.apache.catalina.authenticator.AuthenticatorBase.invoke(AuthenticatorBase.java:607)
+	at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:139)
+	at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:92)
+	at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:74)
+	at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:343)
+	at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:408)
+	at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:66)
+	at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:834)
+	at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1415)
+	at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:49)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(Unknown Source)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(Unknown Source)
+	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:61)
+	at java.lang.Thread.run(Unknown Source)
+2019-08-02  11:05:33.404 [restartedMain] WARN  org.apache.catalina.core.ContainerBase.[Tomcat].[localhost].[/] - Cannot deserialize session attribute [org.apache.shiro.subject.support.DefaultSubjectContext_PRINCIPALS_SESSION_KEY] for session [421D2BD20825C186E22E5E8506285F6F]
+2019-08-02  11:08:24.630 [https-jsse-nio-8443-exec-3] ERROR com.jinglun.guard.systemManage.service.impl.ParametercontrolServiceImpl - 公共参数接口调用出错
+2019-08-02  11:09:12.299 [restartedMain] WARN  org.apache.catalina.core.ContainerBase.[Tomcat].[localhost].[/] - Cannot deserialize session attribute [org.apache.shiro.subject.support.DefaultSubjectContext_PRINCIPALS_SESSION_KEY] for session [421D2BD20825C186E22E5E8506285F6F]
+2019-08-02  11:12:24.355 [restartedMain] WARN  org.apache.catalina.core.ContainerBase.[Tomcat].[localhost].[/] - Cannot deserialize session attribute [org.apache.shiro.subject.support.DefaultSubjectContext_PRINCIPALS_SESSION_KEY] for session [421D2BD20825C186E22E5E8506285F6F]
+2019-08-02  13:06:32.816 [https-jsse-nio-8443-exec-10] ERROR com.jinglun.guard.systemManage.service.impl.ParametercontrolServiceImpl - 公共参数接口调用出错
+2019-08-02  13:06:45.535 [https-jsse-nio-8443-exec-10] ERROR com.jinglun.guard.devicemanage.service.impl.DeviceServiceImpl - 设备列表接口调用出错
+2019-08-02  13:08:01.904 [https-jsse-nio-8443-exec-8] ERROR com.jinglun.guard.devicemanage.service.impl.DeviceServiceImpl - 设备列表接口调用出错
+2019-08-02  13:08:55.186 [https-jsse-nio-8443-exec-4] ERROR com.jinglun.guard.systemManage.service.impl.ParametercontrolServiceImpl - 公共参数接口调用出错
+2019-08-02  13:09:14.094 [https-jsse-nio-8443-exec-3] ERROR com.jinglun.guard.devicemanage.service.impl.DeviceServiceImpl - 设备列表接口调用出错
+2019-08-02  13:24:17.496 [https-jsse-nio-8443-exec-4] ERROR com.jinglun.guard.devicemanage.service.impl.DeviceServiceImpl - 设备列表接口调用出错
+2019-08-02  13:24:38.072 [https-jsse-nio-8443-exec-6] ERROR com.jinglun.guard.devicemanage.service.impl.DeviceServiceImpl - 设备列表接口调用出错
+2019-08-02  13:24:49.994 [https-jsse-nio-8443-exec-7] ERROR com.jinglun.guard.devicemanage.service.impl.DeviceServiceImpl - 设备列表接口调用出错
+2019-08-02  13:24:57.120 [https-jsse-nio-8443-exec-4] ERROR com.jinglun.guard.devicemanage.service.impl.DeviceServiceImpl - 设备列表接口调用出错
+2019-08-02  13:24:57.853 [https-jsse-nio-8443-exec-6] ERROR com.jinglun.guard.devicemanage.service.impl.DeviceServiceImpl - 设备列表接口调用出错
+2019-08-02  13:25:00.708 [https-jsse-nio-8443-exec-10] ERROR com.jinglun.guard.devicemanage.service.impl.DeviceServiceImpl - 设备列表接口调用出错
+2019-08-02  13:25:03.067 [https-jsse-nio-8443-exec-2] ERROR com.jinglun.guard.devicemanage.service.impl.DeviceServiceImpl - 设备列表接口调用出错
+2019-08-02  13:25:03.956 [https-jsse-nio-8443-exec-5] ERROR com.jinglun.guard.devicemanage.service.impl.DeviceServiceImpl - 设备列表接口调用出错
+2019-08-02  13:25:05.610 [https-jsse-nio-8443-exec-8] ERROR com.jinglun.guard.devicemanage.service.impl.DeviceServiceImpl - 设备列表接口调用出错
+2019-08-02  13:25:06.937 [https-jsse-nio-8443-exec-3] ERROR com.jinglun.guard.devicemanage.service.impl.DeviceServiceImpl - 设备列表接口调用出错
+2019-08-02  13:25:13.124 [https-jsse-nio-8443-exec-7] ERROR com.jinglun.guard.devicemanage.service.impl.DeviceServiceImpl - 设备列表接口调用出错
+2019-08-02  13:25:16.417 [https-jsse-nio-8443-exec-6] ERROR com.jinglun.guard.devicemanage.service.impl.DeviceServiceImpl - 设备列表接口调用出错
+2019-08-02  13:25:18.260 [https-jsse-nio-8443-exec-8] ERROR com.jinglun.guard.devicemanage.service.impl.DeviceServiceImpl - 设备列表接口调用出错
+2019-08-02  13:25:18.807 [https-jsse-nio-8443-exec-10] ERROR com.jinglun.guard.devicemanage.service.impl.DeviceServiceImpl - 设备列表接口调用出错
+2019-08-02  13:25:20.024 [https-jsse-nio-8443-exec-3] ERROR com.jinglun.guard.devicemanage.service.impl.DeviceServiceImpl - 设备列表接口调用出错
+2019-08-02  13:25:21.132 [https-jsse-nio-8443-exec-9] ERROR com.jinglun.guard.devicemanage.service.impl.DeviceServiceImpl - 设备列表接口调用出错
+2019-08-02  14:44:14.909 [restartedMain] WARN  org.apache.catalina.core.ContainerBase.[Tomcat].[localhost].[/] - Cannot deserialize session attribute [org.apache.shiro.subject.support.DefaultSubjectContext_PRINCIPALS_SESSION_KEY] for session [E9BFB5CF4B0521D7CF4582EF08BAE553]
+2019-08-02  15:02:34.375 [https-jsse-nio-8443-exec-8] ERROR com.jinglun.guard.systemManage.service.impl.ParametercontrolServiceImpl - 公共参数接口调用出错
+2019-08-02  15:03:05.039 [https-jsse-nio-8443-exec-7] ERROR com.jinglun.guard.devicemanage.service.impl.DeviceServiceImpl - 设备列表接口调用出错
+2019-08-02  15:05:32.254 [https-jsse-nio-8443-exec-10] ERROR com.jinglun.guard.devicemanage.service.impl.DeviceServiceImpl - 设备列表接口调用出错
+2019-08-02  15:08:46.660 [restartedMain] WARN  org.apache.catalina.core.ContainerBase.[Tomcat].[localhost].[/] - Cannot deserialize session attribute [org.apache.shiro.subject.support.DefaultSubjectContext_PRINCIPALS_SESSION_KEY] for session [854F72D34967616EA3403C66B71E6907]
+2019-08-02  15:09:23.475 [https-jsse-nio-8443-exec-7] ERROR com.jinglun.guard.devicemanage.service.impl.DeviceServiceImpl - 设备列表接口调用出错
+2019-08-02  15:16:19.833 [restartedMain] WARN  org.apache.catalina.core.ContainerBase.[Tomcat].[localhost].[/] - Cannot deserialize session attribute [org.apache.shiro.subject.support.DefaultSubjectContext_PRINCIPALS_SESSION_KEY] for session [854F72D34967616EA3403C66B71E6907]
+2019-08-02  15:50:46.343 [restartedMain] WARN  org.apache.catalina.core.ContainerBase.[Tomcat].[localhost].[/] - Cannot deserialize session attribute [org.apache.shiro.subject.support.DefaultSubjectContext_PRINCIPALS_SESSION_KEY] for session [854F72D34967616EA3403C66B71E6907]

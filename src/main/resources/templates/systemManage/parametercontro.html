@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>控制参数</title>
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <base href="/"/>
+  <link rel="stylesheet" href="/layui/css/layui.css">
+</head>
+<body>
+<div style="left:200px;top:20px;width: 600px;position: absolute;">
+  <div class="layui-inline">  
+    <form class="layui-form" action="" lay-filter="example">
+	  <div class="layui-inline">
+	      <label class="layui-form-label" style="width: 150px;">最大组织结构:</label>
+	      <div class="layui-input-inline">
+	        <select id="grade" name="grade">
+	          <option value ="1">1级</option>
+			  <option value ="2">2级</option>
+			  <option value ="3">3级</option>
+			  <option value ="4">4级</option>
+			  <option value ="5">5级</option>
+			  <option value ="6">6级</option>
+	        </select>
+	      </div>
+	   </div>
+	</form>
+  	</div>
+    <button class="layui-btn layui-btn-normal" id="addSubmit">保存</button>
+</div>
+
+<script src="/js/jquery.min.js"></script>
+<script src="/layui/layui.js"></script>
+<script type="text/javascript" src="/js/ajaxFilter.js"></script>
+<script>
+    $(function () {
+        window.parent.$("#toControlParamLi").siblings("li").removeClass("layui-this");
+        window.parent.$("#toControlParamLi").addClass("layui-this");
+    });
+layui.use(['form','layer'], function(){
+  var form = layui.form;
+  
+  $('#addSubmit').on('click',function(){
+     var layer = layui.layer,$=layui.$; 
+     var grade = document.getElementById("grade").value;
+     
+     $.ajax({ 
+	        url:"/parametercontrol/insertParam",
+			type:'post',
+			data:{value : grade},
+			async:false,	
+			success: function(code) {
+				if(code==0){
+					layer.alert("最大组织结构层级保存成功", {
+	   	               title:"信息",
+	   	               },function(){
+	   	                   layer.closeAll();
+	   	            });
+				}else{
+					layer.alert("最大组织结构层级保存失败", {
+	   	               title:"信息",
+	   	               //skin: 'layui-layer-lan'
+	   	               },function(){
+	   	                   layer.closeAll();
+	   	            });
+				}
+			},
+	 });   	 
+  });
+});
+$(document).ready(function(){
+    $.ajax({ 
+      url:"/publicparameter/getMaxorgStructure",
+      type:'post',
+      async:false,	
+      success: function(data) {
+      		var obj = document.getElementsByTagName("option");
+            for(var j=0;j<obj.length;j++){  
+            	if(obj[j].value==data){  
+                   obj[j].selected=true;  //相等则选中  
+                }   
+            }
+      },
+    });
+});
+/* function addSubmit(){
+	var grade = document.getElementById("grade").value;
+    
+    
+    	$.ajax({ 
+	        url:"/parametercontrol/insertParam",
+			type:'post',
+			data:{value : grade},
+			async:false,	
+			success: function(code) {
+				if(code==0){
+					//alert("最大组织结构上报成功");
+					layer.alert("最大组织结构上报成功", {
+	   	               title:"系统提示",
+	   	               skin: 'layui-layer-lan'
+	   	               },function(){
+	   	                   layer.closeAll();
+	   	           });
+				}else{
+					alert("最大组织结构上报失败");
+				}
+			},
+		});
+        	
+} */  
+</script>
+</body>
+</html>

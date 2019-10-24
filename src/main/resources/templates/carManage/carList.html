@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport"
+          content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi"/>
+    <base href="/"/>
+    <link rel="stylesheet" href="/layui/css/layui.css">
+    <link rel="stylesheet" href="/font-awesome/css/font-awesome.css">
+</head>
+<style type="text/css">
+    .layui-tree li {
+        overflow: unset;
+    }
+
+    .layui-table-view {
+        margin: 0;
+    }
+
+    .layui-input:hover {
+        border-color: #54b5ff !important;
+    }
+
+    .layui-table, .layui-table-view {
+        margin: 0
+    }
+
+    .layui-table-body {
+        margin-bottom: 14px;
+    }
+
+    .layui-btn2 {
+        display: inline-block;
+        height: 38px;
+        line-height: 38px;
+        padding: 0 18px;
+        background-image: url(/css/img/upload1.png);
+        white-space: nowrap;
+        text-align: center;
+        font-size: 14px;
+        border: none;
+        border-radius: 2px;
+        cursor: pointer
+    }
+
+    .layui-btn2:hover {
+        background-image: url(/css/img/upload2.png);
+    }
+
+    .layui-btn2:active {
+        background-image: url(/css/img/upload3.png);
+    }
+
+    .layui-table th {
+        font-weight: bold;
+    }
+
+    .button2 {
+        width: 80px;
+        height: 30px;
+        line-height: 30px;
+        color: #ffffff;
+        font-size: 14px;
+        border: none;
+        border-radius: 4px;
+        background-color: #54b5ff;
+        cursor: pointer;
+        margin-right: 30px;
+        padding: 0;
+    }
+
+    .button2 :hover {
+        background-color: #77c4ff;
+    }
+
+    .button2 :active {
+        background-color: #4a96ec;
+    }
+
+    .layui-table-view .layui-table td, .layui-table-view .layui-table th {
+        padding: 2px 0 !important;
+    }
+
+    .layui-table-cell a {
+        margin-bottom: 2px;
+    }
+
+    .layui-input, .layui-select, .layui-textarea {
+        height: 30px;
+        line-height: 30px;
+        border-width: 1px;
+        border-style: solid;
+        background-color: #fff;
+        border-radius: 2px
+    }
+
+    body {
+        font-family: \5FAE\8F6F\96C5\9ED1 !important;
+    }
+</style>
+<body>
+<!--start 车辆记录工具栏-->
+<div style="width:100%;height:46px;background-color: #f2f2f2;margin-bottom: 16px;">
+    <form class="layui-form" lay-filter="carform">
+        <div style="margin-bottom: 8px;">
+            <div class="layui-inline" style="margin-left: 30px;">
+                <div class="layui-input-inline" style="width:150px">
+                    <select id="ownerAttribute" name="ownerAttribute">
+                        <option value="">车主属性</option>
+                        <option value="1">访客</option>
+                        <option value="2">员工</option>
+                    </select>
+                </div>
+            </div>
+            <div class="layui-inline" style="margin-left: 30px;">
+                <div class="layui-input-inline" style="width:150px">
+                    <select id="throughArea" name="throughArea">
+                        <option value="">通过区域</option>
+                        <option value="1">A1</option>
+                        <option value="2">A2</option>
+                    </select>
+                </div>
+            </div>
+            <div class="layui-inline">
+                <label class="layui-form-label" style="padding:8px 15px;line-height:30px;">开始时间</label>
+                <div class="layui-input-inline" style="margin-top: 8px">
+                    <input type="text" style="height: 30px;line-height: 30px;" name="startdate" id="startdate"
+                           lay-verify="required" class="layui-input" placeholder="yyyy-MM-dd">
+                </div>
+            </div>
+            <div class="layui-inline">
+                <label class="layui-form-label" style="padding:8px 15px;line-height:30px;">结束时间</label>
+                <div class="layui-input-inline" style="margin-top: 8px">
+                    <input type="text" style="height: 30px;line-height: 30px;" name="enddate" id="enddate"
+                           lay-verify="required" class="layui-input" placeholder="yyyy-MM-dd">
+                </div>
+            </div>
+            <div class="layui-inline" style="margin-left: 30px;width: 12.5%;">
+                <input class="layui-input" style="height: 30px;line-height: 30px;" id="searchContent"
+                       placeholder="搜索...">
+            </div>
+            <button type="button" onmouseover="changeImg(this,2)" onmouseout="changeImg(this,1)"
+                    onmousedown="changeImg(this,3)" onmouseup="changeImg(this,2)" class="select-on layui-btn layui-btn"
+                    style="padding:0 0px;border: none;height: 30px;line-height: 30px;background-color: #f2f2f2;color: black;margin-bottom: 4px;"
+                    id="doSearch"><img imgName="searchImg" src="/css/img/searchImg1.png"> </img></button>
+            <div style="margin-top:8px;float:right;">
+                <button type="button" onmouseover="changeImg(this,2)" onmouseout="changeImg(this,1)"
+                        onmousedown="changeImg(this,3)" onmouseup="changeImg(this,2)" class="select-on  layui-btn1"
+                        style="border: none;height: 30px;line-height: 30px;background-color: #f2f2f2;"
+                        id="exportConference">
+                    <img imgName="ExportImg" style="margin-bottom: 3px;" src="/css/img/ExportImg1.png"> </img>导出数据
+                </button>
+
+            </div>
+        </div>
+    </form>
+</div>
+<!--end 车辆记录工具栏-->
+<!--start 车辆记录table-->
+<div style="margin-top:16px;width:100%;">
+    <div id="list" class="" style="width:100%;float: left;box-sizing: border-box;">
+        <table class="layui-hide" id="carList" lay-filter="carList"></table>
+    </div>
+</div>
+<!--end 车辆记录table-->
+<!--start 车位使用情况-->
+<!--<div style="width: 100%;height:46px;float: left;margin-top: 20px">-->
+    <div style="position: absolute;bottom: 2px;background-color: #54b5ff;height:36px;line-height: 30px;text-align: center;margin-right:30px;border:1px solid #e2e2e2;float: right;">
+        已用车位：<span id="used"></span>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        未用车位：<span id="unused"></span>
+    </div>
+<!--</div>-->
+<!--end 车位使用情况-->
+<script type="text/javascript" src="/js/jquery.min.js"></script>
+<script type="text/javascript" src="/layui/layui.js"></script>
+<script type="text/javascript" src="/js/ajaxFilter.js"></script>
+<script>
+    layui.use(['laydate', 'form'], function () {
+        var element = layui.element;
+        var laydate = layui.laydate;
+        var form = layui.form;
+        var parentHeight = document.documentElement.clientHeight;
+        var height = parentHeight - 75;
+        form.on('select(mode)', function (data) {
+            var selectmode = data.value;
+
+        });
+        //执行一个laydate实例
+        laydate.render({
+            elem: '#startdate' //指定元素
+        });
+        laydate.render({
+            elem: '#enddate' //指定元素
+        });
+    });
+
+
+    $(function () {
+        //把父页面的导航条高亮调整为车辆管理
+        window.parent.$("#toVehicleManageLi").siblings("li").removeClass("layui-this");
+        window.parent.$("#toVehicleManageLi").addClass("layui-this");
+    });
+
+    //图标的鼠标移入/移出/点击切换图标
+    function changeImg(obj, status) {
+        var imgName = $(obj).find("img").attr("imgName");
+        $(obj).find("img").attr("src", "/css/img/" + imgName + status + ".png");
+    }
+
+    function change() {
+        if ($("#auto_div").is(":hidden")) {
+            $("#auto_div").show();
+            $("#operation").attr("src", "/css/img/closedown.png");
+        } else {
+            $("#auto_div").hide();
+            $("#operation").attr("src", "/css/img/openup.png");
+        }
+    }
+</script>
+<script>
+    layui.use(['tree', 'table', 'layer', 'form', 'upload'], function () {
+        var $ = layui.$;
+        var table = layui.table;
+        var layer = layui.layer;
+        var form = layui.form;
+
+        $(document).ready(function () {
+            // select下拉框选中触发事件
+            form.on("select", function (data) {
+                doSearch();
+            });
+        });
+        var endTime = new Date();
+        var startTime = new Date();
+
+        var parentHeight = document.documentElement.clientHeight;
+        var height = parentHeight - 75;
+        startTime = Format(startTime, "yyyy-MM-dd");
+        endTime = Format(endTime, "yyyy-MM-dd");
+        //表单初始赋值
+        form.val('carform', {
+            "startdate": startTime
+            , "enddate": endTime
+        });
+        var vehicle = table.render({
+            elem: '#carList'
+            ,url:'/attendance/selectAttendanceList?starttime='+startTime+'&endtime='+endTime
+            ,title: '考勤列表'
+            ,height: height
+            ,limit: 20
+            ,cols: [
+                [
+                    {field:'date', title:'车牌号',height:38}
+                    ,{field:'faceinfoname', title:'车主',height:38}
+                    ,{field:'empno', title:'车主属性',height:38}
+                    ,{field:'first_time', title:'车主手机号',height:38}
+                    ,{field:'last_time', title:'进闸时间',height:38}
+                    ,{field:'last_time', title:'出闸时间',height:38}
+                    ,{field:'last_time', title:'通过区域',height:38}
+                    ,{field:'last_time', title:'车牌类型',height:38}
+                    ,{field:'last_time', title:'车型',height:38}
+                    ,{field:'last_time', title:'车辆颜色',height:38}
+                ]
+            ]
+            ,page: true
+        });
+        $(".layui-tree a").click(function () {
+            $(".layui-tree a cite").css('color', '#333');
+            $(this).find('cite').css('color', '#54b5ff');
+        });
+        $('#doSearch').on('click', function () {
+            doSearch();
+        });
+        document.onkeydown = function (e) { // 回车提交表单
+            var theEvent = window.event || e;
+            var code = theEvent.keyCode || theEvent.which;
+            if (code == 13) {
+                doSearch();
+            }
+        };
+        function containSpecial(s) {
+            var containSpecial = RegExp("^$|[^`~!@#$%^&*()_+<>?:\"{},.\\/\\\\;'[\\]·！#￥（——）：；“”‘、，|《。》？、【】[\\]]+$");
+            for(var i=0;i<s.length;i++){
+                if (!containSpecial.test(s.charAt(i))) {
+                    return false;
+                }
+            }
+            return true;
+        }
+        function doSearch() {
+            var layer = layui.layer,$=layui.$;
+            var searchContent = $('#searchContent').val();
+            searchContent=searchContent.trim();
+            var starttime = $('#startdate').val();
+            var endtime = $('#enddate').val();
+            var mode = $('#mode').val();
+            if(starttime == ""){
+                layer.alert('开始时间不能为空', {
+                    icon: 0,
+                    title:"提示",
+                });
+                return false;
+            }
+            if(endtime == ""){
+                layer.alert('结束时间不能为空', {
+                    icon: 0,
+                    title:"提示",
+                    // skin: 'layui-layer-lan'
+                });
+                return false;
+            }
+            if(starttime > endtime){
+                layer.alert('结束时间不得早于开始时间', {
+                    icon: 0,
+                    title:"提示",
+                });
+                return false;
+            }
+            if (!containSpecial(searchContent)) {
+                layer.msg('搜索条件不能含有特殊字符', {icon: 0, anim: 6});
+            }else {
+                table.reload('carlist', {
+                    where : {
+                        searchContent : searchContent,
+                        starttime : starttime,
+                        endtime : endtime,
+                        mode : mode
+                    },
+                    page : {
+                        curr : 1
+                        //重新从第 1 页开始
+                    }
+                });
+            }
+        }
+        /*$("#export").on('click', function() {
+            var parentHeight = document.documentElement.clientHeight;
+            var height = parentHeight*0.95;
+            layer.open({
+                type : 2,
+                title : '导出考勤报表',
+                shadeClose : false,
+                shade :  [0.2, '#000000'],
+                area : [ '600px', height+'px' ],
+                content : '/attendance/toAttendanceExport',
+                //btn : [ '取消' ],
+                success : function(layero, index) {
+                    var starttime = $('#startdate').val();
+                    var endtime = $('#enddate').val();
+                    var body = layer.getChildFrame('body', index);//获取子页面body
+                    body.find('#startdate').attr("value", starttime);
+
+                    body.find('#enddate').attr("value", endtime);
+                }
+            });
+        });*/
+        $("#camera").on('click', function() {
+            var parentHeight = document.documentElement.clientHeight;
+            var height = parentHeight*0.95;
+            var index = layer.open({
+                type : 2,
+                title : '摄像头',
+                shadeClose : false,
+                shade :  [0.2, '#000000'],
+                area : ['1000px','800px'],
+                content : '/vehicleManage/toCamera',
+                //btn : [ '取消' ],
+                success : function(layero, index) {
+
+                }
+            });
+            layer.full(index);
+        });
+    });
+
+    function Format(now, mask) {
+        var d = now;
+        var zeroize = function (value, length) {
+            if (!length) length = 2;
+            value = String(value);
+            for (var i = 0, zeros = ''; i < (length - value.length); i++) {
+                zeros += '0';
+            }
+            return zeros + value;
+        };
+
+        return mask.replace(/"[^"]*"|'[^']*'|\b(?:d{1,4}|m{1,4}|yy(?:yy)?|([hHMstT])\1?|[lLZ])\b/g, function ($0) {
+            switch ($0) {
+                case 'd':
+                    return d.getDate();
+                case 'dd':
+                    return zeroize(d.getDate());
+                case 'ddd':
+                    return ['Sun', 'Mon', 'Tue', 'Wed', 'Thr', 'Fri', 'Sat'][d.getDay()];
+                case 'dddd':
+                    return ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'][d.getDay()];
+                case 'M':
+                    return d.getMonth() + 1;
+                case 'MM':
+                    return zeroize(d.getMonth() + 1);
+                case 'MMM':
+                    return ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'][d.getMonth()];
+                case 'MMMM':
+                    return ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'][d.getMonth()];
+                case 'yy':
+                    return String(d.getFullYear()).substr(2);
+                case 'yyyy':
+                    return d.getFullYear();
+                case 'h':
+                    return d.getHours() % 12 || 12;
+                case 'hh':
+                    return zeroize(d.getHours() % 12 || 12);
+                case 'H':
+                    return d.getHours();
+                case 'HH':
+                    return zeroize(d.getHours());
+                case 'm':
+                    return d.getMinutes();
+                case 'mm':
+                    return zeroize(d.getMinutes());
+                case 's':
+                    return d.getSeconds();
+                case 'ss':
+                    return zeroize(d.getSeconds());
+                case 'l':
+                    return zeroize(d.getMilliseconds(), 3);
+                case 'L':
+                    var m = d.getMilliseconds();
+                    if (m > 99) m = Math.round(m / 10);
+                    return zeroize(m);
+                case 'tt':
+                    return d.getHours() < 12 ? 'am' : 'pm';
+                case 'TT':
+                    return d.getHours() < 12 ? 'AM' : 'PM';
+                case 'Z':
+                    return d.toUTCString().match(/[A-Z]+$/);
+                // Return quoted strings with the surrounding quotes removed
+                default:
+                    return $0.substr(1, $0.length - 2);
+            }
+        });
+    };
+</script>
+</body>
+</html>

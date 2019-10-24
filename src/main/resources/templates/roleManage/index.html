@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+<meta charset="UTF-8">
+<title>Title</title>
+<meta name="renderer" content="webkit">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport"
+	content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi" />
+<base href="/" />
+<link rel="stylesheet" href="/font-awesome/css/font-awesome.css"> 
+<link rel="stylesheet" href="/layui/css/layui.css">
+<link rel="stylesheet" href="/css/index.css"  />
+
+
+	<style>
+		.layui-form-switch {
+			margin-top: 0;
+		}
+        .disablEvevt {
+            pointer-events: none;
+        }
+       .layui-layer-iframe{
+		    border-radius: 20px;
+		}
+		body .yourclass{border-radius:4px;}
+         body .yourclass .layui-layer-title{border-radius:4px 4px 0 0;}
+	</style>
+</head>
+<body>
+<div style="width:100%;height:46px;background-color: #f2f2f2;">
+	<form class="layui-form">
+		<div style="margin-bottom: 8px;">
+			<!-- <div class="layui-inline" style="margin-top:8px;margin-left:240px;width: 12.5%;">
+				<input class="layui-input" style="height: 30px;line-height: 30px;" id="searchContent" placeholder="搜索..." onkeyup="(this.v=function(){this.value=this.value.replace(/[/]+/,'');}).call(this)">
+			</div>
+			<button type="button" onmouseover="changeImg(this,2)" onmouseout="changeImg(this,1)" onmousedown="changeImg(this,3)" onmouseup="changeImg(this,2)" class="select-on layui-btn layui-btn" style="padding:0 0px;border: none;height: 30px;line-height: 30px;background-color: #f2f2f2;color: black;margin-top: 4px;" id="doSearch"><img imgName="searchImg" src="/css/img/searchImg1.png">    </img></button> -->
+			<div style="margin-top:8px;float:right;margin-right:40px">
+				<shiro:hasPermission name="添加角色"><button type="button" onmouseover="changeImg(this,2)" onmouseout="changeImg(this,1)" onmousedown="changeImg(this,3)" onmouseup="changeImg(this,2)" class="select-on  layui-btn1" style="border: none;height: 30px;line-height: 30px;background-color: #f2f2f2;" id="addRole"><img imgName="addRoleImg" style="margin-bottom: 3px;" src="/css/img/addRoleImg1.png">    </img>新增角色</button></shiro:hasPermission>
+			</div>
+		</div>
+	</form>
+	
+	
+</div>
+
+<div class="" style="width:87%;margin-left:12.3%;float: left">
+		<table class="layui-hide" id="roleList" lay-filter="roleList"></table>
+</div>
+<script type="text/javascript" th:inline="javascript">
+   var user=[[${user}]];
+   var count=0;
+</script>
+<script type="text/html" id="barDemo">
+<shiro:hasPermission name="编辑角色信息"> 	<a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a></shiro:hasPermission>
+<shiro:hasPermission name="删除角色,用户管理"> <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a></shiro:hasPermission>
+
+</script>
+<script type="text/javascript" src="/js/jquery.min.js"></script>
+<script type="text/javascript" src="/layui/layui.js"></script>
+<script type="text/javascript" src="/js/ajaxFilter.js"></script>
+<script type="text/javascript" th:inline="javascript" >
+  var user=[[${user}]];
+</script>
+<script>
+
+//图标的鼠标移入/移出/点击切换图标
+    function changeImg(obj,status) {
+        var imgName = $(obj).find("img").attr("imgName");
+        $(obj).find("img").attr("src","/css/img/" + imgName + status + ".png");
+    }
+    layui.use(['form','tree','table','upload','layer','element'], function(){
+        var layer = layui.layer;//layui弹层
+        var element = layui.element; //Tab的切换功能，切换事件监听等，需要依赖element模块
+        var form = layui.form;//layui表单控件
+        var table=layui.table;
+        var parentHeight = document.documentElement.clientHeight;
+        var height = parentHeight-75;
+        var counts=0;
+        var menulist=user.menuList
+        for(var i=0;i<menulist.length;i++){
+        	if(menulist[i].name=="编辑角色信息"){
+        		counts++;
+        	}
+        	if(menulist[i].name=="删除角色"){
+        		counts++;
+        	}
+        	/* if(menulist[i].name=="员工离职"){
+        		counts++;
+        	} */
+        }
+        table.render({
+            elem: '#roleList'
+            ,url:'/roleManage/selectRoleList'
+            ,title: '角色列表'
+            ,height:height
+            ,limit:20
+            ,cols: [
+                [
+                    {field:'name', title:'角色名称',width:"40%"}
+                    ,{field:'remark', title:'描述',width:"40%"}
+                    ,{fixed: 'right', title:'操作', toolbar: '#barDemo',width:"20%"}
+                ]
+            ]
+            ,page: true
+            ,done:function(){ 
+        		if(counts==0){
+            		$("[data-field='2']").css('display','none');
+            	}
+            }
+        });
+        
+        //监听行工具事件
+        table.on('tool(roleList)', function(obj) {
+        	var data = obj.data;
+            if(obj.event === 'del'){
+            	 layer.confirm('是否删除此角色',{btn:['是','否'],icon:3,title:"提示"} ,function(index){
+                 	$.ajax({ 
+               	        url:"/roleManage/delRole",
+               			type:'get',
+               			data:{
+            	        	 'roleId':data.role_id,
+            	             },
+             			async:false,	
+             			success: function(result) {
+               				if(result==0){
+               					layer.alert("角色删除成功", {
+     	           					title:"提示",
+     	           					icon: 1
+     	           					},function(){
+     	           						layer.closeAll();
+     	                               	location.reload();
+     	                           });
+         					}
+               				else if(result==1){
+         						layer.alert('该角色有用户引用，无法删除', {
+     	               		    		  title:"提示",
+     	               		    		  icon: 2
+     	               		    	});
+         					}
+               				else{
+               					layer.alert('删除失败', {
+	               		    		  title:"提示",
+	               		    		  icon: 2
+	               		    	});
+               				}
+         	         },
+         	         error: function() {
+         	        	 layer.alert("角色删除出错 ");
+         	        	 
+         	         }
+             		});
+                   });
+               }
+            if(obj.event === 'edit'){
+            	var parentHeight = document.documentElement.clientHeight;
+                var height = parentHeight*0.9;
+                var role_id = data.role_id;
+                layer.open({
+                    type: 2,
+                    title: '修改角色',
+                    skin: 'yourclass',
+                    shadeClose: false,
+                    shade:[0.2, '#000000'],
+                    area: ['920px', height+'px'],
+                    content: '/roleManage/toAddRole?roleId=' + role_id,
+                    cancel: function (index, layero) {
+                        var body = layer.getChildFrame('body', index);
+                        if (body.find("#ifWriteFlag").val() != "0") {
+                            layer.confirm('角色未修改完毕,是否退出?',{btn:['是','否'],icon:3,title:"提示"},function (index1) {
+                                layer.close(index);
+                                layer.close(index1);
+                            },function (index1) {
+                                layer.close(index1);
+                            });
+                        } else {
+                            layer.close(index);
+                        }
+                        return false;
+                    },
+	                 success:function(layero,index){
+	              	  var body = layer.getChildFrame('body', index);
+	              	 var iframeWindow = layero.find('iframe')[0].contentWindow;
+	              	  body.find('#roleName').attr("value",data.name);
+	              	    for(var i=0;i<data.menu_list.length;i++){
+	              		body.find('#'+data.menu_list[i].menu_id).prop("checked", true);
+	              	    }
+	              	  body.find('#desc').val(data.employee_id);
+	              	 iframeWindow.layui.form.render();
+	                } 
+                });
+            }
+        });
+        $("#addRole").click(function () {
+        	var parentHeight = document.documentElement.clientHeight;
+            var height = parentHeight*0.9;
+            layer.open({
+                type: 2,
+                title: '新增角色',
+                skin: 'yourclass',
+                shadeClose: false,
+                shade:[0.2, '#000000'],
+                area: ['920px', height+'px'],
+                content: '/roleManage/toAddRole?roleId=0',
+                cancel: function (index, layero) {
+                    var body = layer.getChildFrame('body', index);
+                    if (body.find("#ifWriteFlag").val() != "0") {
+                        layer.confirm('角色未新增完毕,是否退出?',{btn:['是','否'],icon:3,title:"提示"},function (index1) {
+                            layer.close(index);
+                            layer.close(index1);
+                        },function (index1) {
+                            layer.close(index1);
+                        });
+                    } else {
+                        layer.close(index);
+                    }
+                    return false;
+                }
+            });
+        });
+    });
+</script>
+</body>
+</html>

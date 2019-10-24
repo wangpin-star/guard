@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>新增嘉宾分组</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <base href="/"/>
+    <link rel="stylesheet" href="/layui2.5.4/css/layui.css">
+    <style>
+   		
+   </style>
+</head>
+<div class="layui-container" style="width: 100%;">
+  <div class="layui-row" style="width: 100%; height:46px;">
+     <div style="float: left;width:55%;margin-top: 16px;">
+      	 <div class='layui-form-item' style="margin-bottom: 14px;">
+                <label class='layui-form-label' style="line-height: 14px;padding-right: 11px;color: #333333;">分组名称</label>
+                <img src="/css/img/required.png" style="margin-top: 11px;float: left;margin-right: 11px;">
+                <div class='layui-input-inline' style='width: 320px;'>
+                    <input type='text' id="empName" name='empName' placeholder="请输入姓名..." lay-verify='required'
+                           maxlength="20" style="height: 32px;line-height: 32px;border-radius: 4px;"class='layui-input'>
+                </div>
+         </div>
+     </div>
+  </div> 
+  <div class="layui-row" style="width:100%; margin-top: 16px;">
+      <div style="float: left;margin-left: 38px;">
+      	<span style="font-size: 14px; color: #333333;">选择嘉宾</span>
+      </div>
+      <div style="float: left;margin-left:35px">
+      	<div id="group" class="demo-transfer" style="width: 100%;"></div>
+      	
+      	<button data-type="auto" style="float: right;margin-top: 16px;height:30px;text-align: center;line-height: 30px;" class="layui-btn layui-btn-normal"  id="addSubmit">保存设置</button>
+      </div>
+  </div>
+</div>     
+
+
+<script type="text/javascript" src="/js/jquery.min.js"></script>
+<script type="text/javascript" src="/layui2.5.4/layui.js"></script>
+<script type="text/javascript" src="/js/ajaxFilter.js"></script>
+<script>
+layui.use(['transfer', 'layer'], function(){
+	  var $ = layui.$
+	  ,transfer = layui.transfer
+	  ,layer = layui.layer;
+      
+	//模拟数据
+	  var data = [
+	     {"value": "1", "title": "李白(11111111111)"}
+	    ,{"value": "2", "title": "杜甫(22222222222)"}
+	    ,{"value": "3", "title": "苏轼(33333333333)"}
+	    ,{"value": "4", "title": "李清照(44444444444)"}
+	    ,{"value": "5", "title": "鲁迅(55555555555)"}
+	    ,{"value": "6", "title": "巴金(66666666666)"}
+	    ,{"value": "7", "title": "冰心(77777777777)"}
+	    ,{"value": "8", "title": "矛盾(88888888888)"}
+	    ,{"value": "9", "title": "贤心(99999999999)"}
+	  ]
+	
+	  transfer.render({
+		    elem: '#group'
+		    ,title: ['已选择', '未选择']  //自定义标题
+		    ,data: data
+		    ,width: 380 //定义宽度
+		    ,height: 600 //定义高度
+		  })
+		  
+        
+        document.onkeydown = function (e) { // 回车提交表单
+            var theEvent = window.event || e;
+            var code = theEvent.keyCode || theEvent.which;
+            if (code == 13) {
+                doSearch();
+            }
+        };
+
+    });
+</script>
+</body>
+</html> 
+
+
+

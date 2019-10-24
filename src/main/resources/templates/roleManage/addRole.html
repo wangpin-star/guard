@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>添加角色</title>
+<base href="/"/>
+<link rel="stylesheet" href="/layui/css/layui.css">   
+<link rel="stylesheet" href="/font-awesome/css/font-awesome.css">                  
+<style>
+.layui-form-checkbox[lay-skin="primary"] i{
+  width:18px;
+  height:18px;
+  
+}
+.layui-form-checkbox[lay-skin="primary"]{
+  padding-left: 30px;
+  margin-bottom: 10px;
+  
+}
+/*  .layui-form-checked[lay-skin=primary] i {
+      background:url(/css/img/addImg2.png) left center no-repeat;
+}  */
+.layui-input, .layui-textarea{
+  width:420px;
+  height:120px;
+  margin-left:18px;
+  margin-top:0px;
+  border-radius:4px;
+}
+.layui-colla-title{
+  width:98%;
+  border-radius:4px;
+  cursor: auto;
+}
+.layui-colla-content{
+  border:none;
+  padding: 10px 0px;
+}
+.layui-colla-icon{
+  left: 86%;
+  display:none
+}
+.layui-collapse {
+  border:none;
+}
+</style>
+</head>
+<body>
+ <form id="show" class="layui-form" action="" style="margin-top:42px;overflow-x: auto; overflow-y: auto;width:100%;height:600px">
+  <div class="layui-form-item">
+    <label class='layui-form-label' style="line-height: 14px;padding-right: 11px;color: #333333;">角色名称</label>
+    <img src="/css/img/required.png" style="margin-top: 11px;float: left;margin-right: 11px;">
+     <div class="layui-input-block">
+       <input type="text"  lay-verify='required' id="roleName" autocomplete="off" style="width:420px;height:32px" class="layui-input">
+     </div>
+  </div>
+  
+  <div class="layui-form-item" style="margin-top:30px;width:100%">
+     <label class='layui-form-label' style="line-height: 14px;padding-right: 11px;color: #333333;" id="label">选择权限</label>
+    <img src="/css/img/required.png" style="margin-top: 11px;float: left;margin-right: 11px;">
+     <div class="layui-input-block">
+       <div th:if="${menu.children!=null}" style="margin-left:16px;" class="layui-collapse">
+		  <div th:each="menus:${menu.children}" style="margin-bottom:30px;float:left;width:94%" class="role_all">
+		    <div th:switch="${menus.parentId}" >
+		        <div th:case="'0'">
+		           <div class="layui-colla-item">
+			           <h2 class="layui-colla-title" style="border-color:white"> 
+			                <input type="checkbox" th:name="${menus.depart_id}" th:value="${menus.depart_id}" th:id="${menus.depart_id}"  th:title="${menus.name}" 
+			                              lay-skin="primary" lay-filter="allChoose">
+			           </h2>
+		               <div class="layui-colla-content layui-show"> 
+			              <div th:if="menus.children!=null" th:id="${menus.depart_id} ">
+			                 <div th:each="cmenus:${menus.children}" style="float:left;width:25%;" class="role_p">
+			                    <div th:if="${#lists.isEmpty(cmenus.children)}" style="float:left;margin-left:70px">
+			                         <input type="checkbox" th:name="${menus.depart_id}" th:id="${cmenus.depart_id}" th:value="${cmenus.depart_id}" lay-skin="primary" 
+				                         th:title="${cmenus.name}" lay-filter="allChild">
+				                </div>
+				                <div th:if="!${#lists.isEmpty(cmenus.children)}" class="role_c">
+				                    <div class="layui-collapse" lay-filter="test">
+								        <div class="layui-colla-item">
+								          <h2 class="layui-colla-title" style="padding:0 0 0 70px;background-color:#f7f7f7;border-color:white;width: 695px">
+                                              <input type="checkbox" th:name="${menus.depart_id}" th:id="${cmenus.depart_id}" th:value="${cmenus.depart_id}" lay-skin="primary" 
+				                               th:title="${cmenus.name}" lay-filter="allChild">          
+                                                        </h2>            
+									          <div class="layui-colla-content layui-show" style="border-color:white">
+								                    <div th:each="ccmenus:${cmenus.children}" style="float:left;width:10%;margin-left:100px;margin-bottom:30px">
+								                        <input type="checkbox" th:name="${menus.depart_id}" th:id="${ccmenus.depart_id}" th:value="${cmenus.depart_id}" lay-skin="primary" 
+								                             th:title="${ccmenus.name}" lay-filter="allChilds"> 
+								                    </div>
+								              </div>
+							             </div>    
+							           </div>   
+				                  </div>
+			                  </div>
+		                    </div>
+		                </div>
+		            </div>
+		         </div>
+             </div>
+		  </div>
+	   </div>
+     </div>
+ </div>
+  
+
+ 
+
+  <div class="layui-form-item layui-form-text">
+    <label class="layui-form-label" style="color: #333333;">描述</label>
+    <div class="layui-input-block">
+      <textarea name="desc" id="desc" placeholder="请输入内容" class="layui-textarea"></textarea>
+    </div>
+  </div>
+  
+  <div  style="position: fixed; bottom:40px;right:40px;">
+             <button type="button" id="save"  class="layui-btn layui-btn-ks">保存</button>
+             <button type="button" id="cancel" class="layui-btn layui-btn-ks">取消</button>
+  </div>
+</form>
+
+<script type="text/javascript" src="/js/jquery.min.js"></script>
+<script type="text/javascript" src="/layui/layui.js"></script>
+<script type="text/javascript" th:inline="javascript">
+var menulist = [[${menulist}]];  //选中角色的权限
+var usermenulist = [[${usermenulist}]];  //当前用户的权限
+var menu=[[${menu}]];    //所有权限
+var menus=usermenulist.children;   //当前用户的权限
+var menuAll=menu.children;         //所有权限
+</script>
+<script defer="defer">
+window.onload = function() {
+	var height=document.documentElement.clientHeight;
+	var h=height-130;
+	$("#show").css('height',h);
+	function changeheight(){
+		 var h1 = document.documentElement.clientHeight-130;
+		$("#show").css('height',h1);
+		var w1 = document.documentElement.clientWidth;
+		$("#show").css('width',w1);
+	}
+	window.onresize=function(){
+	    changeheight();
+	}
+	var contentElements =document.querySelectorAll("div[class='role_p']");
+	 for(var i=0;i<contentElements.length;i++){
+        if(contentElements[i].children[0].className=="role_c"){
+        	contentElements[i].style.width="100%";
+        }
+    }
+	 var contentElement =document.querySelectorAll("div[class='role_all']");
+	 var count=0;
+	  for(var i=0;i<contentElement.length;i++){
+	   var leng=contentElement[i].getElementsByClassName("role_c").length;
+	   if(leng!=undefined&&leng!=0){
+		  var cont= contentElement[i].getElementsByClassName("role_p");
+		  for(var i=0;i<cont.length;i++){
+			  count++;
+			  cont[i].style.width="765px";
+			  var lengs=cont[i].getElementsByClassName("role_c").length;
+			  if(lengs==0&&count!=1){
+				  cont[i].style.marginBottom="50px";
+				  cont[i].style.backgroundColor="#f7f7f7";
+			  }
+		  }
+	   }
+	}
+}
+layui.use([ 'layer','laydate', 'form' ], function() {
+	//var element = layui.element;
+	var laydate = layui.laydate;
+	var form = layui.form;
+	var layer = layui.layer;
+	var roleId="[[${roleId}]]";
+	var lists=[];
+	 for(var i=0;i<menus.length;i++){
+		var sum=0;
+		var sums=0;
+		 $("input[name='"+menus[i].depart_id+"']").each(function () {
+			 sum++;
+			 var obj = document.getElementById(menus[i].depart_id);
+			for(var j=0;j<menulist.length;j++){
+				if(null!=menulist[j].children){
+					for(var m=0;m<menulist[j].children.length;m++){
+						if(this.id==menulist[j].children[m].depart_id){
+							sums++;
+						}
+					}
+				}
+			} 
+         });
+		if(sum-1>sums){
+			var obj = document.getElementById(menus[i].depart_id);
+			obj.setAttribute("icons", "fa-minus");
+			 form.render('checkbox');
+		}
+		
+		if(null!=menus[i].children){
+			for(var j=0;j<menus[i].children.length;j++){
+				var count=0;
+				var counts=0;
+				if(null!=menus[i].children[j].children){
+					$("input[value='"+menus[i].children[j].depart_id+"']").each(function () {
+						count++;
+						for(var k=0;k<menulist.length;k++){
+							if(null!=menulist[k].children){
+								for(var m=0;m<menulist[k].children.length;m++){
+									if(null!=menulist[k].children[m].children){
+										for(var n=0;n<menulist[k].children[m].children.length;n++){
+											if(this.id==menulist[k].children[m].children[n].depart_id){
+												counts++;
+											}
+										}
+									}
+								}
+							}
+						} 
+					});
+
+	    			
+					if(count-1>counts){
+						var obj = document.getElementById(menus[i].children[j].depart_id);
+						obj.setAttribute("icons", "fa-minus");
+						 form.render('checkbox');
+					}
+				}
+			}
+		}
+	}
+	 function isContains(str, substr) {
+		  if(substr==''){
+			  return false
+			}
+			else{
+				if(str.match(substr)!=null)
+			       return true;
+			}
+		  
+		  return false;
+	 }
+	 var ids=[];
+	 var id=[];
+	 function getTogether(dt,ids) {
+		 for(var i=0;i<dt.length;i++){
+			 if(dt[i].depart_id) {
+				 ids.push(dt[i].depart_id);
+			 } 
+			 if(dt[i].children){
+				 getTogether(dt[i].children,ids);
+			 }
+		 }
+			return ids;
+	 } 
+	 getTogether(menuAll,ids)
+	 getTogether(menus,id)
+	 var difference=ids.filter(function(v){ return id.indexOf(v) === -1 })
+	 for(var i=0;i<difference.length;i++){
+		var obj = document.getElementById(difference[i]);
+		if(obj!=null){
+			obj.setAttribute("icons", "fa-check");
+			$("#"+difference[i]).attr("disabled",true);
+			form.render('checkbox');
+		}
+		
+	}
+	 
+	form.on('checkbox(allChoose)', function (data) {
+		var evt = window.event || arguments.callee.caller.arguments[0]; // 获取event对象
+		 layui.stope(evt);
+		var id=data.elem.name;
+		var obj = document.getElementById(id);
+		obj.removeAttribute("icons");
+        $("input[name='"+id+"']").each(function () {
+        	if(!$(this).attr("disabled")){
+        		var ids=this.id;
+            	var obj = document.getElementById(ids);
+        		obj.removeAttribute("icons");
+            	this.checked = data.elem.checked;
+        	}
+        	
+        });
+        form.render('checkbox');
+      });
+	
+      
+      form.on('checkbox(allChild)', function (data) {
+    	  var evt = window.event || arguments.callee.caller.arguments[0]; // 获取event对象
+    	  layui.stope(evt);
+    	  
+  		var id=data.elem.name;
+  		var ids=data.value;
+  		var count=0;
+  		var sum=0;
+  		var name=data.elem.title;
+  		var flag=data.elem.checked;
+  		
+  		$("input[value='"+ids+"']").each(function () {
+  			this.checked = data.elem.checked;
+  			var objs = document.getElementById(this.id);
+  			objs.removeAttribute("icons");
+  		});
+  		
+        $("input[id='"+id+"']").each(function () {
+        	 var obj = document.getElementById(id);
+        	$("input[name='"+id+"']").each(function () {
+        		sum++;
+        		if(this.checked==true&&this.value!=id){
+              	  count++;
+                }
+        		
+        	});
+        	if(count!=sum){
+        		obj.setAttribute("icons", "fa-minus");
+        	}
+        	if(count==sum-1){
+        		obj.removeAttribute("icons");
+        	}
+        	this.checked=true;
+        	if(count==0){
+        		obj.setAttribute("icons", "fa-minus");
+        		this.checked=false;
+        	}
+         });
+         $("input[name='"+id+"']").each(function () {
+        	 var name=this.title;
+        	 if(isContains(name, "列表")){
+        		 this.checked=true;
+        	 }
+         });
+         
+         if(!flag){
+           	 if(isContains(name, "列表")){
+           		 $("input[name='"+id+"']").each(function () {
+          				this.checked=false;
+          			});
+           	  }
+            }
+         form.render('checkbox');
+        });
+     
+      form.on('checkbox(allChilds)', function (data) {
+    	  var value=data.value;
+    	  var name=data.elem.name;
+    		var count=0;
+    		var sum=0;
+    		 $("input[id='"+name+"']").each(function () {
+    			 this.checked=true;
+      		});
+    		 
+    		 
+    		$("input[id='"+value+"']").each(function () {
+    			var obj = document.getElementById(value);
+    			$("input[value='"+value+"']").each(function () {
+            		sum++;
+            		if(this.checked==true&&this.value!=this.id){
+                  	  count++;
+                    }
+            		
+            	});
+    			if(count!=sum){
+            		obj.setAttribute("icons", "fa-minus");
+            	}
+            	if(count==sum-1){
+            		obj.removeAttribute("icons");
+            	}
+            	this.checked=true;
+            	if(count==0){
+            		obj.setAttribute("icons", "fa-minus");
+            		this.checked=false;
+            	}
+             });
+             form.render('checkbox');
+      });
+	
+	$('#cancel').on('click',function(){
+		parent.layer.closeAll();
+	});
+	
+	$('#save').on('click',function(){
+		 var params={};
+		 params.name=$("#roleName").val();
+		 params.descript=$("#desc").val();
+		 if(params.name==""){
+			 layer.msg('请输入角色名',{icon: 0,anim:6,time:1000}, function(index){
+		 			$("#roleName").focus();
+					layer.close(index);
+				});
+			 
+			 return false;
+		 }
+		var menuList=[];
+		 $("input[type='checkbox']").each(function(){ 
+				if((this.checked ? 'true' : 'false')=='true'){
+				      var value = $(this).attr("id");
+				      menuList.push(value);
+				}
+		 });
+		 params.menuList=menuList;
+		 if(params.menuList==""){
+			 layer.msg('请选择权限',{icon: 0,anim:6,time:1000}, function(index){
+					layer.close(index);
+				});
+			 
+			 return false;
+		 }
+		  $.ajax({
+	         url: "/roleManage/addRole?roleId="+roleId,
+	         type: "post",
+	         async:false,
+	         data:JSON.stringify(params),
+	         dataType:"json",
+	         contentType : 'application/json',
+	         success: function(result) {
+					if(result==0){
+						if(roleId!=0){
+							layer.alert('修改成功', {icon: 1,title:"提示"},function(index){
+								window.parent.location.reload();
+								layer.close(index);
+							});
+						}
+						else{
+							layer.alert('添加成功', {icon: 1,title:"提示"},function(index){
+								window.parent.location.reload();
+							    layer.close(index);
+						   });
+						}
+					}
+					else{
+						if(roleId!=0){
+							layer.alert('修改失败,角色名重复', {icon: 0,title:"提示"},function(index){
+								window.parent.location.reload();
+								layer.close(index);
+							});
+						}
+						else{
+							layer.alert('添加失败,角色名重复', {icon: 0,title:"提示"},function(index){
+								window.parent.location.reload();
+							    layer.close(index);
+						   });
+						}
+					}
+	         },
+	         error: function() {
+	        	 if(roleId!=0){
+						layer.alert('修改失败', {icon: 2,title:"提示"},function(index){
+							window.parent.location.reload();
+							layer.close(index);
+						});
+					}
+					else{
+						layer.alert('添加失败', {icon: 2,title:"提示"},function(index){
+							window.parent.location.reload();
+						    layer.close(index);
+					   });
+					}
+	         }
+	     }); 
+	});
+	
+});
+</script>
+</body>
+</html>

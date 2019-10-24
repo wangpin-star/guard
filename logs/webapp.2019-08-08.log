@@ -1,0 +1,1 @@
+2019-08-08  14:29:21.378 [restartedMain] WARN  org.apache.catalina.core.ContainerBase.[Tomcat].[localhost].[/] - Cannot deserialize session attribute [org.apache.shiro.subject.support.DefaultSubjectContext_PRINCIPALS_SESSION_KEY] for session [421A5B667FE85A3BC32A3E8BDDD18A44]

@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+	<meta charset="UTF-8">
+	<title>Title</title>
+	<meta name="renderer" content="webkit">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<meta name="viewport"
+		  content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi" />
+	<base href="/" />
+	<link rel="stylesheet" href="/layui2.5.4/css/layui.css"><!-- 树形组件使用2.5.4版本 -->
+	<link rel="stylesheet" href="/layui/css/layui.css" media="all">
+	<link rel="stylesheet" href="/font-awesome/css/font-awesome.css">
+	<style>
+		.icon1 {
+			background-image: url(css/img/depart.png);
+			display: inline-block;
+			/*i标签是行内元素必须设置他的display属性才能设置宽高*/
+			width: 20px;
+			height: 25px;
+		}
+		.layui-icon-addition:before {
+			content: "\e602";
+			font-size: 14px;
+		}
+
+		.layui-icon-subtraction:before {
+			content: "\e61a";
+			font-size: 14px;
+		}
+
+		.layui-tree-icon {
+			border: 0px;
+		}
+		/* 去除图标边框 */
+
+		.layui-tree {
+			line-height: 20px;
+		}
+
+		.layui-progress-text {
+			position: static;
+			padding: 0 10px;
+			color: #fff;
+		}
+
+	</style><!-- 图标样式 进度条字体样式 -->
+	<style type="text/css">
+	.layui-table,.layui-table-view {
+		margin:0px 0
+	}
+	.layui-input:hover {
+		border-color: #54b5ff !important;
+	}
+	.layui-input,.layui-select,.layui-textarea {
+		height:30px;
+		line-height:1.3;
+		line-height:30px;
+		border-width:1px;
+		border-style:solid;
+		background-color:#fff;
+		border-radius:2px
+	}
+	.layui-table th {
+		font-weight: bold;
+	}
+	.layui-table-view .layui-table td, .layui-table-view .layui-table th {
+		padding: 2px 0px !important;
+	}
+	.layui-table-cell a{
+		margin-bottom: 2px;
+	}
+	</style>
+</head>
+<body>
+<div class="layui-row">
+<div class="layui-col-xs12" style="height:46px;background-color: #f2f2f2;">
+<div style="margin-bottom: 16px;">
+  <div class="layui-inline" >
+    <form class="layui-form" lay-filter="attendanceform">
+	  <div class="layui-inline">
+	      <div class="layui-input-inline" style="margin-left: 30px;width: 200px;">
+	        <select id="mode" name="mode" style="width: 200px;" class="select"  lay-verify="type">
+	          <option value ="">--所有记录（含无考勤）--</option>
+	          <option value ="1">仅显示有考勤记录</option>
+	        </select>
+	      </div>
+	  </div>
+	  <div class="layui-inline" >
+      	<label class="layui-form-label" style="padding:8px 15px;line-height:30px;">开始时间</label>
+      	<div class="layui-input-inline"style="margin-top: 8px">
+        	<input type="text" style="height: 30px;line-height: 30px;" name="startdate" id="startdate" lay-verify="required" class="layui-input" placeholder="yyyy-MM-dd">
+      	</div>
+      </div>
+      <div class="layui-inline" >
+      	<label class="layui-form-label" style="padding:8px 15px;line-height:30px;">结束时间</label>
+      	<div class="layui-input-inline"style="margin-top: 8px">
+        	<input type="text" style="height: 30px;line-height: 30px;" name="enddate" id="enddate" lay-verify="required" class="layui-input" placeholder="yyyy-MM-dd">
+      	</div>
+      </div>
+  	</form>
+  	</div>
+    
+	<div class="layui-inline" style="margin-left: 30px;width: 12.5%;">
+			<input class="layui-input" style="height: 30px;line-height: 30px;" id="searchContent" placeholder="搜索...">
+	</div>
+	<button onmouseover="changeImg(this,2)" onmouseout="changeImg(this,1)" onmousedown="changeImg(this,3)" onmouseup="changeImg(this,2)" class="select-on layui-btn layui-btn" style="padding:0 0px;mborder: none;height: 30px;line-height: 30px;background-color: #f2f2f2;color: black;" id="doSearch"><img imgName="searchImg" src="/css/img/searchImg1.png">    </img></button>
+	<shiro:hasPermission name="导出考勤记录"><button onmouseover="changeImg(this,2)" onmouseout="changeImg(this,1)" onmousedown="changeImg(this,3)" onmouseup="changeImg(this,2)" class="select-on layui-btn1" 
+	style="margin-top:8px;margin-right:16px;float:right;border: none;height: 30px;line-height: 30px;background-color: #f2f2f2;" id="export"><img imgName="ExportImg" style="margin-bottom: 3px;" src="/css/img/ExportImg1.png">    </img>导出考勤</button></shiro:hasPermission>
+	
+	</div>
+</div>
+<div class="layui-col-xs12" style="margin-top:16px;">
+<div id="treehe" class="layui-col-xs2" style="width:16%;float: left;overflow-y:scroll;">
+	<ul style="width:100%" id="departTree"></ul>
+</div>
+<div class="layui-col-xs10" style="width:83.5%;margin-left:5px;float: left;">
+	<table class="layui-hide" style="margin:0px 0" id="attendancelist" lay-filter="attendancelist"></table>
+</div>
+</div>
+</div>
+<script type="text/html" id="barDemo">
+	
+	<shiro:hasPermission name="查看考勤详情"><a id="detail" class="layui-btn layui-btn-xs" lay-event="detail">查看</a></shiro:hasPermission>
+
+</script>
+<script type="text/javascript" src="/js/jquery.min.js"></script>
+<script type="text/javascript" src="/layui2.5.4/layui.js"></script>
+<script type="text/javascript" src="/js/ajaxFilter.js"></script>
+<script type="text/javascript" th:inline="javascript" >
+  var user=[[${user}]];
+</script>
+<script>
+    $(function () {
+        window.parent.$("#toAttendanceManageLi").siblings("li").removeClass("layui-this");
+        window.parent.$("#toAttendanceManageLi").addClass("layui-this");
+    });
+	function changeImg(obj,status) {
+		var imgName = $(obj).find("img").attr("imgName");
+		$(obj).find("img").attr("src","/css/img/" + imgName + status + ".png");
+	}
+    layui.use(['laydate','form'], function(){
+        var element = layui.element;
+    	var laydate = layui.laydate;
+		var form = layui.form;
+    	var parentHeight = document.documentElement.clientHeight;
+  		var height = parentHeight-75;
+		$("#treehe").css("height",height);
+    	form.on('select(mode)', function(data){
+		  	var selectmode=data.value;
+
+        });
+    	//执行一个laydate实例
+		laydate.render({
+            elem: '#startdate' //指定元素
+		});
+		laydate.render({
+		  	elem: '#enddate' //指定元素
+		});
+	});
+</script>
+
+<script>
+    layui.use(['tree','table','layer','form','upload'], function(){
+        var $ = layui.$;
+        var table = layui.table;
+        var layer = layui.layer;
+        var form = layui.form;
+		var tree = layui.tree;
+        
+        $(document).ready(function() {       
+            // select下拉框选中触发事件
+            form.on("select", function(data){
+            	doSearch();
+            });
+        });
+
+      //获取系统当前时间
+        function getNowFormatDate(num) {
+            var date = new Date();
+            var seperator1 = "-";
+            var seperator2 = ":";
+            var month = "";
+            var month = date.getMonth() + 1;
+            var strDate = date.getDate();
+            var hour = date.getHours();
+            var minutes = date.getMinutes();
+            var seconds = date.getSeconds();
+            if (month >= 1 && month <= 9) {
+                month = "0" + month;
+            }
+            if (strDate >= 0 && strDate <= 9) {
+                strDate = "0" + strDate;
+            }
+            if (hour >= 0 && hour <= 9) {
+            	hour = "0" + hour;
+            }
+            if (minutes >= 0 && minutes <= 9) {
+            	minutes = "0" + minutes;
+            }
+            if (seconds >= 0 && seconds <= 9) {
+            	seconds = "0" + seconds;
+            }
+            var currentdate ="";
+            if(num!=null){
+            	//获取起始日期
+            	currentdate = date.getFullYear() + seperator1 + month + seperator1 + strDate
+                + " " + "00" + seperator2 + "00" + seperator2 + "00";
+            }else{
+            	currentdate = date.getFullYear() + seperator1 + month + seperator1 + strDate
+                + " " + hour + seperator2 + minutes
+                + seperator2 + seconds;
+            }
+            return currentdate;
+        }
+        var endTime = new Date();
+        var startTime = new Date();
+        function isdatetime(str) {
+            var result = str.match(/^(\d{4})(-|\/)(\d{1,2})\2(\d{1,2}) (\d{1,2}):(\d{1,2}):(\d{1,2})$/);
+            if (result == null) return false;
+            var d = new Date(result[1], result[3] - 1, result[4], result[5], result[6], result[7]);
+            return (d.getFullYear() == result[1] && (d.getMonth() + 1) == result[3] && d.getDate() == result[4] && d.getHours() == result[5] && d.getMinutes() == result[6] && d.getSeconds() == result[7]);
+        }
+        var parentHeight = document.documentElement.clientHeight;
+		var height = parentHeight-100;
+      	//表单初始赋值
+        form.val('attendanceform', {
+          "startdate": startTime
+          ,"enddate": endTime 
+        });
+      	
+        var counts=0;
+        var menulist=user.menuList
+        for(var i=0;i<menulist.length;i++){
+        	if(menulist[i].name=="查看考勤详情"){
+        		counts++;
+        	}
+        }
+      	
+        startTime = Format(startTime,"yyyy-MM-dd");
+        endTime = Format(endTime,"yyyy-MM-dd");
+        var attendance = table.render({
+            elem: '#attendancelist'
+            ,url:'/attendance/selectAttendanceList?starttime='+startTime+'&endtime='+endTime
+            ,title: '考勤列表'
+            ,height: height
+			,limit: 20
+            ,cols: [
+                [
+                    {field:'date', title:'日期',height:38}
+                    ,{field:'faceinfoname', title:'姓名',height:38}
+                    ,{field:'empno', title:'工号',height:38}
+                    ,{field:'first_time', title:'首次登记时间',height:38}
+                    ,{field:'last_time', title:'末次登记时间',height:38}
+                    ,{fixed: 'right', title:'详细记录', toolbar: '#barDemo',height:38}
+                ]
+            ]
+            ,page: true
+            ,done:function(){ 
+        		if(counts==0){
+            		$("[data-field='5']").css('display','none');
+            	}
+            }
+        });
+      //监听行双击事件
+        table.on('rowDouble(attendancelist)', function(obj){
+        	if(counts!=0){
+        		toDetail(obj);
+        	}
+        });
+        //监听行工具事件
+        table.on('tool(attendancelist)', function(obj){
+            var data = obj.data;
+            if(obj.event === 'detail'){
+                toDetail(obj);
+            }
+        });
+        function toDetail(obj) {
+        	var parentHeight = document.documentElement.clientHeight;
+        	var height = parentHeight*0.9;
+        	var date= obj.data.date;
+            var starttime=obj.data.first_time;
+            var endtime=obj.data.last_time;
+			layer.open({
+				type: 2,
+				title: '详细刷脸记录',
+				shadeClose: false,
+				shade:[0.2, '#000000'],
+				maxmin: true, //开启最大化最小化按钮
+				area: ['1000px', height+'px'],
+				content: '/attendance/toAttendanceFaceList?face_id='+obj.data.face_id+"&date="+date+"&starttime="+starttime+"&endtime="+endtime,
+				btn:'关闭',
+				yes:function(index,layero){
+					layer.closeAll();
+				}
+			});
+		}
+        var loadingDepartTree = layer.load(1, {
+            shade: [0.1,'#fff'],
+            offset: ['300px', '150px']//0.1透明度的白色背景
+        });
+		//加载部门树,点击树重新加载table，之前使用的是layui1.0.9,现在改为layui2.5.4
+		$.ajax({
+			url: "/departManage/selectDepartTreeByAuth",
+			type: "post",
+			contentType: 'application/json',
+			dataType: 'json',
+			async: false,
+			success: function (data) {
+				var dataArr = new Array();
+				dataArr.push(data);//push() 方法可向数组的末尾添加一个或多个元素，并返回新的长度。
+				var inst1 = tree.render({
+					elem: '#departTree', //绑定元素
+					data: dataArr,
+					click: function (obj) {//点击节点事件
+						var departId = obj.data.depart_id;
+						var searchContent = $('#searchContent').val();
+						searchContent=searchContent.trim();
+						table.reload('attendancelist', {
+							where: {
+								departId: departId,
+								searchContent: searchContent
+							}
+							, page: {
+								curr: 1 //重新从第 1 页开始
+							}
+						});
+					}
+				}); //渲染
+
+				//点击第一个节点(默认展开)
+				$(".layui-tree-spread:first").click();
+				//关闭转圈圈的加载层
+				layer.close(loadingDepartTree);
+			},
+			error: function () {
+				layer.alert('服务器错误,请联系管理员', {icon: 2, title: "提示"}, function (index) {
+					layer.close(index);
+				});
+			}
+		});
+		setIcon();//加载部门树之后改变节点样式
+
+		$(".layui-tree-main").click(function () {//点击树节点改变高亮颜色，并且切换切点图标
+			$(".layui-tree-txt").css('color', '#000000');
+			$(this).children('.layui-tree-txt').css('color', '#54b5ff');
+		});
+
+		$(".layui-tree a").click(function () {
+            $(".layui-tree a cite").css('color','#333');
+            $(this).find('cite').css('color','#54b5ff');
+        });
+        $('#doSearch').on('click',function(){
+            doSearch();
+		});
+        document.onkeydown = function (e) { // 回车提交表单
+            var theEvent = window.event || e;
+            var code = theEvent.keyCode || theEvent.which;
+            if (code == 13) {
+                doSearch();
+            }
+        };
+
+		function containSpecial(s) {
+			var containSpecial = RegExp("^$|[^`~!@#$%^&*()_+<>?:\"{},.\\/\\\\;'[\\]·！#￥（——）：；“”‘、，|《。》？、【】[\\]]+$");
+			for(var i=0;i<s.length;i++){
+				if (!containSpecial.test(s.charAt(i))) {
+					return false;
+				}
+			}
+			return true;
+		}
+
+        function doSearch() {
+            var layer = layui.layer,$=layui.$;
+            var searchContent = $('#searchContent').val();
+			searchContent=searchContent.trim();
+            var starttime = $('#startdate').val();
+            var endtime = $('#enddate').val();
+            /*var startflag = isdatetime(starttime);
+            var endflag = isdatetime(endtime);*/
+            var mode = $('#mode').val();
+            if(starttime == ""){
+                layer.alert('开始时间不能为空', {
+                	icon: 0,
+                	title:"提示",
+                });
+                return false;
+            }
+            if(endtime == ""){
+                layer.alert('结束时间不能为空', {
+                	icon: 0,
+                	title:"提示",
+                    // skin: 'layui-layer-lan'
+                });
+                return false;
+            }
+            /*if(!startflag || !endflag){
+                layer.alert('请按yyyy-mm-dd hh:mm:ss格式输入时间', {
+                	icon: 0,
+                	title:"提示",
+                });
+                return false;
+            }*/
+            if(starttime > endtime){
+                layer.alert('结束时间不得早于开始时间', {
+                	icon: 0,
+                	title:"提示",
+                });
+                return false;
+            }
+			if (!containSpecial(searchContent)) {
+				layer.msg('搜索条件不能含有特殊字符', {icon: 0, anim: 6});
+			}else {
+				table.reload('attendancelist', {
+					where : {
+						searchContent : searchContent,
+						starttime : starttime,
+						endtime : endtime,
+						mode : mode
+					},
+					page : {
+						curr : 1
+						//重新从第 1 页开始
+					}
+				});
+			}
+		}
+		$("#export").on('click', function() {
+			var parentHeight = document.documentElement.clientHeight;
+        	var height = parentHeight*0.95;
+			var index1 = layer.open({
+				type : 2,
+				title : '导出考勤报表',
+				shadeClose : false,
+				shade :  [0.2, '#000000'],
+				area : [ '600px', height+'px' ],
+				content : ['/attendance/toAttendanceExport','no'],
+				//btn : [ '取消' ],
+				success : function(layero, index) {
+					var starttime = $('#startdate').val();
+					var endtime = $('#enddate').val();
+					var body = layer.getChildFrame('body', index);//获取子页面body
+					body.find('#startdate').attr("value", starttime);
+
+					body.find('#enddate').attr("value", endtime);
+				}
+			});
+		});
+
+	});
+    function Format(now,mask) {
+        var d = now;
+        var zeroize = function (value, length)
+        {
+            if (!length) length = 2;
+            value = String(value);
+            for (var i = 0, zeros = ''; i < (length - value.length); i++)
+            {
+                zeros += '0';
+            }
+            return zeros + value;
+        };
+
+        return mask.replace(/"[^"]*"|'[^']*'|\b(?:d{1,4}|m{1,4}|yy(?:yy)?|([hHMstT])\1?|[lLZ])\b/g, function ($0)
+        {
+            switch ($0)
+            {
+                case 'd': return d.getDate();
+                case 'dd': return zeroize(d.getDate());
+                case 'ddd': return ['Sun', 'Mon', 'Tue', 'Wed', 'Thr', 'Fri', 'Sat'][d.getDay()];
+                case 'dddd': return ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'][d.getDay()];
+                case 'M': return d.getMonth() + 1;
+                case 'MM': return zeroize(d.getMonth() + 1);
+                case 'MMM': return ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'][d.getMonth()];
+                case 'MMMM': return ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'][d.getMonth()];
+                case 'yy': return String(d.getFullYear()).substr(2);
+                case 'yyyy': return d.getFullYear();
+                case 'h': return d.getHours() % 12 || 12;
+                case 'hh': return zeroize(d.getHours() % 12 || 12);
+                case 'H': return d.getHours();
+                case 'HH': return zeroize(d.getHours());
+                case 'm': return d.getMinutes();
+                case 'mm': return zeroize(d.getMinutes());
+                case 's': return d.getSeconds();
+                case 'ss': return zeroize(d.getSeconds());
+                case 'l': return zeroize(d.getMilliseconds(), 3);
+                case 'L': var m = d.getMilliseconds();
+                    if (m > 99) m = Math.round(m / 10);
+                    return zeroize(m);
+                case 'tt': return d.getHours() < 12 ? 'am' : 'pm';
+                case 'TT': return d.getHours() < 12 ? 'AM' : 'PM';
+                case 'Z': return d.toUTCString().match(/[A-Z]+$/);
+                // Return quoted strings with the surrounding quotes removed
+                default: return $0.substr(1, $0.length - 2);
+            }
+        });
+    };
+</script>
+<script type="text/javascript">
+
+	function setIcon() {
+		$(".layui-tree-iconClick").each(function () { //根据图标父元素data-id设置样式
+			var data_id = $(this).parents(".layui-tree-set").attr("data-id");
+			if (data_id == "1") {
+				$(this).css("height","25px");
+				$(this).children("i").removeClass();
+				$(this).children("i").addClass("icon1");
+			}
+			else {
+				if($(this).children("i").hasClass("layui-icon-file")) {
+					$(this).children("i").hide();
+					$(this).siblings(".layui-tree-txt").css("margin-left","-7px");
+				}
+				else{
+					$(this).siblings(".layui-tree-txt").css("margin-left","-7px");
+
+				}
+
+			}
+		});
+	}
+
+</script>
+
+</body>
+</html>

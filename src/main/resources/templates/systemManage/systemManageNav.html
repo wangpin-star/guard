@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>系统管理</title>
+    <base href="/"/>
+    <link rel="stylesheet" href="/layui/css/layui.css">
+</head>
+<body>
+<!-- 左侧导航区域（可配合layui已有的垂直导航） -->
+<div class="layui-side layui-bg-black" style="width: 11.5%;">
+    <div class="layui-side-scroll" style="width: 100%;">
+
+        <ul class="layui-nav layui-nav-tree layui-inline"  lay-filter="test" style="width: 100%;">
+            
+            <shiro:hasPermission name="部门管理"> <li id="toDepartManageLi" class="layui-nav-item" style="line-height: 56px;">
+                <a id="businessParamButton" href="javascript:;" onclick="toDepartManage(this)" style="line-height: 56px;height: 56px;text-align: center;font-size: 16px;">部门管理</a>
+            </li></shiro:hasPermission>
+           
+           <shiro:hasPermission name="用户管理"><li id="toUserManageLi" class="layui-nav-item" style="line-height: 56px;">
+                <a href="javascript:;" onclick="toUserManage(this)" style="line-height: 56px;height: 56px;text-align: center;font-size: 16px;">用户管理</a> 
+            </li></shiro:hasPermission>
+            
+            <shiro:hasPermission name="角色管理"> <li id="toRoleManageLi" class="layui-nav-item" style="line-height: 56px;">
+                <a href="javascript:;" onclick="toRoleManage(this)" style="line-height: 56px;height: 56px;text-align: center;font-size: 16px;">角色管理</a>
+            </li></shiro:hasPermission>
+            <shiro:hasPermission name="业务参数">
+            <li id="toBusinessParamLi" class="layui-nav-item" style="line-height: 56px;">
+                <a  href="javascript:;" onclick="toBusinessParam(this)" style="line-height: 56px;height: 56px;text-align: center;font-size: 16px;">业务参数</a>
+            </li></shiro:hasPermission>
+            <!--<li id="toControlParamLi" class="layui-nav-item" style="line-height: 56px;">
+                <a href="javascript:;" onclick="toControlParam(this)" style="line-height: 56px;height: 56px;text-align: center;font-size: 16px;">控制参数</a>
+            </li>-->
+            <shiro:hasPermission name="公共参数">
+            <li id="toPublicParamLi" class="layui-nav-item" style="line-height: 56px;">
+                <a href="javascript:;" onclick="toPublicParam(this)" style="line-height: 56px;height: 56px;text-align: center;font-size: 16px;">公共参数</a>
+            </li></shiro:hasPermission>
+            
+            <shiro:hasPermission name="应用参数">
+            <li id="toApplyParamLi" class="layui-nav-item" style="line-height: 56px;">
+                <a href="javascript:;" onclick="toApplyParam(this)" style="line-height: 56px;height: 56px;text-align: center;font-size: 16px;">应用参数</a>
+            </li></shiro:hasPermission>
+             <!-- <li id="toCompanyManageLi" class="layui-nav-item" style="line-height: 56px;">
+                <a href="javascript:;" onclick="toCompanyManage(this)" style="line-height: 56px;height: 56px;text-align: center;font-size: 16px;">公司管理</a>
+            </li> -->
+        </ul>
+        <button onclick="toPublicParamAdmin()" style="position: absolute;bottom: 0;right:0;width: 100%;height: 56px;border: none;color: #393D49;background-color: #393D49">公共参数隐藏按钮</button>
+    </div>
+</div>
+<iframe id="systemManageIframe" frameborder="0" width="100%"></iframe>
+<script type="text/javascript" src="/js/jquery.min.js"></script>
+<script type="text/javascript" src="/layui/layui.js"></script>
+<script type="text/javascript" src="/js/ajaxFilter.js"></script>
+<script type="text/javascript">
+    $(function () {
+        window.parent.$("#toSysManageLi").siblings("li").removeClass("layui-this");
+        window.parent.$("#toSysManageLi").addClass("layui-this");
+    });
+
+    layui.use('element', function(){
+        var element = layui.element;
+        $("#businessParamButton").click();
+    });
+
+    function toBusinessParam(obj) {
+        $(obj).parent().siblings("li").removeClass("layui-this");
+        $(obj).parent().addClass("layui-this");
+        $("#systemManageIframe").attr("src","/businessParam/showBusinessParam");
+        changeFrameHeight();
+    }
+    
+    function toControlParam(obj) {
+        $(obj).parent().siblings("li").removeClass("layui-this");
+        $(obj).parent().addClass("layui-this");
+        $("#systemManageIframe").attr("src","/parametercontrol/showParam");
+        changeFrameHeight();
+    }
+    
+    function toPublicParam(obj) {
+        $(obj).parent().siblings("li").removeClass("layui-this");
+        $(obj).parent().addClass("layui-this");
+        $("#systemManageIframe").attr("src","/publicparameter/showPublicparam");
+        changeFrameHeight();
+    }
+
+    function toApplyParam(obj) {
+        $(obj).parent().siblings("li").removeClass("layui-this");
+        $(obj).parent().addClass("layui-this");
+        $("#systemManageIframe").attr("src","/businessParam/showApplyParam");
+        changeFrameHeight();
+    }
+
+    function toPublicParamAdmin() {
+        $("#systemManageIframe").attr("src","/publicparameter/showPublicparamAdmin");
+        changeFrameHeight();
+    }
+
+    function toDepartManage() {
+        $("#systemManageIframe").attr("src","/departManage/toDepartManage");
+        changeFrameHeight();
+    }
+
+    function toCompanyManage() {
+        $("#systemManageIframe").attr("src","/companyManage/toCompanyManage");
+        changeFrameHeight();
+    }
+    function toRoleManage() {
+        $("#systemManageIframe").attr("src","/roleManage/roleSet");
+        changeFrameHeight();
+    }
+    function toUserManage() {
+        $("#systemManageIframe").attr("src","/userManage/toUserManage");
+        changeFrameHeight();
+    }
+    function changeFrameHeight(){
+        var ifm= document.getElementById("systemManageIframe");
+        ifm.height=document.documentElement.clientHeight-10;
+    }
+</script>
+</body>
+</html>

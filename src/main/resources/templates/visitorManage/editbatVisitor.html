@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>访客登记</title>
+    <link rel="stylesheet" href="/layui/css/layui.css">
+    <link rel="stylesheet" href="/font-awesome/css/font-awesome.css">
+    <style>
+        .layui-form-label{
+            width: 100px;
+        }
+        .layui-input-block{
+            margin-left: 130px;
+        }
+        .layui-form-radio{
+            margin: 6px 0 0 0;
+        }
+        .layui-form-select input{
+            height: 32px;line-height: 32px;border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <form class='layui-form' id='visitorRegisterOne'>
+     
+      <div style="width: 600px;margin-left:150px;margin-top:50px;height: 400px;">
+          <div class="layui-form-item" >
+              <label class="layui-form-label">来访事由</label>
+              <div class="layui-input-block" style="width: 200px;" id="visitReasondiv">
+                  <select id="visitReason" lay-verify="visitReasonRequired">
+                     <div th:each="visitReason:${visitReasonList}">
+                           <option  th:if="${visitReason.visitReasonId} == ${data.reason_id}" th:value="${visitReason.visitReasonId}" th:text="${visitReason.visitReasonName}" selected="true"></option>
+                           <option th:else th:value="${visitReason.visitReasonId}" th:text="${visitReason.visitReasonName}" ></option>
+                    </div>
+                  </select>
+              </div>
+          </div>
+          <div class="layui-form-item" >
+              <label class="layui-form-label">被访人部门</label>
+              <div class="layui-input-block" style="width: 200px;" id="departdiv">
+                  <select id="depart" lay-filter="departFilter" lay-verify="departRequired">
+                    <div th:each="depart:${departList}">
+                           <option  th:if="${depart.depart_id} == ${depart_id}" th:value="${depart.depart_id}" th:text="${depart.depart_name}" selected="true"></option>
+                           <option th:else th:value="${depart.depart_id}" th:text="${depart.depart_name}" ></option>
+                    </div> 
+                  </select>
+              </div>
+          </div>
+          <div class="layui-form-item" >
+              <label class="layui-form-label">被访人</label>
+              <div class="layui-input-block" style="width: 200px;" id="employeediv">
+                  <select id="employee" lay-filter="employeeFilter" lay-verify="employeeRequired">
+                      <option th:each="faceInfo:${faceInfoList}" th:value="${faceInfo.face_id+','+faceInfo.tel_no}" th:text="${faceInfo.name}"></option>
+                  </select>
+              </div>
+          </div>
+          <div class='layui-form-item'>
+              <label class='layui-form-label'>被访人手机号</label>
+              <div class='layui-input-block' style='width: 200px;'>
+                  <input type='text' id='telNum' lay-verify='required|phone' class='layui-input' style="height: 32px;line-height: 32px;border-radius: 4px;">
+              </div>
+          </div>
+          <div class='layui-form-item'>
+              <label class='layui-form-label'>来访时间</label>
+              <div class='layui-input-inline' style='width: 200px;'>
+                  <input type='text' id="startTime" lay-verify='required' class='layui-input' style="height: 32px;line-height: 32px;border-radius: 4px;">
+              </div>
+              <div class='layui-input-inline' style='width: 5px;line-height: 36px;'>
+                  -
+              </div>
+              <div class='layui-input-inline' style='width: 200px;'>
+                  <input type='text' id="endTime" lay-verify='required' class='layui-input' style="height: 32px;line-height: 32px;border-radius: 4px;">
+              </div>
+          </div>
+    
+          <div class='layui-form-item' id="batchNameDiv" >
+              <label class='layui-form-label'>来访主题</label>
+              <div class='layui-input-block' style='width: 200px;'>
+                  <input type='text' id="batchName" class='layui-input' lay-verify='required' style="height: 32px;line-height: 32px;border-radius: 4px;">
+              </div>
+          </div>
+          
+      </div>
+      <div style="text-align: center;">
+          <button class='layui-btn layui-btn-ks' type='button' lay-submit='' lay-filter='visitorRegisterOneFilter'>下一步</button>
+      </div>
+    </form>
+    <form class='layui-form' id='visitorRegisterTwo' style="display: none;width:600px;margin-left:100px">
+        <table class="layui-table" id="deviceTable"></table>
+        <div style="text-align: center;margin-top:30px">
+            <button class='layui-btn layui-btn-ks' type='button' onclick="backVisitorRegisterOne();">上一步</button>
+            <button class='layui-btn layui-btn-ks' type='button' lay-submit='' lay-filter='visitorRegisterTwoFilter'>完成</button>
+        </div>
+    </form>
+</body>
+<script type="text/html" id="barDemo">
+{{# if(d.status===0||d.status===1){ }} 
+ <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+{{# } }}
+</script>
+<script type="text/javascript" src="/js/jquery.min.js"></script>
+<script type="text/javascript" src="/layui/layui.js"></script>
+<script type="text/javascript" src="/js/ajaxFilter.js"></script>
+<script>
+    var batId =[[${bat_id}]];
+    var batchRegister = true;
+    var onlyBrushCard = true;
+    //var onlyBrushCard = false;
+    var IDCardPhotoData = "";
+    var t1 = "";
+  	var FaceIdAndTelNo = "[[${face_id}]]" +","+ "[[${tel_no}]]";
+    $("#telNum").val("[[${tel_no}]]");
+    var visit_time_="[[${data.visit_time}]]";
+    var end_Time_="[[${data.expire_time}]]";
+    var batchName_="[[${data.title}]]";
+    $("#startTime").val(visit_time_);
+    $("#endTime").val(end_Time_);
+    $("#batchName").val(batchName_);
+    layui.use(['table','layer','form','laydate','upload'], function() {
+        var $ = layui.$;
+        var table = layui.table;
+        var layer = layui.layer;
+        var form = layui.form;
+        var laydate = layui.laydate;
+        var upload = layui.upload;
+        layui.use('table', function(){
+            var table = layui.table;
+        });
+        
+        //监听批量开关
+       /* form.on('switch(batchRegister)', function(data) {
+            if (this.checked) {
+                $("#batchNameDiv").show();
+                $("#onlyBrushCardDiv").show();
+                batchRegister = true;
+            } else {
+                $("#batchNameDiv").hide();
+                $("#onlyBrushCardDiv").hide();
+                $("#batchName").val("");
+                if ($("#onlyBrushCard").is(":checked")) {
+                    $("#onlyBrushCard").next().click();
+                }
+                batchRegister = false;
+            }
+        });*/
+        //监听仅刷证开关
+       form.on('switch(onlyBrushCard)', function(data) {
+            if (this.checked) {
+                $("#visitorTelNum").attr("lay-verify","telNum");
+                onlyBrushCard = true;
+                $("#telNumRequiredImg").hide();
+            } else {
+                $("#visitorTelNum").attr("lay-verify","telNumRequired");
+                onlyBrushCard = false;
+                $("#telNumRequiredImg").show();
+            }
+        });
+        upload.render({
+            elem: '#uploadPhoto1'
+            ,auto: false
+            ,choose: function(obj){
+                //预读本地文件示例，不支持ie8
+                obj.preview(function(index, file, result){
+                    $('#photo1').attr('src', result); //图片链接（base64）
+                    comparePhoto(result,"1");
+                });
+            }
+        });
+
+        upload.render({
+            elem: '#uploadPhoto2'
+            ,auto: false
+            ,choose: function(obj){
+                //预读本地文件示例，不支持ie8
+                obj.preview(function(index, file, result){
+                    $('#photo2').attr('src', result); //图片链接（base64）
+                });
+            }
+        });
+
+        upload.render({
+            elem: '#uploadPhoto3'
+            ,auto: false
+            ,choose: function(obj){
+                //预读本地文件示例，不支持ie8
+                obj.preview(function(index, file, result){
+                    $('#photo3').attr('src', result); //图片链接（base64）
+                });
+            }
+        });
+        
+        var endTime = new Date();
+        endTime.setHours(18);
+        endTime.setMinutes(0);
+        endTime.setSeconds(0);
+        laydate.render({
+            elem: '#startTime' //指定元素
+            ,type: 'datetime'
+        });
+        laydate.render({
+            elem: '#endTime' //指定元素
+            ,type: 'datetime'
+        });
+        form.verify({
+            nameRequired: function(value) {
+                if (value == "") {
+                    return "请输入姓名";
+                }
+            },
+            visitReasonRequired: function(value){
+                if(value == "请选择"){
+                    return '请选择来访事由';
+                }
+            },
+            departRequired: function(value){
+                if(value == "请选择"){
+                    return '请选择被访人部门';
+                }
+            },
+            employeeRequired: function(value){
+                if(value == "请选择"){
+                    return '请选择被访人';
+                }
+            },
+            IDCardNum: function (value) {
+                if (value != "" && !checkIDCard(value)) {
+                    return '请输入合法的身份证号码';
+                }
+            },
+            telNumRequired: function (value) {
+                reg = /0?(13|14|15|16|17|18|19)[0-9]{9}/;
+                if (!reg.test(value)) {
+                    return '请输入合法的手机号码';
+                }
+            },
+            telNum: function (value) {
+                if (value != "") {
+                    reg = /0?(13|14|15|16|17|18|19)[0-9]{9}/;
+                    if (!reg.test(value)) {
+                        return '请输入合法的手机号码';
+                    }
+                }
+            }
+        });
+
+        form.on('submit(visitorRegisterOneFilter)', function(obj) {
+            var startTime = $("#startTime").val();
+            var endTime = $("#endTime").val();
+            if (startTime > endTime) {
+            	layer.alert('来访结束时间必须晚于开始时间',{icon: 5,anim: 6});
+            } else {
+                var employee = $("#employee").val();
+                var valArr = employee.split(",");
+                var face_id = valArr[0];
+                var param = {
+                    face_id:face_id,
+                    attribute:0
+                };
+                table.render({
+                    elem: '#deviceTable'
+                    ,url: '/visitorManage/batqueryDevice' //数据接口
+                    ,where:param
+                    ,cols: [
+                        [ //表头
+                            {field: 'term_name', title: '设备名称'}
+                            ,{field: 'depart_name', title: '所属部门'}
+                            ,{type: 'checkbox'}
+                        ]
+                    ]
+                });
+                $("#visitorRegisterOne").hide();
+                $("#visitorRegisterTwo").show();
+            }
+        });
+        form.on('submit(visitorRegisterTwoFilter)', function(obj) {
+          /*  if (onlyBrushCard) {
+                $("#visitorTelNum").attr("lay-verify","");
+                $("#man").addClass("layui-disabled").attr("disabled","true");
+                $("#woman").addClass("layui-disabled").attr("disabled","true");
+                $("#nation").addClass("layui-disabled").attr("disabled","true");
+                $("#address").addClass("layui-disabled").attr("disabled","true");
+                $("#IDCardNum").addClass("layui-disabled").attr("disabled","true");
+                $("#IDCardDate").addClass("layui-disabled").attr("disabled","true");
+                $("#visitorName").addClass("layui-disabled").attr("disabled","true");
+            } else {
+                $("#visitorTelNum").attr("lay-verify","required");
+                $("#man").removeClass("layui-disabled").removeAttr("disabled");
+                $("#woman").removeClass("layui-disabled").removeAttr("disabled");
+                $("#nation").removeClass("layui-disabled").removeAttr("disabled");
+                $("#address").removeClass("layui-disabled").removeAttr("disabled");
+                $("#IDCardNum").removeClass("layui-disabled").removeAttr("disabled");
+                $("#IDCardDate").removeClass("layui-disabled").removeAttr("disabled");
+                $("#visitorName").removeClass("layui-disabled").removeAttr("disabled");
+            }*/
+            if (batchRegister) {
+                var visitReason = $("#visitReason").val();
+                var visitReasonName = $("#visitReason").next().find(".layui-input").val();
+                var employee = $("#employee").val();
+                var valArr = employee.split(",");
+                var face_id = valArr[0];
+                var startTime = $("#startTime").val();
+                var endTime = $("#endTime").val();
+                var batchName = $("#batchName").val();
+                var checkStatus = table.checkStatus('deviceTable')
+                    ,deviceList = checkStatus.data;
+                var batVisitor = {
+                    bat_id:batId,
+                    employee_id:face_id,
+                    reason_id:visitReason,
+                    title:batchName,
+                    content:visitReasonName,
+                    visit_time:startTime,
+                    expire_time:endTime
+                }
+                var addBatParam = {
+                    batVisitor:batVisitor,
+                    deviceList:deviceList
+                }
+                $.ajax({
+                    url: "/visitorManage/addBatVisitor",
+                    type: "post",
+                    data:JSON.stringify(addBatParam),
+                    contentType: 'application/json',
+                    async: false,
+                    traditional:true,
+                    success: function(data) {
+                        if (data != "0") {
+                        	layer.alert('编辑多人来访信息成功', {icon:1,title:"提示"}, function(index) {
+                        		parent.window.location.reload();
+                        		layer.close(index);
+                        	}); 
+                        } else {
+                        	parent.layer.closeAll();
+                        	parent.layer.alert("编辑多人来访信息失败");
+                        }
+                    },
+                    error: function() {
+                    	parent.layer.closeAll();
+                    	parent.layer.alert('服务器错误,请联系管理员');
+                    }
+                });
+            }
+           
+        });
+        form.on('select(employeeFilter)', function(obj) {
+            var valArr = obj.value.split(",");
+            var telNum = valArr[1];
+            $("#telNum").val(telNum);
+        });
+        
+        if (FaceIdAndTelNo != "") {
+      	  $('#employeediv').find("[lay-value='" +FaceIdAndTelNo + "']").click();
+      	  form.render();
+      	  FaceIdAndTelNo = "";
+        } 
+        form.on('select(departFilter)', function(obj) {
+            var index = layer.load(1, {
+                shade: [0.1,'#fff'] //0.1透明度的白色背景
+            });
+            var departId = obj.value;
+            if (departId != "请选择") {
+                var param = {
+                    depart_id:departId,
+                    attribute:0
+                }
+                $.ajax({
+                    url: "/employeeManage/selectByDepart",
+                    type: "post",
+                    data: param,
+                    async: true,
+                    success: function(data) {
+                        $("#employee").empty();
+                        var jsonData = $.parseJSON(data);
+                        var count = jsonData.count;
+                        if (count != 0) {
+                            var empList = jsonData.data;
+                            var selectEmpHTML = "";
+                            $.each(empList,function(index,value){
+                                var telNum = value.tel_no;
+                                var faceId = value.face_id;
+                                var name = value.name;
+                                var value = faceId + "," + telNum;
+                                var optionHTML = "<option value='" + value + "'>" + name + "</option>";
+                                selectEmpHTML = selectEmpHTML + optionHTML;
+                            });
+                            $("#employee").append(selectEmpHTML);
+                         //   var selects = 'dd[lay-value=' + value + ']';
+                          //  $('#employee').siblings("div.layui-form-select").find('dl').find(selects).click();
+                            $("#telNum").val(empList[0].tel_no);
+                        } else {
+                            layer.alert("该部门无人员");
+                            $("#telNum").val("");
+                        }
+                        form.render('select');
+                        layer.close(index);
+                    }
+                });
+            }
+        });
+    });
+    function deleteVisitorReg(obj) {
+        var rec_id = $(obj).parent().next().val();
+        var faceVisitInfo = {
+            rec_id:rec_id,
+            status:2
+        };
+        $.ajax({
+            url: "/visitorManage/deleteVisitorRegister",
+            type: "post",
+            data: faceVisitInfo,
+            async: false,
+            success: function(data) {
+                if (data === "1") {
+                    $(obj).parent().remove();
+                } else {
+                    layer.alert("删除失败,请联系系统管理员");
+                }
+            }
+        });
+    }
+    function backVisitorRegisterOne() {
+        $("#visitorRegisterOne").show();
+        $("#visitorRegisterTwo").hide();
+    }
+    function deletePhoto(obj) {
+        $(obj).parent().find(".clearImg").removeAttr('src');
+        $(obj).parent().find(".clearImg").removeAttr('pass');
+        $(obj).parent().find(".layui-btn").hide();
+    }
+    
+    $("#IDCardNum").blur(function(){
+        var IDCardNum = $("#IDCardNum").val();
+        if (IDCardNum.length == 18) {
+            var param = {
+                idcard:IDCardNum,
+                attribute:0,
+                face_id:0,
+                depart_id:0,
+                status:0
+            };
+            checkFaceInfo(param,"身份证号");
+        }
+    });
+
+    $("#visitorTelNum").blur(function(){
+        var visitorTelNum = $("#visitorTelNum").val();
+        if (visitorTelNum.length == 11) {
+            var param = {
+                tel_no:visitorTelNum,
+                attribute:0,
+                face_id:0,
+                depart_id:0,
+                status:0
+            };
+            checkFaceInfo(param,"手机号");
+        }
+    });
+
+    function checkFaceInfo(param,paramName) {
+        $.ajax({
+            url: "/visitorManage/selectByParam",
+            type: "post",
+            data: param,
+            async: false,
+            success: function(data) {
+                var jsonData = $.parseJSON(data);
+                if (jsonData.count == 1) {
+                    layer.alert("已存在此" + paramName + "的员工", function(){});
+                } else if (jsonData.count > 1) {
+                    layer.alert("此" + paramName + "已登记过多个员工,数据异常,请联系管理员", function(){});
+                }
+            }
+        });
+    }
+
+    function checkIDCard(idcode){
+        // 函数参数必须是字符串，因为二代身份证号码是十八位，而在javascript中，十八位的数值会超出计算范围，造成不精确的结果，导致最后两位和计算的值不一致，从而该函数出现错误。
+// 详情查看javascript的数值范围
+        // 加权因子
+        var weight_factor = [7,9,10,5,8,4,2,1,6,3,7,9,10,5,8,4,2];
+        // 校验码
+        var check_code = ['1', '0', 'X' , '9', '8', '7', '6', '5', '4', '3', '2'];
+        var code = idcode + "";
+        var last = idcode[17];//最后一个
+        var seventeen = code.substring(0,17);
+        // ISO 7064:1983.MOD 11-2
+        // 判断最后一位校验码是否正确
+        var arr = seventeen.split("");
+        var len = arr.length;
+        var num = 0;
+        for(var i = 0; i < len; i++){
+            num = num + arr[i] * weight_factor[i];
+        }
+        // 获取余数
+        var resisue = num%11;
+        var last_no = check_code[resisue];
+        /*第一位不可能是0
+        第二位到第六位可以是0-9
+        第七位到第十位是年份，所以七八位为19或者20
+        十一位和十二位是月份，这两位是01-12之间的数值
+        十三位和十四位是日期，是从01-31之间的数值
+        十五，十六，十七都是数字0-9
+        十八位可能是数字0-9，也可能是X*/
+        var idcard_patter = /^[1-9][0-9]{5}([1][9][0-9]{2}|[2][0][0|1][0-9])([0][1-9]|[1][0|1|2])([0][1-9]|[1|2][0-9]|[3][0|1])[0-9]{3}([0-9]|[X])$/;
+        // 判断格式是否正确
+        var format = idcard_patter.test(idcode);
+        // 返回验证结果，校验码和格式同时正确才算是合法的身份证号码
+        return last === last_no && format ? true : false;
+    }
+
+    function ifIE() {
+        var ua = navigator.userAgent.toLowerCase();
+        if (ua.indexOf('trident') > -1) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+</script>
+</html>

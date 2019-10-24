@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>离职员工</title>
+    <link rel="stylesheet" href="/layui/css/layui.css">
+</head>
+<body>
+<!-- <div class="layui-inline">
+		<input class="layui-input" id="searchContent" placeholder="搜索...">
+	</div>
+	<button class="select-on layui-btn layui-btn-sm" id="doSearch">搜索</button> -->
+	<div class="layui-inline" style="position: relative;margin-top:8px;margin-left: 30px;width: 18%;">
+		<input class="layui-input" style="height: 30px;line-height: 30px;" id="searchContent" placeholder="搜索...">
+	</div>
+<button onmouseover="changeImg(this,2)" onmouseout="changeImg(this,1)" onmousedown="changeImg(this,3)" onmouseup="changeImg(this,2)" class="select-on layui-btn layui-btn" style="padding:0 0px;border: none;height: 30px;line-height: 30px;background-color: white;color: black;margin-top: 4px;" id="doSearch"><img imgName="searchImg" src="/css/img/searchImg1.png">    </img></button>
+	<table  id="employeeList" lay-filter="employeeList"></table>
+<img id="hidePhoto1" style="display: none;">
+</body>
+<script type="text/javascript" src="/js/jquery.min.js"></script>
+<script type="text/javascript" src="/layui/layui.js"></script>
+<script type="text/javascript" src="/js/ajaxFilter.js"></script>
+<script type="text/html" id="barDemo">
+	<a class="layui-btn layui-btn-xs" lay-event="show">详情</a>
+</script>
+<script>
+function changeImg(obj,status) {
+    var imgName = $(obj).find("img").attr("imgName");
+    $(obj).find("img").attr("src","/css/img/" + imgName + status + ".png");
+}
+layui.use(['tree','table','layer','form','upload'], function(){
+	var $ = layui.$;
+    var table = layui.table;
+    var layer = layui.layer;
+    var form = layui.form;
+    var upload = layui.upload;
+    var parentHeight = document.documentElement.clientHeight;
+	var height = parentHeight*0.9;
+    table.render({
+        elem: '#employeeList'
+        ,url:'/employeeManage/selectLeaveEmployee'
+        ,title: '员工列表'
+        ,height:height
+        ,cols: [
+            [
+                {field:'name', title:'姓名' , fixed: 'left'}
+                ,{field:'sex', title:'性别', templet: '#sex'}
+                ,{field:'departName', title:'部门'}
+                ,{field:'tel_no', title:'联系电话'}
+                ,{fixed: 'right', title:'操作', toolbar: '#barDemo'}
+            ]
+        ]
+       ,page: true
+    });
+    table.on('tool(employeeList)', function(obj){
+        if(obj.event === 'show'){
+        	toDetail(obj);
+    	}
+	});
+
+    function toDetail(obj) {
+        var loadingtoDetail = layer.load(1, {
+            shade: [0.1,'#fff']
+        });
+        var faceId = obj.data.face_id;
+        var param = {
+            face_id:faceId,
+            attribute:0
+        };
+        $.ajax({
+            url: "/employeeManage/selectFacePhoto",
+            type: "post",
+            data: param,
+            async: false,
+            success: function(data1) {
+                var jsonData = $.parseJSON(data1);
+                var photoBase64 = "";
+                if (jsonData.resultCode == "0") {
+                    var headPictureList = jsonData.headPictureList;
+                    if (headPictureList.length > 0) {//若有头像,则使用头像
+                        photoBase64 = "data:image/jpg;base64," + headPictureList[0].data;
+                    } else {//若无头像,则判断有无比对照片
+                        var comparePictureList = jsonData.comparePictureList;
+                        if (comparePictureList.length > 0) {//若有比对照片,则使用比对照片的第一张
+                            photoBase64 = "data:image/jpg;base64," + comparePictureList[0].data;
+                        } else {//若没有,则使用身份证照片
+                            if (obj.data.photo_wlt != undefined && obj.data.photo_wlt != "") {
+                                photoBase64 = "data:image/jpg;base64," + obj.data.photo_wlt;
+                            } else {
+                                photoBase64 = "/css/img/headPhotoDefault.png";
+                            }
+                        }
+                    }
+                } else {//调用接口出错,查询比对照片和头像失败,只能使用身份证照片
+                    if (obj.data.photo_wlt != undefined && obj.data.photo_wlt != "") {
+                        photoBase64 = "data:image/jpg;base64," + obj.data.photo_wlt;
+                    } else {
+                        photoBase64 = "/css/img/headPhotoDefault.png";
+                    }
+                    layer.alert('查询比对照片失败,请重试!',{icon: 2,title:"提示"},function (index) {
+                        layer.close(index);
+                    });
+                }
+                if (photoBase64 != "/css/img/headPhotoDefault.png") {
+                    $("#hidePhoto1").attr('src', photoBase64);
+                    var theImage = new Image();
+                    theImage.src = $("#hidePhoto1").attr("src");
+                    theImage.onload = function(){
+                        var width = "164";
+                        var height = "164";
+                        if (width / height > this.width / this.height) {
+                            var changeWidth = (this.width / this.height) * height;
+                            $("#detailPhoto").attr("width",changeWidth);
+                        } else {
+                            var changeHeight = (width * this.height) / this.width;
+                            $("#detailPhoto").attr("height",changeHeight);
+                        }
+                    }
+                }
+                var leaderId = obj.data.leader_id;
+                var faceInfo = {
+                    face_id:leaderId,
+                    attribute:0
+                };
+                $.ajax({
+                    url: "/employeeManage/selectFaceInfoByParam",
+                    type: "post",
+                    data: faceInfo,
+                    async: false,
+                    success: function (data2) {
+                        var leaderName = data2;
+						var empName = obj.data.name;
+						if (empName == "") {
+							empName = "暂未设置";
+						}
+						var sex = obj.data.sex;
+						if (sex == "") {
+							sex = "暂未设置";
+						} else if (sex == "1") {
+							sex = "男";
+						} else if (sex == "2") {
+							sex = "女";
+						}
+						var nation = obj.data.nation;
+						if (nation == "" || nation == undefined) {
+							nation = "暂未设置";
+						}
+						var addr = obj.data.addr;
+						if (addr == "" || addr == undefined) {
+							addr = "暂未设置";
+						}
+						var idcard = obj.data.idcard;
+						if (idcard == "" || idcard == undefined) {
+							idcard = "暂未设置";
+						}
+						var employee_id = obj.data.employee_id;
+						if (employee_id == "" || employee_id == undefined) {
+							employee_id = "暂未设置";
+						}
+						var empcard = obj.data.empcard;
+						if (empcard == "" || empcard == undefined) {
+							empcard = "暂未设置";
+						}
+						var departName = obj.data.departName;
+						if (departName == "" || departName == undefined) {
+							departName = "暂未设置";
+						}
+						var position = obj.data.position;
+						if (position == "" || position == undefined) {
+							position = "暂未设置";
+						}
+						var nick_name = obj.data.nick_name;
+						if (nick_name == "" || nick_name == undefined) {
+							nick_name = "暂未设置";
+						}
+						var tel_no = obj.data.tel_no;
+						if (tel_no == "") {
+							tel_no = "暂未设置";
+						}
+						var detailHTML ="<form class='layui-form' action=''>" +
+							"  <div style='float: left;width: 100%;height: 38px;'></div>" +
+							"  <div style='float: left;width: 5%;height: 100px;'></div>" +
+							"  <div style='float: left;width: 60%;height: 230px;'>" +
+							"  <div class='layui-form-item' style='margin-bottom: 14px;'>" +
+							"    <label class='layui-form-label' style='color: #333333;line-height: 14px;'>姓名</label>" +
+							"    <div class='layui-input-block' style='width: 200px;min-height: 32px;'>" +
+							"      <input type='text' value='" + empName +"' class='layui-input' title='"+empName+"' style='color: #999999 !important;border: none;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;padding-left: 25px;height: 32px;line-height: 32px;' disabled>" +
+							"    </div>" +
+							"  </div>" +"  " +
+							"  <div class='layui-form-item' style='margin-bottom: 14px;'>" +
+							"    <label class='layui-form-label' style='color: #333333;line-height: 14px;'>性别</label>" +
+							"    <div class='layui-input-inline' style='width: 100px;'>" +
+							"      <input type='text' value='" + sex +"' class='layui-input' style='color: #999999 !important;border: none;padding-left: 25px;height: 32px;line-height: 32px;' disabled>" +
+							"    </div>" +
+							"   </div>" +
+							"	<div class='layui-form-item' style='margin-bottom: 14px;'>" +
+							"    <label class='layui-form-label' style='color: #333333;line-height: 14px;'>民族</label>" +
+							"    <div class='layui-input-inline' style='width: 100px;'>" +
+							"      <input type='text' value='" + nation +"' class='layui-input' style='color: #999999 !important;border: none;padding-left: 25px;height: 32px;line-height: 32px;' disabled>" +
+							"    </div>" +
+							"  </div>" +
+							"  <div class='layui-form-item' style='margin-bottom: 14px;'>" +
+							"    <label class='layui-form-label' style='color: #333333;line-height: 14px;'>手机号</label>" +
+							"    <div class='layui-input-block' style='width: 200px;min-height: 32px;'>" +
+							"      <input type='text' value='" + tel_no +"' class='layui-input' style='color: #999999 !important;border: none;padding-left: 25px;height: 32px;line-height: 32px;' disabled>" +
+							"    </div>" +
+							"  </div>" +
+							"  <div class='layui-form-item' style='margin-bottom: 14px;'>" +
+							"    <label class='layui-form-label' style='color: #333333;line-height: 14px;'>身份证号</label>" +
+							"    <div class='layui-input-block' style='width: 200px;min-height: 32px;'>" +
+							"      <input type='text' value='" + idcard +"' class='layui-input' style='color: #999999 !important;border: none;padding-left: 25px;height: 32px;line-height: 32px;' disabled>" +
+							"    </div>" +
+							"  </div>" +
+							"  </div>" +
+							"  <div style='float: left;width: 168px;height: 168px;text-align: center;line-height: 168px;'>" +
+							"  		<img id='detailPhoto' src='" + photoBase64 +"' width='164' height='164' style='border-radius: 50%;border: 2px solid #d8d8d8;'/>" +
+							"  </div>" +
+							"	<div style='float: left;width: 95%;height: 308px;margin-left: 5%;'>" +
+							"  <div class='layui-form-item' style='margin-bottom: 14px;'>" +
+							"    <label class='layui-form-label' style='color: #333333;line-height: 14px;'>地址</label>" +
+							"    <div class='layui-input-block' style='width: 440px;min-height: 32px;'>" +
+							"      <input type='text' value='" + addr +"' class='layui-input' title='"+addr+"' style='color: #999999 !important;border: none;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;padding-left: 25px;height: 32px;line-height: 32px;' disabled>" +
+							"    </div>" +
+							"  </div>" +
+							"  <div class='layui-form-item' style='margin-bottom: 14px;'>" +
+							"    <label class='layui-form-label' style='color: #333333;line-height: 14px;'>部门</label>" +
+							"    <div class='layui-input-block' style='width: 440px;min-height: 32px;'>" +
+							"      <input type='text' value='" + departName +"' class='layui-input' style='color: #999999 !important;border: none;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;padding-left: 25px;height: 32px;line-height: 32px;' disabled>" +
+							"    </div>" +
+							"  </div>" +
+							"  <div class='layui-form-item' style='margin-bottom: 14px;'>" +
+							"    <label class='layui-form-label' style='color: #333333;line-height: 14px;'>职位</label>" +
+							"    <div class='layui-input-block' style='width: 440px;min-height: 32px;'>" +
+							"      <input type='text' value='" + position +"' class='layui-input' title='"+position+"' style='color: #999999 !important;border: none;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;padding-left: 25px;height: 32px;line-height: 32px;' disabled>" +
+							"    </div>" +
+							"  </div>" +
+							"  <div class='layui-form-item' style='margin-bottom: 14px;'>" +
+							"    <label class='layui-form-label' style='color: #333333;line-height: 14px;'>上级领导</label>" +
+							"    <div class='layui-input-block' style='width: 440px;min-height: 32px;'>" +
+							"      <input type='text' value='" + leaderName +"' class='layui-input' style='color: #999999 !important;border: none;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;padding-left: 25px;height: 32px;line-height: 32px;' disabled>" +
+							"    </div>" +
+							"  </div>" +
+							"  <div class='layui-form-item' style='margin-bottom: 14px;'>" +
+							"    <label class='layui-form-label' style='color: #333333;line-height: 14px;'>昵称</label>" +
+							"    <div class='layui-input-block' style='width: 440px;min-height: 32px;'>" +
+							"      <input type='text' value='" + nick_name +"' class='layui-input' title='"+nick_name+"'  style='color: #999999 !important;border: none;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;padding-left: 25px;height: 32px;line-height: 32px;' disabled>" +
+							"    </div>" +
+							"  </div>" +
+							"  <div class='layui-form-item' style='margin-bottom: 14px;'>" +
+							"    <label class='layui-form-label' style='color: #333333;line-height: 14px;'>工号</label>" +
+							"    <div class='layui-input-block' style='width: 440px;min-height: 32px;'>" +
+							"      <input type='text' value='" + employee_id +"' class='layui-input' title='"+employee_id+"' style='color: #999999 !important;border: none;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;padding-left: 25px;height: 32px;line-height: 32px;' disabled>" +
+							"    </div>" +
+							"  </div>" +
+							"  <div class='layui-form-item' style='margin-bottom: 14px;'>" +
+							"    <label class='layui-form-label' style='color: #333333;line-height: 14px;'>工牌号</label>" +
+							"    <div class='layui-input-block' style='width: 440px;min-height: 32px;'>" +
+							"      <input type='text' value='" + empcard +"' class='layui-input' title='"+empcard+"' style='color: #999999 !important;border: none;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;padding-left: 25px;height: 32px;line-height: 32px;' disabled>" +
+							"    </div>" +
+							"  </div>" +
+							"</div>" +
+							"</form>";
+						var parentHeight = document.documentElement.clientHeight;
+						var height = parentHeight*0.95;
+						layer.open({
+							type: 1,
+							title: '详情',
+							area: ['600px', height+'px'], //宽高
+							content: detailHTML,
+							shadeClose: false,
+							shade:[0.2, '#000000'],
+							success: function(layero, index){
+								layer.close(loadingtoDetail);
+							}
+						});
+                    }
+                });
+            }
+        });
+    }
+
+    $("#doSearch").on('click', function () {
+        doSearch();
+    });
+
+    document.onkeydown = function (e) { // 回车提交表单
+        var theEvent = window.event || e;
+        var code = theEvent.keyCode || theEvent.which;
+        if (code == 13) {
+            doSearch();
+        }
+    };
+
+    function doSearch() {
+        var searchContent = $('#searchContent').val();
+		searchContent=searchContent.trim();
+		if (!containSpecial(searchContent)) {
+			layer.msg('搜索条件不能含有特殊字符', {icon: 0, anim: 6});
+		} else {
+			table.reload('employeeList', {
+				where: {
+					searchContent: searchContent,
+				}
+				, page: {
+					curr: 1 //重新从第 1 页开始
+				}
+			});
+		}
+    }
+	function containSpecial(s) {
+		var containSpecial = RegExp("^$|[^`~!@#$%^&*()_+<>?:\"{},.\\/\\\\;'[\\]·！#￥（——）：；“”‘、，|《。》？、【】[\\]]+$");
+		for(var i=0;i<s.length;i++){
+			if (!containSpecial.test(s.charAt(i))) {
+				return false;
+			}
+		}
+		return true;
+	}
+});
+
+    
+</script>
+
+<script type="text/html" id="sex">
+	{{#  if(d.sex == 1){ }}
+	男
+	{{#  } else if(d.sex == 2){ }}
+	女
+	{{#  } else{}}
+	暂未设置
+	{{#  } }}
+</script>
+</html>

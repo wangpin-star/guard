@@ -1,0 +1,141 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>webcam</title>
+    <link rel="stylesheet" href="/layui/css/layui.css">
+    <style type="text/css">
+        #webcam {
+            width: auto;
+            height: auto;
+            float: left;
+        }
+
+        #base64image {
+            display: block;
+            width: 320px;
+            height: 240px;
+        }
+    </style>
+
+    <script src="/js/jquery.min.js"></script>
+    <script type="text/javascript" src="/layui/layui.js"></script>
+    <script src="/js/jquery.webcam.js"></script>
+    <script type="text/javascript" src="/js/ajaxFilter.js"></script>
+
+</head>
+
+<body>
+
+    <div id="webcam"></div>
+    <div style="width: 10px;float: left;height: 240px;">
+
+    </div>
+    <canvas id="canvas" width="320" height="240"></canvas>
+    <!--<input id="snapBtn" type="button" value="capture" />-->
+    <button class='layui-btn' id="snapBtn" type="button">拍照</button>
+    <img id="base64image" src=''  style="display: none;"/>
+    <!--<button type="button" onclick="surePhoto();">确定</button>-->
+    <script type="text/javascript">
+
+            var pos = 0,
+                ctx = null,
+                image = [];
+            var w = 320;
+            var h = 240;
+            $(document).ready(function() {
+                jQuery("#webcam").webcam({
+
+                    width: 320,
+                    height: 240,
+                    mode: "callback",
+                    swffile: "/jscam_canvas_only.swf",
+                    onTick: function(remain) {},
+                    onSave: function(data) {
+
+                        var col = data.split(";");
+                        var img = image;
+
+                        for(var i = 0; i < 320; i++) {
+                            var tmp = parseInt(col[i]);
+                            img.data[pos + 0] = (tmp >> 16) & 0xff;
+                            img.data[pos + 1] = (tmp >> 8) & 0xff;
+                            img.data[pos + 2] = tmp & 0xff;
+                            img.data[pos + 3] = 0xff;
+                            pos += 4;
+                        }
+
+                        if(pos >= 4 * 320 * 240) {
+
+
+                            ctx.putImageData(img, 0, 0);
+
+                            var base64 = canvas.toDataURL("image/jpeg");
+
+                            var base64image = document.getElementById('base64image');
+                            base64image.setAttribute('src', base64);
+
+                            pos = 0;
+
+                        }
+
+                    },
+
+                    onCapture: function() {
+                        webcam.save();
+                        // Show a flash for example
+                    },
+
+                    debug: function(type, string) {
+                        //alert('type:' + type + ',string:' + string);
+                        layui.use(['layer'], function() {
+                            var layer = layui.layer;
+                            if (type == "error" && string == "No camera was detected.") {
+                                layer.alert("检测到您的设备未安装摄像头",{end:function () {
+                                        parent.layer.closeAll();
+                                }});
+                            }
+                        });
+                    },
+
+                    onLoad: function() {
+                        // Page load
+                    }
+
+                });
+                window.addEventListener("load", function() {
+
+                    var canvas = document.getElementById("canvas");
+
+                    if(canvas.getContext) {
+                        ctx = canvas.getContext("2d");
+                        ctx.clearRect(0, 0, 320, 240);
+
+                        var img = new Image();
+                        img.onload = function() {
+                            ctx.drawImage(img, 129, 89);
+                        }
+                        image = ctx.getImageData(0, 0, 320, 240);
+                    }
+
+                }, false);
+
+                $('#snapBtn').on('click', function() {
+                    webcam.capture();
+                });
+            });
+
+            /*function surePhoto() {
+                var base64 = $("#base64image").attr('src');
+                var photoId = "photo" + photoNo;
+                layui.use(['layer'], function() {
+                    var layer = layui.layer;
+                    parent.$("#" + photoId).attr('src',base64);
+                    parent.layer.closeAll();
+                });
+            }*/
+    </script>
+</body>
+
+</html>

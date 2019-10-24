@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>设备权限配置</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport"
+          content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi"/>
+    <base href="/"/>
+	<link rel="stylesheet" href="/layui2.5.4/css/layui.css"><!-- 树形组件使用2.5.4版本 -->
+	<link rel="stylesheet" href="/layui/css/layui.css" media="all">
+	<style>
+		.icon1 {
+			background-image: url(css/img/depart.png);
+			display: inline-block;
+			/*i标签是行内元素必须设置他的display属性才能设置宽高*/
+			width: 20px;
+			height: 25px;
+		}
+		.layui-icon-addition:before {
+			content: "\e602";
+			font-size: 14px;
+		}
+
+		.layui-icon-subtraction:before {
+			content: "\e61a";
+			font-size: 14px;
+		}
+
+		.layui-tree-icon {
+			border: 0px;
+		}
+		/* 去除图标边框 */
+
+		.layui-tree {
+			line-height: 20px;
+		}
+
+		.layui-progress-text {
+			position: static;
+			padding: 0 10px;
+			color: #fff;
+		}
+
+	</style><!-- 图标样式 进度条字体样式 -->
+    <style>
+   		.layui-input:hover {
+	 		border-color: #54b5ff !important;
+   		}
+   		.layui-input::-webkit-input-placeholder {
+	       color: #c8c8c8;
+    	}
+   </style>
+</head>
+<body>
+<div class="layui-container" style="width: 100%;">
+  <div class="layui-row" style="width: 100%; height:46px;">
+<!-- <div class="layui-collapse" lay-accordion="" style="float: left;padding: 20px;">
+  <div class="layui-colla-item">
+    <h4 class="layui-colla-title">当前选择设备：</h4>
+    <div class="layui-colla-content">
+      <h4><font color="#1E9FFF"><span id="show" th:text="${termnamelist}"></span></font></h4>
+    </div>
+  </div>
+</div> -->
+     <div style="float: left;width:55%;margin-top: 16px;">
+      	 <div style="float: left;margin-left: 16px;">
+      	     <font color="#333333">当前选择设备</font>
+      	 </div>
+      	 <div style="float: left;margin-left: 20px;">
+      	     <font color="#999999"><span id="show" th:text="${termnamelist}"></span></font>
+      	 </div>
+     </div>
+     <div style="float: right;margin-top: 6px;">
+        <!-- <input type="text" style="width:200px;height:30px" placeholder="搜索..." id="search_text"> -->
+        <input class="layui-input" style="width:300px;height: 34px;line-height: 34px;margin-right: 56px;" id="search_text" placeholder="搜索...">
+        <!-- <button data-type="auto" style="height:30px;text-align: center;line-height: 30px;" class="layui-btn layui-btn-normal" id="query">搜索</button> -->
+        <button onmouseover="changeImg(this,2)" onmouseout="changeImg(this,1)" onmousedown="changeImg(this,3)" onmouseup="changeImg(this,2)" class="select-on layui-btn" 
+        style=" position:absolute;right:46px;top:12px;padding:0 0px;mborder: none;width:22px;height: 22px;line-height: 22px;background-color: #ffffff;color: black;" id="query">
+        <img imgName="searchImg" src="/css/img/searchImg1.png">    </img></button> 
+        <div id="auto_div" style="display: none;width:300px;background-color: #e2e2e2;position: absolute;z-index:1;">
+        </div>
+     </div>
+  </div> 
+  <div class="layui-row" style="width:100%; height:740px;margin-top: 16px;">
+      <div style="float: left;width:305px;margin-left: 8px;">
+      	<ul id="departTree"></ul>
+      </div>
+      <div style="float: left;width:382px;height:636px;margin-left: 40px;border:1px solid #e2e2e2">
+      	<div style="float: left;width:382px;height:38px;border-bottom:1px solid #e2e2e2">
+      		<div style="margin-top: 4px;">
+      			<table style="margin:auto">
+				    <tr>
+				        <td style="width:330px;text-align:center;font-size:16px;">
+			            	未授权
+			        	</td>
+			        	<td style="width:52px;">
+			                <input type="button" style="width:48px;height:30px;background-color:transparent;border-radius: 3px;border:1px solid #e2e2e2;color:#333333" onclick="selectAll()" value="全选">               
+			        	</td>
+				    </tr>
+				</table> 
+      		</div>
+        </div>
+        <div style="float: left;width:382px;height:588px;margin-left: 8px;margin-top: 8px;">
+      		<select multiple="multiple" class="form-control" id="k1" size="10" style="width:374px;height:588px;color:#333333;border:none">
+				<option style="height:22px;padding-left:12px;" th:each="item:${faceinfolist}" th:value="${item.key}" th:id="${item.key}" th:text="${item.value}"></option>
+			</select>
+        </div>
+      </div>
+      <div style="float: left;width:120px;height:636px;">
+      	<table>
+			<tr>
+				<div style="width:120px;text-align:center;margin-top: 270px;">
+					<button id="b1" onmouseover="changeImg(this,2)" onmouseout="changeImg(this,1)" onmousedown="changeImg(this,3)" onmouseup="changeImg(this,2)" class="select-on layui-btn" 
+	        		style="background-color:transparent;">
+	        		<img imgName="Rightmove" src="/css/img/Rightmove1.png"></img></button>
+				</div>
+			</tr>		        
+			<tr>
+				<div style="width:120px;text-align:center;margin-top: 50px;">
+					<button id="b2" onmouseover="changeImg(this,2)" onmouseout="changeImg(this,1)" onmousedown="changeImg(this,3)" onmouseup="changeImg(this,2)" class="select-on layui-btn" 
+	        		style="background-color:transparent;">
+	        		<img imgName="Leftmove" src="/css/img/Leftmove1.png"></img></button>
+        		</div>
+			</tr>		    
+		</table>
+      </div>
+      <div style="float: left;width:382px;height:710px;">
+      	<div style="float: left;width:382px;height:636px;border:1px solid #e2e2e2">
+      		<div style="float: left;width:382px;height:38px;border-bottom:1px solid #e2e2e2">
+	      		<div style="margin-top: 4px;">
+	      			<table style="margin:auto">
+					    <tr>
+					        <td style="width:330px;text-align:center;font-size:16px;">
+				            	已授权
+				        	</td>
+				        	<td style="width:52px;">
+				        		<input type="button" style="width:48px;height:30px;background-color:transparent;border-radius: 3px;border:1px solid #e2e2e2;color:#333333" onclick="removeAll()" value="清空">
+				        	</td>
+					    </tr>
+					</table> 
+	      		</div>
+        	</div>
+	        <div style="float: left;width:382px;height:588px;margin-left: 8px;margin-top: 8px;">
+				<select multiple="multiple" class="form-control" id="k2" size="10" style="width:374px;height:588px;color:#333333;border:none">
+				    <option style="height:22px;padding-left:12px;" th:each="item:${authlist}" th:value="${item.key}" th:id="${item.key}" th:text="${item.value}"></option>
+				</select>
+	        </div>
+        </div>
+        <div style="float: left;width:382px;height:74px;">
+      		<div style="float: right;margin-top: 30px;">
+      			<button data-type="auto" style="height:30px;text-align: center;line-height: 30px;" class="layui-btn layui-btn-normal"  id="addSubmit">保存设置</button>
+				<button data-type="auto" style="height:30px;text-align: center;line-height: 30px;background-color:transparent;border:1px solid #e2e2e2;color:#333333" class="layui-btn layui-btn-normal"  id="cancleSubmit">退出</button>
+        	</div>
+        </div>
+      </div>
+      <!-- <div class="layui-col-md4" style="overflow-y:auto;float: left;width:180px;height:600px;border:1px solid #e2e2e2">
+      	<table style="margin:auto">
+			    <tr>
+			        <div style="text-align: center;background-color: #e2e2e2;">
+			        	<h3>部门</h3>
+			        </div>
+			    </tr>
+			    <tr>
+			        <div style="width:500px;">
+			        	<ul id="departTree"></ul>
+			        </div>
+			    </tr>
+		</table>
+      </div> -->
+      
+      <!-- <div class="layui-col-md4" style="margin-left:20px;overflow-y:auto;float: left;width:700px;height:600px;border:1px solid #e2e2e2">
+			<input type="hidden" name="termid"  />
+			<table>
+			    <tr>
+			    	<td style="text-align:center;">
+			            <h3>未授权</h3>
+			        </td>
+			        <td>
+			                               
+			        </td>
+			        <td style="text-align:center;">
+			            <h3>已授权</h3> 
+			        </td>
+			    </tr>
+			    <tr>
+			    	<td style="text-align:right;">
+			            <input type="button" onclick="selectAll()" value="全选">
+			            <input  id="all" type="checkbox" name="yon" onclick="selectAll()"/><font color="#1E9FFF">全选</font>
+			        </td>
+			        <td>
+			                               
+			        </td>
+			        <td style="text-align:right;">
+			            <input type="button" onclick="removeAll()" value="清空">
+			        </td>
+			    </tr>
+			    <tr>
+			        <td>
+			            <select id="k1" size="10" multiple="true" style="width:300px;height:500px">
+			            <select multiple="multiple" class="form-control" id="k1" size="10" style="width:300px;height:500px">
+			                <option value="Ning1" id="p1">张三（13025152630）</option>
+			                <option value="Ning2" id="p2">李四（13025152631）</option>
+			                <option value="Ning3" id="p3">王五（13025152632）</option>
+			            </select>
+			            <select multiple="multiple" class="form-control" id="k1" size="10" style="width:300px;height:500px">
+				      	  <option th:each="item:${faceinfolist}" th:value="${item.key}" th:id="${item.key}" th:text="${item.value}"></option>
+						</select>
+			        </td>
+			        <td>
+			            <input type="button" id="b1" style="color: #1E9FFF;" value=">>"/>
+			            <input type="button" id="b3" style="color: #1E9FFF;" value="==>>"/><br/>
+			            <input type="button" id="b2" value="<<"/>
+			            <input type="button" id="b4" value="<<=="/>
+			                
+			        </td>
+			        <td>
+			            <select id="k2" value="Ning4" size="10" multiple="true" style="width:300px;height:500px">
+			                <option>李哥（13825152635）</option>                
+			            </select>
+			            <select multiple="multiple" class="form-control" id="k2" size="10" style="width:300px;height:500px">
+				      	  <option th:each="item:${authlist}" th:value="${item.key}" th:id="${item.key}" th:text="${item.value}"></option>
+						</select>
+			        </td>
+			    </tr>
+			    <tr>
+			    	<td>
+			        </td>
+			        <td>
+			        </td>
+			        <td style="text-align:right;">
+			            <button data-type="auto" style="height:30px;text-align: center;line-height: 30px;" class="layui-btn layui-btn-normal"  id="addSubmit">保存设置</button>
+			            <button data-type="auto" style="height:30px;text-align: center;line-height: 30px;" class="layui-btn layui-btn-normal"  id="cancleSubmit">取消</button>
+			        </td>
+			    </tr>
+			</table>
+      </div> -->
+  </div>
+</div>
+
+<script type="text/javascript" src="/js/jquery.min.js"></script>
+<script type="text/javascript" src="/layui2.5.4/layui.js"></script>
+<script type="text/javascript" src="/js/ajaxFilter.js"></script>
+<script type="text/javascript" src="/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="/js/bootstrap-multiselect.js"></script>
+<script language="javascript">
+function changeImg(obj,status) {
+    var imgName = $(obj).find("img").attr("imgName");
+    $(obj).find("img").attr("src","/css/img/" + imgName + status + ".png");
+}
+
+	    $(document).ready(function(){
+	        $("#b1").click(function(){
+	            $("#k2").append($("#k1 option:selected"));
+	        });
+	        
+	        $("#b2").click(function(){
+	            $("#k1").append($("#k2 option:selected"));
+	        });
+	        
+	        $("#b3").click(function(){
+	            $("#k2").append($("#k1 option"));
+	        });
+	        
+	        $("#b4").click(function(){
+	            $("#k1").append($("#k2 option"));
+	        });
+	    });
+	    
+	    function selectAll(){
+            var opts = document.getElementById("k1");
+            for(var i=0;i<opts.length;i++){
+            	opts[i].selected=true;
+            }
+        }
+	    /* function selectAll(){
+            var all = document.getElementById("all");
+            var opts = document.getElementById("k1");
+            if(all.checked==true){
+                if(opts.length){
+                    for(var i=0;i<opts.length;i++){
+                    	opts[i].selected=true;
+                    }
+                }
+                opts.selected=true;
+            }else{
+                if(opts.length){
+                    for(var i=0;i<opts.length;i++){
+                    	opts[i].selected = false;
+                    }
+                }
+            }
+            
+        } */
+	    
+	    function removeAll(){
+	    	$("#k1").append($("#k2 option"));
+	    }
+	    /* function selectAll(){
+	       var opts=document.getElementById("k1");
+	       for(var i=0;i<opts.length;i++){
+	        opts[i].selected=true;
+	       }
+	    } */
+	   /*  $("#k1").multiselect({
+	        checkAllText : "全选", //全选按钮显示的文本
+	    }); */
+	    /* $(document).ready(function() {
+	        $('#k1').multiselect({
+	            enableClickableOptGroups: true
+	        });
+	    }); */
+</script>
+<script>
+    layui.use(['tree','flow','layer'], function(){
+    	var $ = layui.$;
+    	var flow = layui.flow;
+		var tree = layui.tree;
+    	
+    	var loadingDepartTree = layer.load(1, {
+            shade: [0.1,'#fff'],
+            offset: ['300px', '80px']//0.1透明度的白色背景
+        });
+    	
+    	//加载部门树,点击树重新加载table
+        $.ajax({
+            url: "/departManage/selectDepartTreeByAuth",
+            type: "post",
+            contentType : 'application/json',
+            dataType: 'json',
+            async: false,
+            success: function(data) {
+                var dataArr = new Array();
+                dataArr.push(data);
+                tree.render({
+                    elem: '#departTree' //传入元素选择器
+                    ,data:dataArr
+                    ,click:function (obj) {
+                    	var departId = obj.data.depart_id;
+						var obj1 = document.getElementsByTagName("option");
+                    	//点击部门前清空所有选中信息
+                    	for(var j=0;j<obj1.length;j++){
+            			    obj1[j].selected=false;
+            			}
+                        //alert(departId);
+                        //var user = [[${faceinfolist}]]
+                        //var user = '[[${faceinfolist}]]'.replace('=', ":");
+                        //var o = JSON.parse(user);
+                        $.ajax({ 
+                            url:"/device/showfaceinfo",
+                    		type:'post',
+                    		data:{id : departId},
+                    		async:false,	
+                    		success: function(data) {
+                    			//alert(data);
+                    			for(var i=0;i<data.length;i++){
+                    				//alert(data[i]);
+                    				var id = data[i];
+                    				for(var j=0;j<obj1.length;j++){
+                        			    if(obj1[j].value==id){
+                        			        obj1[j].selected=true;  //相等则选中
+                        			    }  
+                        			}
+                                }
+                    			//$("option[value='"+ data +"']").click();
+                    			//$("option[value='"+ data +"']").select();
+                    		},
+                    	});
+                    }
+                });
+                $(".layui-tree-spread:first").click();
+                layer.close(loadingDepartTree);
+            },
+            error: function() {
+                alert('服务器错误,请联系管理员');
+            }
+        });
+		setIcon();//加载部门树之后改变节点样式
+		$(".layui-tree-main").click(function () {//点击树节点改变高亮颜色，并且切换切点图标
+			$(".layui-tree-txt").css('color', '#000000');
+			$(this).children('.layui-tree-txt').css('color', '#54b5ff');
+		});/*
+        $(".layui-tree a").click(function () {
+            $(".layui-tree a cite").css('color','#333');
+            $(this).find('cite').css('color','#54b5ff');
+        });*/
+        
+        $("#addSubmit").on('click', function () {
+        	var layer = layui.layer,$=layui.$;
+        	var opts = document.getElementById("k2");
+        	var id = "";
+        	for(var i=0;i<opts.length;i++){
+                id += opts[i].value;
+                if(i<opts.length-1){
+                    id += ",";
+                }
+            }
+            var termid = "[[${termid}]]";
+        	$.ajax({ 
+                url:"/device/savefaceinfo",
+        		type:'post',
+        		data:{id : id,termid:termid},
+        		async:false,	
+        		success: function(code) {
+        			var result = code;
+        			if(result==0){
+        				layer.alert("权限信息保存成功",{icon: 1,title:"提示"},function(){
+                            // 获得frame索引
+                            var index = parent.layer.getFrameIndex(window.name);
+                            //关闭当前frame
+                            parent.layer.close(index);
+                            //修改成功后刷新父界面
+                            window.parent.location.reload();
+                        });
+
+        				/* layer.alert('权限信息保存成功', {
+        					title:"系统提示",
+        		    		skin: 'layui-layer-lan'
+        					},function(){
+        						window.parent.location.reload();
+        				}); */
+        				
+        			}else{
+        				/* layer.alert('权限信息保存失败', {
+        		    		  title:"提示",icon: 2},function (index) {
+                            layer.close(index);
+                        }); */
+        				layer.alert('权限信息保存失败', {
+         		    		  title:"提示",
+         		    		  icon: 2,
+         		    		  //skin: 'layui-layer-lan'
+         		    	});
+        			}
+        		},
+        	}); 
+        });
+        
+        $("#cancleSubmit").on('click', function () {
+            var layer = layui.layer,$=layui.$;
+            var length = [[${authlistsize}]];
+            var opts = document.getElementById("k2");
+            if(opts.length != length){
+            	layer.confirm('更改的人员权限信息尚未保存，是否保存？',{btn:['是','否','取消'],icon:3,title:"提示"},function(){
+     	    	    //保存并退出
+            		var layer = layui.layer,$=layui.$;
+                	var id = "";
+                	for(var i=0;i<opts.length;i++){
+                        id += opts[i].value;
+                        if(i<opts.length-1){
+                            id += ",";
+                        }
+                    }
+                    var termid = "[[${termid}]]";
+                	$.ajax({ 
+                        url:"/device/savefaceinfo",
+                		type:'post',
+                		data:{id : id,termid:termid},
+                		async:false,	
+                		success: function(code) {
+                			var result = code;
+                			if(result==0){
+                				layer.alert("权限信息保存成功",{icon: 1,title:"提示"},function(){
+                                    // 获得frame索引
+                                    var index = parent.layer.getFrameIndex(window.name);
+                                    //关闭当前frame
+                                    parent.layer.close(index);
+                                    //修改成功后刷新父界面
+                                    window.parent.location.reload();
+                                });
+                			}else{
+                				layer.alert('权限信息保存失败', {
+                 		    		  title:"提示",
+                 		    		  icon: 2,
+                 		    	});
+                			}
+                		},
+                	});
+     	               },function(){
+     	            	  //不保存并退出
+     	            	   var index = parent.layer.getFrameIndex(window.name);
+       	            	  parent.layer.close(index);
+     	        	   },function(index){
+     	            	  layer.close(index);
+     	        	   });
+            }else{
+            	var index = parent.layer.getFrameIndex(window.name);
+            	parent.layer.close(index);
+            }
+            
+            /* layer.open({
+	               type:1,//类型   
+	               title:'权限配置  ',//题目
+	               skin: 'layui-layer-lan',   //蓝色皮肤 
+	               btn: ['是  ','否 '],
+	               shadeClose:true,//点击遮罩层打开 
+	               content: '<div style="padding: 20px 80px;">当前所配置的人员权限信息未保存，是否继续？</div>'//打开的内容
+	               ,yes: function(){
+	            	   var index = parent.layer.getFrameIndex(window.name);
+	            	   parent.layer.close(index);
+
+	            	   //layer.closeAll();
+	               }
+	               ,btn2: function(index){
+	            	   layer.close(index);
+	               }
+	        }); */
+        });
+        
+        $("#query").on('click', function () {
+        	doSearch();
+        });
+
+        document.onkeydown = function (e) { // 回车提交表单
+            var theEvent = window.event || e;
+            var code = theEvent.keyCode || theEvent.which;
+            if (code == 13) {
+                doSearch();
+            }
+        };
+
+        function doSearch() {
+            var obj = document.getElementsByTagName("option");
+            for(var j=0;j<obj.length;j++){
+                obj[j].selected=false;
+            }
+            var facename = document.getElementById('search_text').value;
+            var length = facename.length;
+            if(length != 0){
+                for(var j=0;j<obj.length;j++){
+                    if(obj[j].text.indexOf(facename)>-1){
+                        obj[j].selected=true;
+                    }
+                }
+            }
+        }
+
+        /* flow.load({
+    	    elem: '#k1' //流加载容器
+    	    ,scrollElem: '#k1' //滚动条所在元素，一般不用填，此处只是演示需要。
+    	    ,done: function(page, next){ //执行下一页的回调
+    	      
+    	      //模拟数据插入
+    	      setTimeout(function(){
+    	        var lis = [];
+    	        for(var i = 0; i < 8; i++){
+    	          lis.push('<li>'+ ( (page-1)*8 + i + 1 ) +'</li>')
+    	        }
+    	        next(lis.join(''), page < 10); //假设总页数为 10
+    	      }, 500);
+    	    }
+    	  }); */
+        
+    });
+</script>
+<script type="text/javascript">
+        //模拟百度输入框效果
+        //var test_list = ["小张", "小苏", "小杨", "老张", "老苏", "老杨", "老爷爷", "小妹妹", "老奶奶", "大鹏", "大明", "大鹏展翅", "你好", "hello", "hi"];
+        var result = "[[${facenameStr}]]";
+        var test_list= result.split(",");
+        
+        var old_value = "";
+        var highlightindex = -1;   //高亮
+        //自动完成
+        function AutoComplete(auto, search, mylist) {
+            if ($("#" + search).val() != old_value || old_value == "") {
+                var autoNode = $("#" + auto);   //缓存对象（弹出框）
+                var carlist = new Array();
+                var n = 0;
+                old_value = $("#" + search).val();
+                for (i in mylist) {
+                    if (mylist[i].indexOf(old_value) >= 0) {
+                        carlist[n++] = mylist[i];
+                    }
+                }
+                if (carlist.length == 0) {
+                    autoNode.hide();
+                    return;
+                }
+                autoNode.empty();  //清空上次的记录
+                for (i in carlist) {
+                    var wordNode = carlist[i];   //弹出框里的每一条内容
+                    var newDivNode = $("<div>").attr("id", i);    //设置每个节点的id值
+                    newDivNode.attr("style", "font:14px/25px arial;height:25px;padding:0 8px;cursor: pointer;");
+                    newDivNode.html(wordNode).appendTo(autoNode);  //追加到弹出框
+                    //鼠标移入高亮，移开不高亮
+                    newDivNode.mouseover(function () {
+                        if (highlightindex != -1) {        //原来高亮的节点要取消高亮（是-1就不需要了）
+                            autoNode.children("div").eq(highlightindex).css("background-color", "white");
+                        }
+                        //记录新的高亮节点索引
+                        highlightindex = $(this).attr("id");
+                        $(this).css("background-color", "#ebebeb");
+                    });
+                    newDivNode.mouseout(function () {
+                        $(this).css("background-color", "white");
+                    });
+                    //鼠标点击文字上屏
+                    newDivNode.click(function () {
+                        //取出高亮节点的文本内容
+                        var comText = autoNode.hide().children("div").eq(highlightindex).text();
+                        highlightindex = -1;
+                        //文本框中的内容变成高亮节点的内容
+                        $("#" + search).val(comText);
+                    })
+                    if (carlist.length > 0) {    //如果返回值有内容就显示出来
+                        autoNode.show();
+                    } else {               //服务器端无内容返回 那么隐藏弹出框
+                        autoNode.hide();
+                        //弹出框隐藏的同时，高亮节点索引值也变成-1
+                        highlightindex = -1;
+                    }
+                }
+            }
+            //点击页面隐藏自动补全提示框
+            document.onclick = function (e) {
+                var e = e ? e : window.event;
+                var tar = e.srcElement || e.target;
+                if (tar.id != search) {
+                    if ($("#" + auto).is(":visible")) {
+                        $("#" + auto).css("display", "none")
+                    }
+                }
+            }
+        }
+        $(function () {
+            old_value = $("#search_text").val();
+            /* $("#search_text").focus(function () {
+                if ($("#search_text").val() == "") {
+                    AutoComplete("auto_div", "search_text", test_list);
+                }
+            }); */
+            $("#search_text").keyup(function () {
+            	//alert(test_list);
+            	AutoComplete("auto_div", "search_text", test_list);
+            });
+        });
+</script>
+<script type="text/javascript">
+
+	function setIcon() {
+		$(".layui-tree-iconClick").each(function () { //根据图标父元素data-id设置样式
+			var data_id = $(this).parents(".layui-tree-set").attr("data-id");
+			if (data_id == "1") {
+				$(this).css("height","25px");
+				$(this).children("i").removeClass();
+				$(this).children("i").addClass("icon1");
+			}
+			else {
+				if($(this).children("i").hasClass("layui-icon-file")) {
+					$(this).children("i").hide();
+					$(this).siblings(".layui-tree-txt").css("margin-left","-7px");
+				}
+				else{
+					$(this).siblings(".layui-tree-txt").css("margin-left","-7px");
+
+				}
+
+			}
+		});
+	}
+
+</script>
+</body>
+</html>

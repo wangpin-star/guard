@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>添加/编辑公司</title>
+    <base href="/"/>
+    <link rel="stylesheet" href="/layui/css/layui.css">
+    <style>
+        .button1{
+            width: 110px;height: 40px;line-height: 40px;color: #666666;font-size: 16px;border: 1px solid #d8d8d8;border-radius: 4px;background-color: white;cursor:pointer;
+        }
+        .button2{
+            width: 110px;height: 40px;line-height: 40px;color: #ffffff;font-size: 16px;border: none;border-radius: 4px;background-color: #54b5ff;cursor:pointer;
+        }
+    </style>
+</head>
+<body>
+<form id="show" class='layui-form' lay-filter="addCompanyForm" style="overflow-x: auto; overflow-y: auto;">
+    <div style="width: 100%;">
+        <div >
+             <fieldset class="layui-elem-field layui-field-title" style="width: 100%;">
+                 <legend style="color: #999999;font-size: 14px;">公司信息</legend>
+             </fieldset>
+         </div>
+         <div style="margin-left: 36px;">
+        <div class='layui-form-item' style="margin-bottom: 14px;">
+            <label class='layui-form-label' style="line-height: 14px;padding-right: 11px;color: #333333">公司名称</label>
+            <img src="/css/img/required.png" style="margin-top: 11px;float: left;margin-right: 11px;">
+            <div class='layui-input-inline' style='width: 420px;'>
+                <input type='text' id="companyName"  placeholder="请输入公司名称..." lay-verify='companyNameRequired' style="height: 32px;line-height: 32px;border-radius: 4px;" class='layui-input'>
+            </div>
+        </div>
+        <div class='layui-form-item' style="margin-bottom: 14px;">
+            <label class='layui-form-label' style="line-height: 14px;padding-right: 32px;color: #333333">公司地址</label>
+            <div class='layui-input-inline' style='width: 420px;'>
+                <input type='text' id="companyAddress"  placeholder="请输入公司地址..." style="height: 32px;line-height: 32px;border-radius: 4px;" class='layui-input'>
+            </div>
+        </div>
+        <div class="layui-form-item layui-form-text">
+            <label class="layui-form-label" style="line-height: 14px;padding-right: 32px;color: #333333">备注</label>
+            <div class="layui-input-inline" style="width: 420px;">
+                <textarea id="remarks" name="remarks" placeholder="请输入备注..." class="layui-textarea" style="min-height: 120px;border-radius: 4px;"></textarea>
+            </div>
+        </div>
+        </div>
+        
+        <div id="line">
+             <fieldset class="layui-elem-field layui-field-title" style="width: 100%;">
+                 <legend style="color: #999999;font-size: 14px;">公司管理员信息</legend>
+             </fieldset>
+         </div>
+        <div style="margin-left: 36px;" id="userinfo"> 
+       <div class="layui-form-item" >
+	    <label class='layui-form-label' style="line-height: 14px;padding-right: 11px;color: #333333;">登录名</label>
+	    <img src="/css/img/required.png" style="margin-top: 11px;float: left;margin-right: 11px;">
+	     <div class="layui-input-block">
+	       <input type="text"  lay-verify='required' id="loginName" autocomplete="off" style="width:420px;height:32px" class="layui-input">
+	     </div>
+	  </div>
+	
+	<div class="layui-form-item" >
+	    <label class='layui-form-label' style="line-height: 14px;padding-right: 11px;color: #333333;">登录密码</label>
+	    <img src="/css/img/required.png" style="margin-top: 11px;float: left;margin-right: 11px;">
+	     <div class="layui-input-block">
+	       <input maxlength="16" type="password"  lay-verify='required' id="loginpass" autocomplete="off" style="width:420px;height:32px" class="layui-input">
+	     </div>
+	  </div>
+	  
+	  <div class="layui-form-item" >
+	    <label class='layui-form-label' style="line-height: 14px;padding-right: 11px;color: #333333;">确认密码</label>
+	    <img src="/css/img/required.png" style="margin-top: 11px;float: left;margin-right: 11px;">
+	     <div class="layui-input-block">
+	       <input maxlength="16" type="password"  lay-verify='required' id="ackpass" autocomplete="off" style="width:420px;height:32px" class="layui-input">
+	     </div>
+	  </div>
+	  </div>
+    </div>
+    <!-- <div style="width: 100%;height: 45px;"></div> -->
+    <div  style="position: fixed; bottom:25px;right:40px">
+             <button type="button" id="save"  class="layui-btn layui-btn-ks">保存</button>
+             <button type="button" id="cancel" class="layui-btn layui-btn-ks">取消</button>
+  </div>
+</form>
+<div id="motaikunag" style="display: none;">
+       <div style="margin-left:75px">
+        <img id="npcImg" > 
+        </div>
+</div>
+</body>
+<script type="text/javascript" src="/js/jquery.min.js"></script>
+<script type="text/javascript" src="/layui/layui.js"></script>
+<script type="text/javascript" src="/js/ajaxFilter.js"></script>
+<script>
+function gotourl(url){
+	document.location.href = url;
+}
+</script>
+<script>
+    layui.use(['layer','form'], function() {
+        var layer = layui.layer;
+        var form = layui.form;
+        var companyId=[[${companyId}]];
+        
+        var height=document.documentElement.clientHeight;
+        var h=height*0.85;
+        $("#show").css('height',h);
+      		function changeheight(){
+      			 var h1 = document.documentElement.clientHeight;
+      			$("#show").css('height',h1*0.85);
+      			var w1 = document.documentElement.clientWidth;
+      			$("#show").css('width',w1);
+      		}
+      		window.onresize=function(){
+      		    changeheight();
+      		}
+        
+        
+        $('#save').on('click',function(){
+        	var loginName=$("#loginName").val();
+    		var loginpass=$("#loginpass").val();
+    		var ackpass=$("#ackpass").val();
+            var companyName = $("#companyName").val();
+            var companyAddress = $("#companyAddress").val();
+            var remarks = $("#remarks").val();
+	            if(companyName==""){
+	            	layer.msg('请输入公司名',{icon: 0,anim:6,time:1000}, function(index){
+      		 			$("#companyName").focus();
+      					layer.close(index);
+      				});
+      			 
+      			 return false;
+	            }
+            	if(loginName==""){
+          			 layer.msg('请输入登录名',{icon: 0,anim:6,time:1000}, function(index){
+          		 			$("#loginName").focus();
+          					layer.close(index);
+          				});
+          			 
+          			 return false;
+          		    }
+                   if(loginpass==""){
+       				 layer.msg('请输入密码 ',{icon: 0,anim:6,time:1000}, function(index){
+       			 			$("#loginpass").focus();
+       						layer.close(index);
+       					});
+       				 
+       				 return false;
+       			 }
+       			if(ackpass==""){
+       				 layer.msg('请确认密码',{icon: 0,anim:6,time:1000}, function(index){
+       			 			$("#ackpass").focus();
+       						layer.close(index);
+       					});
+       				 
+       				 return false;
+       			 }
+       			if (loginpass.length<6) {
+       				layer.msg('登录密码少于 小于6位',{icon: 0,anim:6,time:1000}, function(index){
+       		 			$("#loginpass").focus();
+       					layer.close(index);
+       				});
+       		        return false;
+       		    }
+       			if(loginpass!=ackpass){
+       				layer.msg('两次密码不一致，请确认密码',{icon: 0,anim:6,time:1000}, function(index){
+       		 			$("#ackpass").focus();
+       					layer.close(index);
+       				});
+       			 
+       			 return false;
+       			}
+            var company = {
+                name:companyName
+            };
+            if (companyAddress != "") {
+                company.addr = companyAddress;
+            }
+            if (remarks != "") {
+                company.description = remarks;
+            }
+            company.face_library_id=companyId;
+            $.ajax({
+                url: "/companyManage/addCompany",
+                type: "post",
+                data:JSON.stringify(company),
+   	            dataType:"json",
+   	            contentType : 'application/json',
+                async: false,
+                success: function(data) {
+                    if (data!=-1&&data!=-8) {
+	                    		var params={};
+	       	 	     		 params.user_name=loginName;
+	       	 	     		 params.user_password=loginpass;
+	       	 	     		 params.company_name=companyName;
+	       	 	     		 params.face_library_id=data;
+	       	 	     		 var companyIds=data;
+	       	 	     		$.ajax({
+	       	 	                url: "/companyManage/addCompanyUser",
+	       	 	                type: "post",
+	       	 	                data:JSON.stringify(params),
+	       	 	   	            dataType:"json",
+	       	 	   	            contentType : 'application/json',
+	       	 	                async: false,
+	       	 	                success: function(data) {
+	       	 	                	if(data==0){
+	       	 	                	  layer.alert('添加成功', {icon: 1,title:"提示"},function(index){
+	       	 	                		layer.close(index);
+	       	 				            var img=document.getElementById("npcImg");
+	       	 				            var name = encodeURIComponent(companyName);
+	       	 				            img.src = '/companyManage/getQRCode?companyName='+name;
+	       	 				            layer.msg('二维码加载中...', {icon: 16});
+	       	 				            img.onload = function () {
+	       	 				             layer.open({
+	       	 				                    type:1,//类型
+	       	 				                    area:['400px','400px'],//定义宽和高
+	       	 				                    title:'开通二维码 ',//题目 
+	       	 				                    btn: ['保存至本地','取消 '],
+	       	 				                    shadeClose: false,
+	       	 				                    shade:[0.2, '#000000'],
+	       	 				                    content:$('#motaikunag')//打开的内容
+	       	 				                    ,success:function(){
+	       	 				                        /* var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
+     	 				                             parent.layer.close(index); */
+	       	 				                    }
+			       	 				             ,cancel:function(){
+			       	 				            	var index = parent.layer.getFrameIndex(window.name); 
+						                            parent.layer.close(index);
+		  		       	 					         window.parent.location.reload();
+			       	 				             }
+	       	 				                     ,yes: function(){
+	       	 				                    	var index = parent.layer.getFrameIndex(window.name); 
+  	 				                                 parent.layer.close(index);
+	       		       	 					         window.parent.location.reload();
+	       	 				                         gotourl('/companyManage/downloadQRCode?companyName='+name);
+	       	 				                       }
+	       	 				                      ,btn2: function(){
+	       	 				                    	var index = parent.layer.getFrameIndex(window.name); 
+   	 				                                 parent.layer.close(index);
+	       		       	 					         window.parent.location.reload();
+	       	 				                    }
+	       	 				                        
+	       	 				                }); 
+	       	 				            }
+       	 						       });
+	       	 	                	}
+	       	 	                	else{
+	       	 	                		layer.alert('添加失败，或用户登录名重复', {icon: 2,title:"提示"},function(index){
+	       	 	                		    layer.close(index);
+		       	 	                		$.ajax({
+		       		       	 	                url: "/companyManage/delCompany",
+			       		       	 	            type:'get',
+				       	               			data:{
+				       	            	        	 'companyId':companyIds,
+				       	            	             },
+				       	             			async:false,	
+		       		       	 	                success: function(data) {
+		       		       	 	                	if(data==0){
+		       		       	 	                	   window.parent.location.reload();
+		       		       	 	                	}
+		       		       	 	                }
+		       	 	                		});
+	       	 	                			//gotourl('/companyManage/delCompany?companyId='+companyIds);
+	       	 								/* window.parent.location.reload();
+	       	 								layer.close(index); */
+	       	 						    });
+	       	 	                	}
+	       	 	                },
+	       	 	                error:function () {
+	       	 	                	layer.alert('添加出错', {icon: 2,title:"提示"},function(index){
+	       	 								window.parent.location.reload();
+	       	 							    layer.close(index);
+	       	 						   });
+	       	 	                }
+	       	 	     		});
+                    	
+                    	 
+                    }
+                    else if(data==-8){
+						layer.alert('公司最多添加10个', {icon: 0,title:"提示"},function(index){
+							window.parent.location.reload();
+						    layer.close(index);
+					   });
+                    }
+                    else{
+                    	
+							layer.alert('添加信息失败', {icon: 2,title:"提示"},function(index){
+								window.parent.location.reload();
+							    layer.close(index);
+						   });
+                    }
+                },
+                error:function () {
+                	layer.alert('添加出错', {icon: 2,title:"提示"},function(index){
+							window.parent.location.reload();
+						    layer.close(index);
+					   });
+                }
+            });
+        });
+        $("#cancel").click(function () {
+           parent.layer.closeAll();
+        });
+    });
+</script>
+</html>

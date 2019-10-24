@@ -1,0 +1,139 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<head lang="en">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>修改密码</title>
+<meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="">
+<meta name="author" content="">
+<base href="/"/>
+	<link rel="stylesheet" href="/layui/css/layui.css">
+<link rel="stylesheet" type="text/css"
+	href="/lib/bootstrap/css/bootstrap.css">
+<!--<link rel="stylesheet" type="text/css"-->
+	<!--href="/lib/bootstrap/css/bootstrap-responsive.css">-->
+<link rel="stylesheet" type="text/css"
+	href="/stylesheets/theme.css">
+<!--<link rel="stylesheet"-->
+	<!--href="/lib/font-awesome/css/font-awesome.css">-->
+
+<script src="/lib/jquery-1.8.1.min.js"
+	type="text/javascript"></script>
+<script type="text/javascript" src="/js/ajaxFilter.js"></script>
+<style type="text/css">
+#line-chart {
+	height: 300px;
+	width: 800px;
+	margin: 0px auto;
+	margin-top: 1em;
+}
+
+.brand {
+	font-family: georgia, serif;
+}
+
+.brand .first {
+	color: #ccc;
+	font-style: italic;
+}
+
+.brand .second {
+	color: #fff;
+	font-weight: bold;
+}
+</style>
+</head>
+<body>
+
+
+	<div class="container-fluid">
+
+		<div class="row-fluid">
+			<div class="dialog span4">
+				<div class="block">
+					<div class="block-heading">修改密码</div>
+					<div class="block-body" style="height:220px">
+						<form class="layui-form" action="/user/editUserPwd" method="post" id="pwdform">
+							<input type="text" style="display: none;">
+							<input type="password" style="display: none;">
+							<label>原密码：</label> <input maxlength="16" type="password"  name="old_password" id="pwd" class="span12" autocomplete="new-password">
+							<label>新密码：</label> <input maxlength="16" type="password"  name="new_password" id="pwd1" class="span12" autocomplete="new-password">
+							<label>确认密码：</label><input maxlength="16" type="password" name="password1" id="pwd2" class="span12" autocomplete="new-password">
+							<input type="password" style="display: none;">
+
+							<div class="clearfix"></div>
+						</form>
+						<input type="button" value="提交" id="subpwd" onclick="subpwd()" class="btn btn-primary pull-right">
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+</body>
+</html>
+<script type="text/javascript" src="/layui/layui.js"></script>
+<script>
+
+
+    $(document).ready(function() {
+		var loginResult = [[${loginResult}]];
+		if (loginResult == 0)
+			{
+			alert("初次登录，请修改密码！");
+			}
+		if (loginResult == 1)
+		{
+		alert("原始密码输入错误！");
+		}
+
+		/* $('#pwd1').val('');
+		$('#pwd2').val(''); */
+
+		});
+
+function subpwd(){
+		var pwd = $("input[id='pwd']").val();   
+
+	    var pwd1 = $("input[id='pwd1']").val();
+
+	    var pwd2 = $("input[id='pwd2']").val();
+    if (pwd.length<6) {
+        alert("原始密码不能小于6位!");
+        $("input[id='pwd']").val("");
+        return false;
+    }
+    if (pwd1.length<6) {
+        alert("新密码不能小于6位!");
+        $("input[id='pwd1']").val("");
+        return false;
+    }
+    if (pwd1.length<6) {
+        alert("确认密码不能小于6位!");
+        $("input[id='pwd2']").val("");
+        return false;
+    }
+	if (pwd==pwd1) {
+		alert("原密码和新密码不能相同");
+		return false;
+	}
+		if(pwd==""){
+			alert("原密码不能为空!");
+			return false;
+		}
+		if(pwd1==""||pwd2==""){
+			alert("新密码或确认密码不能为空!");
+			return false;
+		}
+	    if(pwd1 != pwd2){
+	    alert("两次输入的密码不一致!");
+	    $("input[id='pwd1']").val("");
+	    $("input[id='pwd2']").val("");
+	    return false;
+	    }
+
+	var form = document.getElementById('pwdform');
+	form.submit();
+}
+
+      </script>

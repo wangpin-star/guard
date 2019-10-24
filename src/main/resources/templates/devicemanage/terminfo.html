@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>   
+<title>
+</title>    
+<meta charset="UTF-8"></meta>    
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"></meta>    
+<meta name="viewport" content="width=device-width, initial-scale=1.0"></meta>    
+<meta http-equiv="pragma" content="no-cache"></meta>    
+<meta http-equiv="cache-control" content="no-cache"></meta>    
+<meta http-equiv="expires" content="0"></meta>    
+<link rel="stylesheet" href="/layui/css/layui.css" media="all" />
+<style type="text/css"> 
+.layui-form-item{ width: 90% } 
+.layui-form-radio {
+            line-height: 28px;
+            margin: 6px 1px 0 0;
+            padding-right: 10px;
+            cursor: pointer;
+            font-size: 0;
+            width:212px;
+        }
+.layui-input-block{
+        width:940px
+        }
+.layui-btn + .layui-btn{
+    margin-right:30px;
+}
+.layui-input {
+    border-radius: 4px 4px 4px 4px;
+}
+.layui-form-pane .layui-form-radio, .layui-form-pane .layui-form-switch {
+    margin-top: 6px;
+    margin-left:27px!important;
+}
+</style>
+</head>
+<body>
+
+<div style="width:400px;padding: 20px;height:20%">
+   <p style="float:left;margin-bottom: 13px;"> <font color="#1E9FFF" size="5px">当前选择设备：</font></p>
+   <p id="name"  style="margin-top:3px;width:150px;white-space:nowrap;font-size:20px;color:#1E9FFF; float:left" th:title="${names}" th:text="${names}" ></p>
+      	
+</div>
+
+<div id="show_" class="layui-collapse" lay-filter="test" style="overflow-y: auto;width:99.9%;margin-top:10px;">
+   <div class="layui-colla-item">  
+     <h2 class="layui-colla-title">设备参数</h2>    
+        <div class="layui-colla-content layui-show">
+            <form class="layui-form layui-form-pane"  id="doorcontrol" action="" >
+               <div class="layui-form-item" th:each="paramInfo:${paramInfo}" th:if="${paramInfo.param_sheet}=='开门控制参数'"> 
+                   <div th:if="${paramInfo.type}=='OPTION'" style="float:left;" th:id="${paramInfo.param_key}">
+                      <label class="layui-form-label"  style="width:20%;border:none;background-color:transparent" th:title="${paramInfo.param_name}" th:text="${paramInfo.param_name}"></label>
+                       <div  class="layui-input-block" >
+                          <div style="float:left" th:each="values:${paramInfo.set}">
+                           <input  th:if="${values.value!=paramInfo.param_value}" type="radio" th:name="${paramInfo.param_key}" th:id="${values.value}"  th:value="${values.dispaly}" th:title="${values.dispaly}" lay-filter="radio">
+                           <input th:if="${values.value==paramInfo.param_value}" type="radio" th:name="${paramInfo.param_key}" th:id="${values.value}" th:value="${values.dispaly}"  th:title="${values.dispaly}" lay-filter="radio" checked>  
+                          </div>
+                       </div>
+                    </div>
+                    
+                    <div th:if="${paramInfo.type}=='TEXT'" style="float:left;" th:id="${paramInfo.param_key}">
+                      <label class="layui-form-label"  style="width:20%;border:none;background-color:transparent" th:title="${paramInfo.param_name}" th:text="${paramInfo.param_name}"></label>
+                       <div  class="layui-input-block" >
+                           <input  type="text" style="height:30px;width:345px;margin-left: 130px;" th:name="${paramInfo.param_key}" 
+                            autocomplete="off"  class="layui-input" th:value="${paramInfo.param_value}" th:title="${paramInfo.param_value}">
+                          
+                       </div>
+                    </div>
+                    
+                    <div th:if="${paramInfo.type}=='NUMBER'" style="float:left;" th:id="${paramInfo.param_key}">
+                      <label class="layui-form-label"  style="width:20%;border:none;background-color:transparent" th:title="${paramInfo.param_name}" th:text="${paramInfo.param_name}"></label>
+                       <div  class="layui-input-block" >
+                           <input type="text" style="height:30px;width:345px;margin-left: 130px;"  th:name="${paramInfo.param_key}"
+                             autocomplete="off"  class="layui-input" th:value="${paramInfo.param_value}" th:title="${paramInfo.param_value}" onkeyup="this.value=this.value.replace(/\D/g,'')" onafterpaste="this.value=this.value.replace(/\D/g,'')">
+                       </div>
+                    </div>
+                    
+                     <div th:if="${paramInfo.type}=='JSON'" style="float:left;">
+                      <label class="layui-form-label"  style="width:20%;border:none;background-color:transparent" th:title="${paramInfo.param_name}" th:text="${paramInfo.param_name}"></label>
+                         <div  class="layui-input-block" >
+                           <div th:each="value1:${paramInfo.sets}" th:if="${#strings.contains(paramInfo.param_value,value1.key)}">
+                               <div th:if="${value1.type}=='OPTION'" style="float:left;">
+			                      <label class="layui-form-label"  style="width:20%;border:none;background-color:transparent" th:title="${value1.name}" th:text="${value1.name}"></label>
+			                       <div  class="layui-input-block" th:each="paramvalue:${#strings.arraySplit(paramInfo.param_value,',')}" th:if="${#strings.contains(paramvalue,value1.key)}">
+			                          <div style="float:left" th:each="value2:${value1.set}">
+				                         <input type="radio"  th:each="paramvalue:${#strings.arraySplit(paramInfo.param_value,',')}"
+				                            th:if="${#strings.contains(paramvalue,value1.key) && #strings.contains(paramvalue,value2.value)}" th:name="${value1.key}"  th:id="${value2.value}"  th:value="${value2.dispaly}" th:title="${value2.dispaly}" lay-filter="radio" checked> 
+				                        
+				                         <input type="radio" th:each="paramvalue:${#strings.arraySplit(paramInfo.param_value,',')}" 
+				                            th:if="${#strings.contains(paramvalue,value1.key) && not #strings.contains(paramvalue,value2.value)}" th:name="${value1.key}"  th:id="${value2.value}"  th:value="${value2.dispaly}" th:title="${value2.dispaly}" lay-filter="radio">
+				                        
+				                       <input type="radio" th:if="${#strings.isEmpty(paramInfo.param_value)||not #strings.contains(paramInfo.param_value,value1.key)}" th:name="${value1.key}"  th:id="${value2.value}"  th:value="${value2.dispaly}" th:title="${value2.dispaly}" lay-filter="radio">
+				                       </div>
+			                       </div>
+			                    </div>
+			                    
+			                    <div th:if="${value1.type}=='TEXT'" style="float:left;">
+			                      <label class="layui-form-label"  style="width:20%;border:none;background-color:transparent" th:title="${value1.name}" th:text="${value1.name}"></label>
+			                       <div  class="layui-input-block" th:each="paramvalue:${#strings.arraySplit(paramInfo.param_value,',')}" th:if="${#strings.contains(paramvalue,value1.key)}">
+			                           <input   type="text" style="height:30px;width:345px" th:name="${value1.key}" 
+			                            autocomplete="off"  class="layui-input" th:value="${value1.value}" th:title="${value1.value}">
+			                          
+			                       </div>
+			                    </div>
+			                    
+			                    <div th:if="${value1.type}=='NUMBER'" style="float:left;">
+			                      <label class="layui-form-label"  style="width:20%;border:none;background-color:transparent" th:title="${value1.name}" th:text="${value1.name}"></label>
+			                       <div  class="layui-input-block" th:each="paramvalue:${#strings.arraySplit(paramInfo.param_value,',')}" th:if="${#strings.contains(paramvalue,value1.key)}">
+			                           <input type="text" style="height:30px;width:345px"  th:name="${value1.key}"
+			                             autocomplete="off"  class="layui-input" th:value="${value1.value}" th:title="${value1.value}" onkeyup="this.value=this.value.replace(/\D/g,'')" onafterpaste="this.value=this.value.replace(/\D/g,'')">
+			                       </div>
+			                    </div>
+			                    
+                            </div>
+                        </div>
+                    </div>
+                 </div>
+            </form>
+         </div>   
+    </div> 
+    
+    
+    <div class="layui-colla-item">  
+     <h2 class="layui-colla-title">软件参数</h2>    
+        <div class="layui-colla-content layui-show">
+            <form class="layui-form layui-form-pane"  id="doorcontrol" action="" >
+               <div class="layui-form-item" th:each="paramInfo:${paramInfo}" th:if="${paramInfo.param_sheet}=='软件参数'"> 
+                   <div th:if="${paramInfo.type}=='OPTION'" style="float:left;">
+                      <label class="layui-form-label"  style="width:20%;border:none;background-color:transparent" th:title="${paramInfo.param_name}" th:text="${paramInfo.param_name}"></label>
+                       <div  class="layui-input-block" >
+                         <div style="float:left" th:each="values:${paramInfo.set}">
+                           <input  th:if="${values.value!=paramInfo.param_value}" type="radio" th:name="${paramInfo.param_key}" th:id="${values.value}"  th:value="${values.dispaly}" th:title="${values.dispaly}" lay-filter="radio">
+                           <input  th:if="${values.value==paramInfo.param_value}" type="radio" th:name="${paramInfo.param_key}" th:id="${values.value}"  th:value="${values.dispaly}" th:title="${values.dispaly}" lay-filter="radio" checked>  
+                         </div>
+                       </div>
+                    </div>
+                    
+                    <div th:if="${paramInfo.type}=='TEXT'" style="float:left;">
+                      <label class="layui-form-label"  style="width:20%;border:none;background-color:transparent" th:title="${paramInfo.param_name}" th:text="${paramInfo.param_name}"></label>
+                       <div  class="layui-input-block" >
+                           <input  type="text" style="height:30px;width:345px;margin-left: 130px;" th:name="${paramInfo.param_key}" 
+                            autocomplete="off"  class="layui-input" th:value="${paramInfo.param_value}" th:title="${paramInfo.param_value}">
+                          
+                       </div>
+                    </div>
+                    
+                    <div th:if="${paramInfo.type}=='NUMBER'" style="float:left;">
+                      <label class="layui-form-label"  style="width:20%;border:none;background-color:transparent" th:title="${paramInfo.param_name}" th:text="${paramInfo.param_name}"></label>
+                       <div  class="layui-input-block" >
+                           <input type="text" style="height:30px;width:345px;margin-left: 130px;"  th:name="${paramInfo.param_key}"
+                             autocomplete="off"  class="layui-input" th:value="${paramInfo.param_value}" th:title="${paramInfo.param_value}" onkeyup="this.value=this.value.replace(/\D/g,'')" onafterpaste="this.value=this.value.replace(/\D/g,'')">
+                       </div>
+                    </div>
+                    
+                    
+                    <div th:if="${paramInfo.type}=='JSON'" style="float:left;">
+                      <label class="layui-form-label"  style="width:20%;border:none;background-color:transparent" th:title="${paramInfo.param_name}" th:text="${paramInfo.param_name}"></label>
+                         <div  class="layui-input-block" >
+                           <div th:each="value1:${paramInfo.sets}" th:if="${#strings.contains(paramInfo.param_value,value1.key)}">
+                               <div th:if="${value1.type}=='OPTION'" style="float:left;">
+			                      <label class="layui-form-label"  style="width:20%;border:none;background-color:transparent" th:title="${value1.name}" th:text="${value1.name}"></label>
+			                       <div  class="layui-input-block" th:each="paramvalue:${#strings.arraySplit(paramInfo.param_value,',')}" th:if="${#strings.contains(paramvalue,value1.key)}">
+			                          <div style="float:left" th:each="value2:${value1.set}">
+				                         <input type="radio"  th:each="paramvalue:${#strings.arraySplit(paramInfo.param_value,',')}"
+				                            th:if="${#strings.contains(paramvalue,value1.key) && #strings.contains(paramvalue,value2.value)}" th:name="${value1.key}"  th:id="${value2.value}"  th:value="${value2.dispaly}" th:title="${value2.dispaly}" lay-filter="radio" checked> 
+				                        
+				                         <input type="radio" th:each="paramvalue:${#strings.arraySplit(paramInfo.param_value,',')}" 
+				                            th:if="${#strings.contains(paramvalue,value1.key) && not #strings.contains(paramvalue,value2.value)}" th:name="${value1.key}"  th:id="${value2.value}"  th:value="${value2.dispaly}" th:title="${value2.dispaly}" lay-filter="radio">
+				                        
+				                       <input type="radio" th:if="${#strings.isEmpty(paramInfo.param_value)||not #strings.contains(paramInfo.param_value,value1.key)}" th:name="${value1.key}"  th:id="${value2.value}"  th:value="${value2.dispaly}" th:title="${value2.dispaly}" lay-filter="radio">
+				                       </div>
+			                       </div>
+			                    </div>
+			                    
+			                   <div th:if="${value1.type}=='TEXT'" style="float:left;">
+			                      <label class="layui-form-label"  style="width:20%;border:none;background-color:transparent" th:title="${value1.name}" th:text="${value1.name}"></label>
+			                       <div  class="layui-input-block" th:each="paramvalue:${#strings.arraySplit(paramInfo.param_value,',')}" th:if="${#strings.contains(paramvalue,value1.key)}">
+			                           <input   type="text" style="height:30px;width:345px" th:name="${value1.key}" 
+			                            autocomplete="off"  class="layui-input" th:value="${value1.value}" th:title="${value1.value}">
+			                          
+			                       </div>
+			                    </div>
+			                    
+			                    <div th:if="${value1.type}=='NUMBER'" style="float:left;">
+			                      <label class="layui-form-label"  style="width:20%;border:none;background-color:transparent" th:title="${value1.name}" th:text="${value1.name}"></label>
+			                       <div  class="layui-input-block" th:each="paramvalue:${#strings.arraySplit(paramInfo.param_value,',')}" th:if="${#strings.contains(paramvalue,value1.key)}">
+			                           <input type="text" style="height:30px;width:345px"  th:name="${value1.key}"
+			                             autocomplete="off"  class="layui-input" th:value="${value1.value}" th:title="${value1.value}" onkeyup="this.value=this.value.replace(/\D/g,'')" onafterpaste="this.value=this.value.replace(/\D/g,'')">
+			                       </div>
+			                    </div>
+			                    
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+         </div>   
+    </div> 
+    
+    <div class="layui-colla-item">  
+     <h2 class="layui-colla-title">应用参数</h2>    
+        <div class="layui-colla-content layui-show">
+            <form class="layui-form layui-form-pane"  id="doorcontrol" action="" >
+               <div  class="layui-form-item" th:each="paramInfo:${paramInfo}" th:if="${paramInfo.param_sheet}=='应用参数'"> 
+                
+                   <div th:if="${paramInfo.type}=='OPTION'" style="float:left;">
+                      <label class="layui-form-label"  style="width:20%;border:none;background-color:transparent" th:title="${paramInfo.param_name}" th:text="${paramInfo.param_name}"></label>
+                       <div  class="layui-input-block" >
+                           <div style="float:left" th:each="values:${paramInfo.set}">
+                             <input type="radio" th:if="${values.value==paramInfo.param_value}" th:name="${paramInfo.param_key}" th:id="${values.value}"  th:value="${values.dispaly}" th:title="${values.dispaly}" lay-filter="radio" checked>
+                             <input type="radio" th:if="${values.value!=paramInfo.param_value}" th:name="${paramInfo.param_key}" th:id="${values.value}"  th:value="${values.dispaly}" th:title="${values.dispaly}" lay-filter="radio" >
+                           </div>
+                       </div>
+                    </div>
+                    
+                    <div th:if="${paramInfo.type}=='TEXT'" style="float:left;">
+                      <label class="layui-form-label"  style="width:20%;border:none;background-color:transparent" th:title="${paramInfo.param_name}" th:text="${paramInfo.param_name}"></label>
+                       <div  class="layui-input-block" >
+                           <input  type="text" style="height:30px;width:345px;margin-left: 130px;" th:name="${paramInfo.param_key}" 
+                            autocomplete="off"  class="layui-input" th:value="${paramInfo.param_value}" th:title="${paramInfo.param_value}">
+                          
+                       </div>
+                    </div>
+                    
+                    <div th:if="${paramInfo.type}=='NUMBER'" style="float:left;">
+                      <label class="layui-form-label"  style="width:20%;border:none;background-color:transparent" th:title="${paramInfo.param_name}" th:text="${paramInfo.param_name}"></label>
+                       <div  class="layui-input-block" >
+                           <input type="text" style="height:30px;width:345px;margin-left: 130px;"  th:name="${paramInfo.param_key}"
+                             autocomplete="off"  class="layui-input" th:value="${paramInfo.param_value}" th:title="${paramInfo.param_value}" onkeyup="this.value=this.value.replace(/\D/g,'')" onafterpaste="this.value=this.value.replace(/\D/g,'')">
+                       </div>
+                    </div>
+                    
+                    <div th:if="${paramInfo.type}=='JSON'" style="float:left;background-color: #f7f7f7;">
+                    <div class="layui-colla-item" style="margin-left:40px;width: 1060px;">  
+					   <h2 class="layui-colla-title" style="background-color: #f9f9f9" th:text="${paramInfo.param_name}"></h2>    
+					      <div class="layui-colla-content layui-show">
+                         <div  class="layui-input-block" style="width:830px !important;">
+                           <div th:each="value1:${paramInfo.sets}" >
+                               <div th:if="${value1.type}=='OPTION'" style="float:left;">
+			                      <label class="layui-form-label"  style="width:20%;border:none;background-color:transparent" th:title="${value1.name}" th:text="${value1.name}"></label>		                   
+				                   <div  class="layui-input-block" style="width:830px !important;">
+				                       <div style="float:left" th:each="value2:${value1.set}">
+				                         <input type="radio"  th:each="paramvalue:${#strings.arraySplit(paramInfo.param_value,',')}"
+				                            th:if="${#strings.contains(paramvalue,value1.key) && #strings.contains(paramvalue,value2.value)}" th:name="${value1.key}"  th:id="${value2.value}"  th:value="${value2.dispaly}" th:title="${value2.dispaly}" lay-filter="radio" checked> 
+				                        
+				                         <input type="radio" th:each="paramvalue:${#strings.arraySplit(paramInfo.param_value,',')}" 
+				                            th:if="${#strings.contains(paramvalue,value1.key) && not #strings.contains(paramvalue,value2.value)}" th:name="${value1.key}"  th:id="${value2.value}"  th:value="${value2.dispaly}" th:title="${value2.dispaly}" lay-filter="radio">
+				                        
+				                       <input type="radio" th:if="${#strings.isEmpty(paramInfo.param_value)||not #strings.contains(paramInfo.param_value,value1.key)}" th:name="${value1.key}"  th:id="${value2.value}"  th:value="${value2.dispaly}" th:title="${value2.dispaly}" lay-filter="radio">
+				                       </div>
+				                   </div>
+			                    </div>
+			                    
+			                    <div th:if="${value1.type}=='TEXT'" style="float:left;">
+			                      <label class="layui-form-label"  style="width:20%;border:none;background-color:transparent" th:title="${value1.name}" th:text="${value1.name}"></label>
+			                       <div  class="layui-input-block" th:each="paramvalue:${#strings.arraySplit(paramInfo.param_value,',')}" th:if="${#strings.contains(paramvalue,value1.key)}">
+			                           <input   type="text" style="height:30px;width:345px" th:name="${value1.key}" 
+			                            autocomplete="off"  class="layui-input" th:value="${value1.value}" th:title="${value1.value}">
+			                          
+			                       </div>
+			                    </div>
+			                    
+			                    <div th:if="${value1.type}=='NUMBER'" style="float:left;">
+			                      <label class="layui-form-label"  style="width:20%;border:none;background-color:transparent" th:title="${value1.name}" th:text="${value1.name}"></label>
+			                       <div  class="layui-input-block" th:each="paramvalue:${#strings.arraySplit(paramInfo.param_value,',')}" th:if="${#strings.contains(paramvalue,value1.key)}">
+			                           <input type="text" style="height:30px;width:345px"  th:name="${value1.key}"
+			                             autocomplete="off"  class="layui-input" th:value="${value1.value}" th:title="${value1.value}" onkeyup="this.value=this.value.replace(/\D/g,'')" onafterpaste="this.value=this.value.replace(/\D/g,'')">
+			                       </div>
+			                    </div>
+			                    
+                            </div>
+                        </div>
+                        
+                        </div>
+                        
+                       </div> 
+                    </div>
+                 </div>
+            </form>
+         </div>   
+    </div> 
+    
+    <div class="layui-colla-item" id="terminal">    
+     <h2 class="layui-colla-title">终端提示参数</h2>    
+    <div class="layui-colla-content layui-show">
+            <div style="float:left;margin-left:8%"><p style="font-size:18px">提示信息名称</p></div>
+            <div style="float:left;margin-left:17%"><p style="font-size:18px">语言提示文本</p></div>
+             <div style="float:left;margin-left:15%"><p style="font-size:18px">文字提示文本</p></div>
+             <div style="float:left;margin-left:13%"><button class="layui-btn layui-btn-danger layui-btn-xs" id="reset_">重置</button></div>
+         <form class="layui-form layui-form-pane" id="prompt" style="margin-top:50px;"  action="" onsubmit="return check()">
+         <div>
+          <div class="layui-form-item" th:each="hintInfo:${hintInfo}">
+             <div style="float:left;margin-left:10px" >
+                 <label class="layui-form-label"  style="width:30%;border:none;background-color:transparent;" th:text="${hintInfo.hint_name}"  th:title="${hintInfo.hint_name}"  th:id="${hintInfo.hint_key}" ></label>
+                 <div  class="layui-input-block">
+                    <div style="float:left;margin-left: 20px;"> 
+                       <input type="text" style="height:30px;width:270px"  th:id="${hintInfo.hint_key}" th:name="${hintInfo.hint_key+','+hintInfo.hint_name}" th:value="${hintInfo.hint_sound_text}" lay-verify="required" autocomplete="off"  class="layui-input">
+                       
+                    </div>
+                     <div style="float:left;margin-left: 10px;">
+                       <input type="text" style="height:30px;width:270px"  th:id="${hintInfo.hint_key+1}" th:name="${hintInfo.hint_key+','+hintInfo.hint_name}" th:value="${hintInfo.hint_text}" lay-verify="required" autocomplete="off"  class="layui-input"></div>
+                 </div>
+             </div>
+           </div>
+           </div>
+       </form>
+     </div> 
+  </div>
+</div>
+      <div  style="position: fixed; bottom:40px;right:30px;margin:1">
+             <button type="button" id="save"  class="layui-btn layui-btn-ks">保存</button>
+             <button type="button" id="cancel" class="layui-btn layui-btn-ks">取消</button>
+      </div>
+<script type="text/javascript" src="/layui/layui.js"></script>
+<script type="text/javascript" src="/js/jquery.min.js"></script>
+<script type="text/javascript" src="/js/param.js"></script>
+<script type="text/javascript" src="/js/ajaxFilter.js"></script>
+<script th:inline="javascript">
+$(document).ready(function() {
+var height=document.documentElement.clientHeight;
+var h=height-170;
+$("#show_").css('height',h);
+changeFrameHeight();
+function changeFrameHeight(){
+	 var h = document.documentElement.clientHeight*0.75;
+	 var w = document.documentElement.clientWidth*0.75;
+     $("#show").css('height',h);
+     for(var i=1;i<40;i++){
+    	 $("#block_"+i).css('width',w);
+     }
+}   
+function changeheight(){
+	 var h1 = document.documentElement.clientHeight-170;
+	$("#show_").css('height',h1);
+	var w1 = document.documentElement.clientWidth*0.99;
+	$("#show_").css('width',w1);
+}
+window.onresize=function(){
+    changeFrameHeight();
+    changeheight();
+}
+layui.use(['layer', 'form', 'element'], function(){  
+	var layer = layui.layer  
+	,form= layui.form  
+	,element = layui.element;
+	 var paramInfo=[[${paramInfo}]];
+	 var l=paramConfig(paramInfo);
+	var params=l.params;
+	var results=l.results;
+	var list=l.list;
+	$("input[type='radio']").each(function(){
+		if((this.checked ? 'true' : 'false')=='true'){
+			 for(var i=0;i<params.length;i++){
+				if($(this).attr("name")==params[i].key&&$(this).attr("id")==params[i].value){
+					if(params[i].display==false){
+						hideOrShow(params[i].sheet,results);
+						for(var j=0;j<params[i].controlled.length;j++){
+							if(params[i].controlled[j]!=""){
+								$("#"+params[i].controlled[j]).show();  //下一级radio 
+								$('input:radio[name='+params[i].controlled[j]+']').each(function(){
+									if((this.checked ? 'true' : 'false')=='true'){
+										hideOrShows($(this).attr("name"),list);
+										for(var k=0;k<params.length;k++){
+											if($(this).attr("name")==params[k].key&&$(this).attr("id")==params[k].value){
+												for(var o=0;o<params[k].controlled.length;o++){
+													if(params[k].controlled[o]!=""){
+														$("#"+params[k].controlled[o]).show();
+													}
+													
+												}
+											}
+										}
+									}
+								});
+							}
+							
+						}
+					}
+					else{
+						hideOrShows($(this).attr("name"),list);
+						for(var m=0;m<params[i].controlled.length;m++){
+							if(params[i].controlled[m]!=""){
+								$("#"+params[i].controlled[m]).show();
+							}
+							$('input:radio[name='+params[i].controlled[m]+']').each(function(){
+								if((this.checked ? 'true' : 'false')=='true'){
+									hideOrShows($(this).attr("name"),list);
+									for(var n=0;n<params.length;n++){
+										if($(this).attr("name")==params[n].key&&$(this).attr("id")==params[n].value){
+											for(var c=0;c<params[n].controlled.length;c++){
+												if(params[n].controlled[c]!=""){
+													$("#"+params[n].controlled[c]).show();
+												}
+												
+											}
+										}
+									}
+								}
+							});
+						}
+					}
+						
+				}
+			}
+		}
+	});
+	
+	form.on('radio(radio)', function(data){
+		if((this.checked ? 'true' : 'false')=='true'){
+			 for(var i=0;i<params.length;i++){
+				if($(this).attr("name")==params[i].key&&$(this).attr("id")==params[i].value){
+					if(params[i].display==false){
+						hideOrShow(params[i].sheet,results);
+						for(var j=0;j<params[i].controlled.length;j++){
+							if(params[i].controlled[j]!=""){
+								$("#"+params[i].controlled[j]).show();  //下一级radio 
+								$('input:radio[name='+params[i].controlled[j]+']').each(function(){
+									if((this.checked ? 'true' : 'false')=='true'){
+										hideOrShows($(this).attr("name"),list);
+										for(var k=0;k<params.length;k++){
+											if($(this).attr("name")==params[k].key&&$(this).attr("id")==params[k].value){
+												for(var o=0;o<params[k].controlled.length;o++){
+													if(params[k].controlled[o]!=""){
+														$("#"+params[k].controlled[o]).show();
+													}
+													
+												}
+											}
+										}
+									}
+								});
+							}
+							
+						}
+					}
+					else{
+						hideOrShows($(this).attr("name"),list);
+						for(var m=0;m<params[i].controlled.length;m++){
+							if(params[i].controlled[m]!=""){
+								$("#"+params[i].controlled[m]).show();
+							}
+							$('input:radio[name='+params[i].controlled[m]+']').each(function(){
+								if((this.checked ? 'true' : 'false')=='true'){
+									hideOrShows($(this).attr("name"),list);
+									for(var n=0;n<params.length;n++){
+										if($(this).attr("name")==params[n].key&&$(this).attr("id")==params[n].value){
+											for(var c=0;c<params[n].controlled.length;c++){
+												if(params[n].controlled[c]!=""){
+													$("#"+params[n].controlled[c]).show();
+												}
+												
+											}
+										}
+									}
+								}
+							});
+						}
+					}
+						
+				}
+			}
+		}
+	});
+	});
+  });
+	
+$('#cancel').on('click',function(){
+		parent.layer.closeAll();
+});
+
+$('#reset_').on('click',function(){
+	$("input[type='text']").each(function(){	
+		if(($(this).attr("name").split(","))[0]=="mod_face_only"){
+			$(this).val("请刷脸");
+		}
+		if(($(this).attr("name").split(","))[0]=="mod_card_only"){
+			$(this).val("请刷卡");
+		}
+		if(($(this).attr("name").split(","))[0]=="mod_face_or_card"){
+			$(this).val("请刷脸或刷卡");
+		}
+		if(($(this).attr("name").split(","))[0]=="auth_emp_wel"){
+			$(this).val("%s您好");
+		}
+		if(($(this).attr("name").split(","))[0]=="unauth_emp_wel"){
+			$(this).val("%s欢迎来访");
+		}
+		if(($(this).attr("name").split(","))[0]=="auth_visitor_wel"){
+			$(this).val("%s欢迎来访");
+		}
+		if(($(this).attr("name").split(","))[0]=="unauth_visitor_wel"){
+			$(this).val("%s欢迎来访");
+		}
+		if(($(this).attr("name").split(","))[0]=="cmp_timeout"){
+			$(this).val("比对超时");
+		}
+		if(($(this).attr("name").split(","))[0]=="cmp_unpass"){
+			$(this).val("比对不通过");
+		}
+		if(($(this).attr("name").split(","))[0]=="cmp_pphoto"){
+			$(this).val("请刷脸进行比对");
+		}
+		if(($(this).attr("name").split(","))[0]=="cmp_pcard"){
+			$(this).val("请刷脸进行比对");
+		}
+		if(($(this).attr("name").split(","))[0]=="unauth_emp_tip"){
+			$(this).val("%s未授权");
+		}
+		if(($(this).attr("name").split(","))[0]=="unauth_visitor_face_only_tip"){
+			$(this).val("%s您未登记");
+		}
+		if(($(this).attr("name").split(","))[0]=="unauth_visitor_face_tip"){
+			$(this).val("%s请刷身份证");
+		}
+		if(($(this).attr("name").split(","))[0]=="unauth_visitor_empcard_tip"){
+			$(this).val("%s请刷身份证");
+		}
+		if(($(this).attr("name").split(","))[0]=="unauth_visitor_idcard_tip"){
+			$(this).val("%s未授权");
+		}
+		if(($(this).attr("name").split(","))[0]=="cmp_unmatch"){
+			$(this).val("%s请使用本人身份证");
+		}
+	});
+});
+
+
+$('#save').on('click',function(){
+	var paramInfo=[[${paramInfo}]]; 
+	
+	var hintInfo=[[${hintInfo}]];
+	var hintInfos=[];
+	var flag=0;
+	for(var i=0;i<paramInfo.length;i++){
+		paramInfo[i].param_value="";
+	}
+	$("input[type='radio']").each(function(){	
+		if((this.checked ? 'true' : 'false')=='true'){
+			for(var i=0;i<paramInfo.length;i++){
+				if(paramInfo[i].param_key==$(this).attr("name")){
+					paramInfo[i].param_value=$(this).attr("id");
+				}
+				if(paramInfo[i].type=="JSON"){
+					for(var j=0;j<paramInfo[i].sets.length;j++){
+						if($(this).attr("name")==paramInfo[i].sets[j].key){
+							if(paramInfo[i].sets[j].value_type=="TEXT"){
+								paramInfo[i].param_value+='"'+$(this).attr("name")+'":'+'"'+$(this).attr("id")+'"'+',';
+							}
+							if(paramInfo[i].sets[j].value_type=="BOOL"){
+								paramInfo[i].param_value+='"'+$(this).attr("name")+'":'+$(this).attr("id")+',';
+							}
+						}
+					}
+				}
+			}
+		}
+	});
+	$("input[type='text']").each(function(){	
+		if($(this).val()!=""){
+			for(var i=0;i<paramInfo.length;i++){
+				if(paramInfo[i].param_key==$(this).attr("name")){
+					paramInfo[i].param_value=$(this).val();
+				}
+			}
+		}
+	});
+	 $("#terminal").find("input[type='text']").each(function(){
+         for(var i=0;i<hintInfo.length;i++){
+        	 if(hintInfo[i].hint_key==$(this).attr("id")){
+        		 hintInfo[i].hint_sound_text=$(this).val();
+        		 hintInfo[i].hint_name=($(this).attr("name").split(","))[1];
+        	 }
+        	 if(hintInfo[i].hint_key+1==$(this).attr("id")){
+        		 hintInfo[i].hint_text=$(this).val();
+        		 hintInfo[i].hint_name=($(this).attr("name").split(","))[1];
+        	 }
+         }
+     });
+	for(var i=0;i<paramInfo.length;i++){
+		var dname=paramInfo[i].param_key;
+		if($("#"+dname).is(':hidden')){
+			paramInfo[i].param_value="";
+		}
+	}
+	for(var i=0;i<paramInfo.length;i++){
+		if(paramInfo[i].param_value!=""){
+			if(paramInfo[i].type=="JSON"){
+				var val=paramInfo[i].param_value;
+				paramInfo[i].param_value='{'+val.substring(0,val.length-1)+'}';
+			}
+			if(paramInfo[i].param_key=="switch_ip"||paramInfo[i].param_key=="net_server"){
+				if(!isValidIP(paramInfo[i].param_value)){
+					flag=1;
+				}
+			}
+			if(paramInfo[i].param_key=="report_url"){
+				if(!isUrL(paramInfo[i].param_value)){
+					flag=2;
+				}
+			}
+		}
+	}
+	var termInfo={};
+	for(var i=0;i<hintInfo.length;i++){
+		if(hintInfo[i].hint_sound_text!=""&&hintInfo[i].hint_text!=""){
+			hintInfos.push(hintInfo[i]);
+		}
+	}
+	termInfo.paramInfo=paramInfo;
+	termInfo.hintInfo=hintInfos;
+	if(flag==1){
+		layer.alert('请输入合法的IP', {icon: 0,title:"提示"},function(index){
+			layer.close(index);
+		});
+	}
+	if(flag==2){
+		layer.alert('请输入合法的url', {icon: 0,title:"提示"},function(index){
+			layer.close(index);
+		});
+	}
+	if(flag==0){
+	 $.ajax({
+         url: "/device/TermConfig",
+         type: "post",
+         async:false,
+         data:JSON.stringify(termInfo),
+         dataType:"json",
+         contentType : 'application/json',
+         success: function(result) {
+
+				if(result==0){
+					layer.alert('修改成功', {icon: 1,title:"提示"},function(index){
+						window.parent.location.reload();
+						layer.close(index);
+					});
+				}
+				if(result==1){
+					layer.alert('无任何修改',{icon: 0,title:"提示"}, function(index){
+						window.parent.location.reload();
+						layer.close(index);
+					});
+				}
+         },
+         error: function() {
+        	 layer.alert('修改失败',{icon: 2,title:"提示"}, function(index){
+					window.parent.location.reload();
+					layer.close(index);
+				});
+         }
+     });
+	}
+ });
+
+</script>
+</body>
+</html> 

@@ -1,0 +1,1230 @@
+﻿<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+  <meta charset="utf-8">
+  <title>设备列表</title>
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <base href="/"/>
+  <link rel="stylesheet" href="/layui/css/layui.css">
+  <link rel="stylesheet" href="/font-awesome/css/font-awesome.css">
+  <style>
+	.layui-input:hover {
+		border-color: #54b5ff !important;
+					}
+	.layui-input::-webkit-input-placeholder {
+		color: #c8c8c8;
+	}
+	.layui-input,.layui-select,.layui-textarea {
+		height:30px;
+		line-height:1.3;
+		line-height:30px;
+		border-width:1px;
+		border-style:solid;
+		background-color:#fff;
+		border-radius:2px
+	}
+	.layui-table th {
+		font-weight: bold;
+	}
+	.layui-table-view .layui-table td, .layui-table-view .layui-table th {
+		padding: 2px 0px !important;
+	}
+	.layui-table-cell a{
+		margin-bottom: 2px;
+	}
+  </style>
+</head>
+<body>
+<!-- <div style="background-color: #f2f2f2;width: 100%;height:46px;">
+  <div style="margin-bottom: 16px;">
+  <div class="layui-inline">  
+    <form class="layui-form" lay-filter="visitorform">
+	  <div class="layui-inline">
+	      <div class="layui-input-inline" style="width:150px;margin-left:30px;">
+	        <div class="layui-input-inline" style="width:150px;">
+	        <select id="category" name="category">
+	          <option value ="">--设备型号--</option>
+	          <option value ="4">iDR350</option>
+	          <option value ="1">iDR410</option>
+	          <option value ="5">iDR410-1</option>
+	          <option value ="3">iDR420</option>
+	          <option value ="9">iDR420-1</option>
+	          <option value ="2">iDR500</option>
+	          <option value ="6">iDR500-1</option>
+	          <option value ="7">CI-14T</option>
+	          <option value ="8">CI-24T</option>
+	          <option value ="11">RK3288BST</option>
+	          <option value ="13">RK3288DW</option>
+	          <option value ="12">RK3288HDX</option>
+	          <option value ="16">RK3288iDR710</option>
+	          <option value ="17">RK3288iDR710-D</option>
+	          <option value ="10">RK3288YF_CIRCLE</option>
+	          <option value ="14">RK3288YF_SQUARE</option>
+	          <option value ="15">RK3288YF_SQUARE_ID</option>
+	          <option value ="100">FACE_CHECK</option>
+	        </select>
+	      </div>
+	  </div>
+	  <div class="layui-inline" style="margin-left: 30px;">
+				<div class="layui-input-inline" style="width:150px;">
+					<select id="network" name="network">
+			          <option value ="">--连接状态--</option>
+			          <option value ="1">在线</option>
+			          <option value ="2">离线</option>
+	        		</select>
+				</div>
+	  </div>
+	  <div class="layui-inline" style="margin-left: 30px;">
+				<div class="layui-input-inline" style="width:150px;">
+					<select id="status" name="status">
+			          <option value ="">--运行状态--</option>
+			          <option value ="1">启用</option>
+			          <option value ="2">停用</option>
+			        </select>
+				</div>
+	  </div>
+  	</form>
+  	</div>
+	<div class="layui-inline" style="margin-left: 30px;width: 12.5%;">
+		<input class="layui-input" style="height: 30px;line-height: 30px;" id="searchContent" placeholder="搜索..." onkeyup="(this.v=function(){this.value=this.value.replace(/[/]+/,'');}).call(this)">
+	</div>
+	<button onmouseover="changeImg(this,2)" onmouseout="changeImg(this,1)" onmousedown="changeImg(this,3)" onmouseup="changeImg(this,2)" class="select-on layui-btn layui-btn" style="padding:0 0px;border: none;height: 30px;line-height: 30px;background-color: #f2f2f2;color: black;" id="doSearch"><img imgName="searchImg" src="/css/img/searchImg1.png">    </img></button>
+	
+  <div style="margin-top:8px;float:right;"> 
+  	<button id="openModak" onmouseover="changeImg(this,2)" onmouseout="changeImg(this,1)" onmousedown="changeImg(this,3)" onmouseup="changeImg(this,2)" class="select-on layui-btn1" style="padding:0 18px;border: none;height: 30px;line-height: 30px;background-color: #f2f2f2;"><img imgName="QRCode" style="margin-bottom: 3px;" src="/css/img/QRCode1.png">    </img>开通二维码</button>
+	<button id="delete" onmouseover="changeImg(this,2)" onmouseout="changeImg(this,1)" onmousedown="changeImg(this,3)" onmouseup="changeImg(this,2)" class="select-on layui-btn1" style="padding:0 18px;border: none;height: 30px;line-height: 30px;background-color: #f2f2f2;" ><img imgName="param" style="margin-bottom: 3px;" src="/css/img/param1.png">    </img>删除设备</button>
+	<button id="deptManage" type="button" onmouseover="changeImg(this,2)" onmouseout="changeImg(this,1)" onmousedown="changeImg(this,3)" onmouseup="changeImg(this,2)" class="select-on layui-btn1" style="padding:0 18px;border: none;height: 30px;line-height: 30px;background-color: #f2f2f2;"><img imgName="depart" style="margin-bottom: 3px;" src="/css/img/depart1.png">    </img>管辖部门</button>
+	<button id="toAuthConfig" onmouseover="changeImg(this,2)" onmouseout="changeImg(this,1)" onmousedown="changeImg(this,3)" onmouseup="changeImg(this,2)" class="select-on layui-btn1" style="padding:0 18px;border: none;height: 30px;line-height: 30px;background-color: #f2f2f2;" ><img imgName="Auth" style="margin-bottom: 3px;" src="/css/img/Auth1.png">    </img>权限配置</button>
+	<button id="getDatas" onmouseover="changeImg(this,2)" onmouseout="changeImg(this,1)" onmousedown="changeImg(this,3)" onmouseup="changeImg(this,2)" class="select-on layui-btn1" style="padding:0 18px;border: none;height: 30px;line-height: 30px;background-color: #f2f2f2;" ><img imgName="param" style="margin-bottom: 3px;" src="/css/img/param1.png">    </img>参数设置</button> 
+  </div>
+</div>
+</div> -->
+<div style="width:100%;height:46px;background-color: #f2f2f2;">
+  <div class="layui-inline">  
+    <form class="layui-form">
+	  <div class="layui-inline" style="margin-top: 8px;margin-left:30px">
+	      <div class="layui-input-inline" style="width:150px;">
+	        <select id="category" name="category">
+	          <option value ="">--设备型号--</option>
+	          <option value ="4">iDR350</option>
+	          <option value ="1">iDR410</option>
+	          <option value ="5">iDR410-1</option>
+	          <option value ="3">iDR420</option>
+	          <option value ="9">iDR420-1</option>
+	          <option value ="2">iDR500</option>
+	          <option value ="6">iDR500-1</option>
+	          <option value ="7">CI-14T</option>
+	          <option value ="8">CI-24T</option>
+	          <option value ="11">RK3288BST</option>
+	          <option value ="13">RK3288DW</option>
+	          <option value ="12">RK3288HDX</option>
+	          <option value ="16">RK3288iDR710</option>
+	          <option value ="17">RK3288iDR710-D</option>
+	          <option value ="10">RK3288YF_CIRCLE</option>
+	          <option value ="14">RK3288YF_SQUARE</option>
+	          <option value ="15">RK3288YF_SQUARE_ID</option>
+	          <option value ="100">FACE_CHECK</option>
+	        </select>
+	      </div>
+	      <div class="layui-input-inline" style="width:150px;">
+	        <select id="network" name="network">
+	          <option value ="">--连接状态--</option>
+	          <option value ="1">在线</option>
+	          <option value ="2">离线</option>
+	        </select>
+	      </div>
+	      <div class="layui-input-inline" style="width:150px;">
+	        <select id="status" name="status">
+	          <option value ="">--运行状态--</option>
+	          <option value ="1">启用</option>
+	          <option value ="2">停用</option>
+	        </select>
+	      </div>
+	  </div>
+  	</form>
+  	</div>
+	 <div class="layui-inline" style="margin-top: 8px;">
+	<div class="layui-inline" style="margin-left: 30px;width: 230px;">
+			<input class="layui-input" style="height: 30px;line-height: 30px;" id="searchContent" placeholder="搜索...">
+	     
+	</div>
+	
+	<button onmouseover="changeImg(this,2)" onmouseout="changeImg(this,1)" onmousedown="changeImg(this,3)" onmouseup="changeImg(this,2)" class="select-on layui-btn1" style="background-color: #f2f2f2;padding:0 0px;mborder: none;height: 30px;line-height: 30px;color: black;" id="doSearch"><img imgName="searchImg" src="/css/img/searchImg1.png">    </img></button>
+</div>
+      <div style="margin-top:8px;float:right;">
+		<shiro:hasPermission name="查看开通二维码">	<button id="openModak" onmouseover="changeImg(this,2)" onmouseout="changeImg(this,1)" onmousedown="changeImg(this,3)" onmouseup="changeImg(this,2)" class="select-on layui-btn1" style="padding:0 18px;border: none;height: 30px;line-height: 30px;background-color: #f2f2f2;"><img imgName="QRCode" style="margin-bottom: 3px;" src="/css/img/QRCode1.png">    </img>开通二维码</button></shiro:hasPermission>
+			<!-- <button id="delete" onmouseover="changeImg(this,2)" onmouseout="changeImg(this,1)" onmousedown="changeImg(this,3)" onmouseup="changeImg(this,2)" class="select-on layui-btn1" style="padding:0 18px;border: none;height: 30px;line-height: 30px;background-color: #f2f2f2;" ><img imgName="param" style="margin-bottom: 3px;" src="/css/img/param1.png">    </img>删除设备</button> -->
+		<shiro:hasPermission name="管辖部门">	<button id="deptManage" type="button" onmouseover="changeImg(this,2)" onmouseout="changeImg(this,1)" onmousedown="changeImg(this,3)" onmouseup="changeImg(this,2)" class="select-on layui-btn1" style="padding:0 18px;border: none;height: 30px;line-height: 30px;background-color: #f2f2f2;"><img imgName="depart" style="margin-bottom: 3px;" src="/css/img/depart1.png">    </img>管辖部门</button></shiro:hasPermission>
+		<shiro:hasPermission name="权限配置">	<button id="toAuthConfig" onmouseover="changeImg(this,2)" onmouseout="changeImg(this,1)" onmousedown="changeImg(this,3)" onmouseup="changeImg(this,2)" class="select-on layui-btn1" style="padding:0 18px;border: none;height: 30px;line-height: 30px;background-color: #f2f2f2;" ><img imgName="Auth" style="margin-bottom: 3px;" src="/css/img/Auth1.png">    </img>权限配置</button></shiro:hasPermission>
+		<shiro:hasPermission name="参数设置">	<button id="getDatas" onmouseover="changeImg(this,2)" onmouseout="changeImg(this,1)" onmousedown="changeImg(this,3)" onmouseup="changeImg(this,2)" class="select-on layui-btn1" style="padding:0 18px;border: none;height: 30px;line-height: 30px;background-color: #f2f2f2;" ><img imgName="param" style="margin-bottom: 3px;" src="/css/img/param1.png">    </img>参数设置</button></shiro:hasPermission>
+		</div>
+</div>
+<div id="motaikunag" style="display: none;">
+       <div style="margin-left:75px">
+        <img id="npcImg" > 
+        </div>
+</div>
+<div style="float: left;width: 100%;margin-top:6px;box-sizing: border-box; ">
+    <table class="layui-hide" id="deviceList" lay-size="sm" lay-filter="test"></table>
+</div>
+<!-- <div style="width: 100%;height:46px;float: left;">
+    <div style="height:36px;line-height: 30px;text-align: center;margin-right:30px;float: right;">
+		<img imgName="online" src="/css/img/online.png">    </img>
+	    <span id="show1"></span> 
+	    <img imgName="underline" src="/css/img/underline.png">    </img>
+	    <span id="show2"></span>
+	</div>
+</div> -->
+<script type="text/html" id="barDemo">
+<shiro:hasPermission name="删除设备">  
+{{# if(d.status==='启用'){ }} 
+      <a class="layui-btn layui-btn-xs" lay-event="close">停用</a> 
+{{# } }} 
+</shiro:hasPermission>
+<shiro:hasPermission name="启用停用设备"> 
+ {{# if(d.status==='停用'){ }} 
+     <a class="layui-btn layui-btn-xs" lay-event="open">启用</a> 
+{{# } }} 
+</shiro:hasPermission>
+<shiro:hasPermission name="删除设备"> 
+{{# if(d.status==='停用'){ }} <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+{{# } }} 
+</shiro:hasPermission>
+</script>
+<script type="text/html" id="devType">
+{{# if(d.term_mode ===1){ }} 
+  <img class='layui-upload-img' src="/css/img/14T.png"/>
+  <span>{{d.device_type}}</span> 
+{{# } }} 
+{{# if(d.term_mode ===2){ }} 
+  <img class='layui-upload-img' src="/css/img/facecheck.png"/>
+  <span>{{d.device_type}}</span> 
+{{# } }}
+{{# if(d.term_mode ===3){ }} 
+  <img class='layui-upload-img' src="/css/img/iDR.png"/>
+  <span>{{d.device_type}}</span> 
+{{# } }}
+{{# if(d.term_mode ===4){ }} 
+  <img class='layui-upload-img' src="/css/img/unknow.png"/>
+  <span>{{d.device_type}}</span> 
+{{# } }}
+</script>
+<script type="text/html" id="taiTpl">
+{{# if(d.term_network ==='在线'){ }}
+<span style="color:#54b5ff">{{d.term_network}}</span>
+{{# } else { }}
+<span style="color:#f55366">{{d.term_network}}</span>
+{{# } }}
+</script>
+<script type="text/html" id="authTpl">
+{{# if(d.term_num ===undefined){ }}
+{{# } else { }}
+<shiro:hasPermission name="权限配置" ><span id="toauth" style="text-decoration:underline;cursor: pointer">{{d.term_num}}</span></shiro:hasPermission >
+<shiro:lacksPermission name="权限配置"><span id="toauth" style="cursor: auto">{{d.term_num}}</span></shiro:lacksPermission >
+{{# } }}
+</script>
+<script type="text/html" id="depTpl">
+{{# if(d.depart_name ===undefined){ }}
+{{# } else { }}
+<shiro:hasPermission name="管辖部门" ><span id="setdepart" style="text-decoration:underline;cursor: pointer">{{d.depart_name}}</span></shiro:hasPermission >
+<shiro:lacksPermission name="管辖部门"><span id="setdepart" style="cursor: auto">{{d.depart_name}}</span></shiro:lacksPermission >
+{{# } }}
+</script>
+<script type="text/html" id="devTpl">
+{{# if(d.term_name ===undefined){ }}
+{{# } else { }}
+<shiro:hasPermission name="管辖部门" ><span id="setdepart" style="text-decoration:underline;cursor: pointer">{{d.term_name}}</span></shiro:hasPermission >
+<shiro:lacksPermission name="管辖部门"><span id="setdepart" style="cursor: auto">{{d.term_name}}</span></shiro:lacksPermission >
+{{# } }}
+</script>
+<script src="/js/jquery.min.js"></script>
+<script src="/layui/layui.js"></script>
+<script type="text/javascript" src="/js/ajaxFilter.js"></script>
+<script type="text/javascript" th:inline="javascript" >
+  var user=[[${user}]];
+</script>
+<script>
+    $(function () {
+        window.parent.$("#toDeviceManageLi").siblings("li").removeClass("layui-this");
+        window.parent.$("#toDeviceManageLi").addClass("layui-this");
+    });
+function gotourl(url){
+	document.location.href = url;
+}
+function changeImg(obj,status) {
+    var imgName = $(obj).find("img").attr("imgName");
+    $(obj).find("img").attr("src","/css/img/" + imgName + status + ".png");
+}
+</script>
+<script>
+    layui.use(['table','layer','laytpl'], function(){
+        var table = layui.table;
+        var laytpl = layui.laytpl;
+        var form = layui.form, layer = layui.layer;
+        var parentHeight = document.documentElement.clientHeight;
+		var height = parentHeight-100;
+        table.on('checkbox(test)', function(obj){
+          console.log(obj);
+        });
+
+    	$(document).ready(function() {       
+    	    // select下拉框选中触发事件
+    	    form.on("select", function(data){
+    	    	doSearch();
+    	    });
+    	});
+      
+    	var counts=0;
+        var menulist=user.menuList
+        for(var i=0;i<menulist.length;i++){
+        	if(menulist[i].name=="启用停用设备"){
+        		counts++;
+        	}
+        	if(menulist[i].name=="删除设备"){
+        		counts++;
+        	}
+        }
+    	
+        table.render({
+            elem: '#deviceList'
+            ,url:'/device/queryDevice'
+            ,height:height
+			,limit:20
+            ,cols: [
+            	[
+                     {type:'checkbox'}	
+              		,{field:'device_type',width:200, title: '设备型号',templet: '#devType'}
+              		,{field:'business_name', width:100, title: '业务类型'}
+              		,{field:'term_name',event:'setdepart', style:'cursor: pointer', title: '设备名称',templet: '#devTpl'}
+              		,{field:'depart_name', event:'setdepart', style:'cursor: pointer',  title: '所管辖部门',templet: '#depTpl'}
+              		,{field:'term_num',width:100, event:'toauth',/*  style:'cursor: pointer',  */ title: '权限人数',templet: '#authTpl'}
+              		/* ,{field:'term_num',width:100, title: '权限人数'} */
+              		,{field:'term_network', width:100, title: '连接状态',templet: '#taiTpl'}
+              		,{field:'term_connectime',width:180, title: '最近连接时间'}
+              		,{field:'soft_ver',width:180, title: '软件版本'}
+              		,{field:'status', width:100, title: '运行状态'}
+              		,{fixed: 'right', width:240, title:'操作', toolbar: '#barDemo'}
+           		]
+          ]
+          ,page:true
+          ,done:function(res, curr, count){  //res 接口返回的信息
+        	  if(counts==0){
+	        		$("[data-field='10']").css('display','none');
+	        	}
+          
+        	var data = res.data;
+      		var online_count = 0;
+      		var underline_count = 0;
+      		if(count!=0){
+              for(var i=0;i<data.length;i++){
+              	var statustr = data[i].term_network;
+              	
+              	if(statustr.indexOf("离线")>-1){
+              		underline_count++;
+                  }else if(statustr.indexOf("在线")>-1){
+                  	online_count++
+                  }
+              }
+      		}
+      		var div=document.getElementById("layui-laypage-1");
+      		div.style.display="none";
+      		$("#layui-table-page1").prepend("<div class=\"layui-box\" style=\"display: inline-block;" +
+                    "background-color: #54b5ff;height:24px;line-height: 24px;text-align: center;width:13%;" +
+                    "margin-left:30px;border:1px solid #e2e2e2;font-size: 14px;\">" +
+                    "在线设备："+online_count+"台,离线设备："+underline_count+"台"+"</div>");
+          }
+         });
+          
+        
+      //监听行工具事件//启用\停用\删除 
+        table.on('tool(test)', function(obj){ 
+          var data = obj.data //获得当前行数据
+          ,layEvent = obj.event; //获得 lay-event 对应的值
+          var name=data.term_name;
+          var dept=data.depart_name;
+          var id=data.term_id;
+          var status=data.status;
+          var business_name=data.business_name;
+          if(layEvent === 'open'){
+        	  $.ajax({ 
+      	        url:"/device/operation",
+      			type:'get',
+      			data:{
+   	        	 'id':id,
+   	        	 'mode':"1"
+   	             },
+      			async:false,	
+      			success: function(result) {
+      				if(result==0){
+      					layer.alert('启用成功',{icon: 1,title:"提示"}, function(index){
+							location.reload();
+						});
+					}
+					if(result==1){
+						//layer.alert("启用失败");
+						layer.alert('启用失败，如需启用请继续尝试', {
+         		    		  title:"提示",
+         		    		  icon: 2,
+         		    	});
+					}
+	         },
+	         error: function() {
+	        	 layer.alert("启用出错 ");
+	        	 
+	         }
+      		});
+        	 
+          } if(layEvent === 'close'){
+        	  layer.confirm('是否停用此设备',{btn:['是','否'],icon:3,title:"提示"}, function(index){
+        	  $.ajax({ 
+        	        url:"/device/operation",
+        			type:'get',
+        			data:{
+     	        	 'id':id,
+     	        	 'mode':"2"
+     	             },
+        			async:false,	
+        			success: function(result) {
+          				if(result==0){
+    						layer.alert('停用成功',{icon: 1,title:"提示"}, function(index){
+    							location.reload();
+    						});
+    						
+    					}
+    					if(result==1){
+    						//layer.alert("停用失败");
+    						layer.alert('停用失败，如需停用请继续尝试 ', {
+	           		    		  title:"提示",
+	           		    		  icon: 2,
+	           		    		  //skin: 'layui-layer-lan'
+	           		    	});
+    					}
+    	         },
+    	         error: function() {
+    	        	 layer.alert("停用失败，如需停用请继续尝试 ");
+    	        	 
+    	         }
+        		});
+        	  });
+          } if(layEvent === 'del'){
+            layer.confirm('是否删除此设备',{btn:['是','否'],icon:3,title:"提示"} ,function(index){
+            	$.ajax({ 
+          	        url:"/device/operation",
+          			type:'get',
+          			data:{
+       	        	 'id':id,
+       	        	 'mode':"0"
+       	             },
+        			async:false,	
+        			success: function(result) {
+          				if(result==0){
+          					layer.alert("设备删除成功", {
+	           					title:"提示",
+	           					icon: 1
+	           					},function(){
+	           						layer.closeAll();
+	                               	location.reload();
+	                           });
+          					
+          					/*obj.del(); //删除对应行（tr）的DOM结构
+          					layer.close(layer.index);
+          					location.reload();*/
+    					}
+    					if(result==1){
+    						layer.alert('设备删除失败', {
+	               		    		  title:"提示",
+	               		    		  icon: 2
+	               		    	});
+    					}
+    	         },
+    	         error: function() {
+    	        	 layer.alert("设备删除出错 ");
+    	        	 
+    	         }
+        		});
+              });
+          }
+          if(layEvent ==='setdepart'){
+        	  if($("#setdepart").css("cursor")=="pointer"){
+        		  var url = encodeURI('/device/deptManage?name='+name+'&termid='+id);
+            	  if(status=="停用"){
+            		  layer.alert('该设备未启用，请先启用设备',{icon: 0,title:"提示"}, function(index){
+            			  layer.close(index);
+            			});        
+            	  }
+            	  else{
+	            	  layer.open({
+	                      type:2,//类型
+	                      area:['500px','520px'],//定义宽和高
+	                      title: '修改设备信息',
+	                      shadeClose: false,
+	                      resize:false,
+	                      shade:[0.2, '#000000'],
+	                      content:url//打开的内容
+	              	 });
+            	  }  
+        	  }
+          }
+          if(layEvent ==='toauth'){
+        	  if($("#toauth").css("cursor")=="pointer"){
+        		  var termname = encodeURIComponent(name);
+            	  var url = encodeURI('/device/showConfig?id='+id+'&termname='+termname);
+            	  var parentHeight = document.documentElement.clientHeight;
+                  var height = parentHeight*0.99;
+            	  if(business_name=="门禁"){
+            		  /* layer.open({
+                          type:2,//类型
+                          area: ['1000px', '700px'],//定义宽和高
+                          title: '权限配置',
+                          skin: 'layui-layer-lan',   //蓝色皮肤
+                          shadeClose: false,
+                          shade:[0.2, '#000000'],
+                          content:url//打开的内容
+                  	  }); */
+                  	  var loadingAuthConfig = layer.load(1, {
+                        shade: [0.1,'#fff']
+                      });
+            		  layer.open({
+                          type: 2,
+                          title:'权限配置',
+                          skin: '#f2f2f2',
+                          area: ['1318px', height+'px'], //宽高
+                          content: '/device/showConfig?id='+id+'&termname='+termname,
+                          closeBtn: 0,
+                          shadeClose: false,
+                          shade:[0.2, '#000000'],
+                          success: function(layero, index){
+                          	layer.close(loadingAuthConfig);
+                          } 
+                      });
+            	  } 
+        	  }
+          }
+        });
+          
+        
+        
+         /* var $ = layui.$, active = {
+        		toAuthConfig: function(){ //获取选中数目
+    			var checkStatus = table.checkStatus('deviceList')
+    			,data = checkStatus.data;
+    			alert('选中了：'+ data.length + ' 个');
+        		layer.alert('选中了：'+ data.length + ' 个');
+    		    if(data.length==0){
+    		    	layer.alert('请选择一个设备', {
+    		    		  title:"系统提示",
+    		    	});
+    		    }else if(data.length==1){
+    		    	layer.open({
+    		    	      type: 2,
+    		    	      title: '权限配置',
+    		    	      skin: 'layui-layer-lan',
+    		    	      shadeClose: true,
+    		    	      shade: false,
+    		    	      area: ['1000px', '700px'],
+    		    	      content: '/device/showConfig'
+    		    	});
+    		    }else{
+    		    	layer.confirm('当前选择了多台设备，若继续将会清空设备的原有权限信息，是否继续？', 
+    		    		{
+    		    		  title:"系统提示",
+    		    		  btn: ['继续','取消'] //按钮
+    		    		}, function(){
+    		    			layer.open({
+    	    		    	      type: 2,
+    	    		    	      title: '权限配置',
+    	    		    	      skin: 'layui-layer-lan',
+    	    		    	      shadeClose: true,
+    	    		    	      shade: false,
+    	    		    	      area: ['1000px', '700px'],
+    	    		    	      content: '/device/showConfig'
+    	    		    	});
+    		    		});
+    		    } 
+    		 }
+    	};
+    		  
+    	$('.demoTable .layui-btn').on('click', function(){
+    		var type = $(this).data('type');
+    		active[type] ? active[type].call(this) : '';
+    	}); */
+    	 
+    	$("#toAuthConfig").on('click', function () {
+    		var checkStatus = table.checkStatus('deviceList');
+            var layer = layui.layer,$=layui.$;
+            
+            var loadingAuthConfig = layer.load(1, {
+                shade: [0.1,'#fff']
+                //,offset: ['300px', '480px']//0.1透明度的白色背景
+            });
+            var parentHeight = document.documentElement.clientHeight;
+            var height = parentHeight*0.99;
+            
+            var data = checkStatus.data;
+            var business_name="";
+            var name = "";
+            var id = "";
+            for(var i=0;i<data.length;i++){
+                id += data[i].term_id;
+                name += data[i].term_name;
+                business_name += data[i].business_name;
+                if(i<data.length-1){
+                    id += ",";
+                    name += "、";
+                }
+            }
+            //alert("name="+name);
+            //转码兼容IE
+            var termname = encodeURIComponent(name);
+            //var termname = GetQueryString(name);
+            //alert("termname="+termname);
+            //var backUrl = '/device/showConfig?id='+id+'&termname='+termname;
+            if(data.length==0){
+		    	layer.alert('请在设备列表中勾选需要操作的设备', {
+		    		  title:"提示",
+		    		  icon: 0,
+		    		  //skin: 'layui-layer-lan'
+		    	});
+		    	layer.close(loadingAuthConfig);
+		    }else if(data.length==1){
+		    	if(business_name.indexOf("会议")>-1){
+		    		layer.alert('请选择业务类型为门禁的设备操作', {
+			    		  title:"提示",
+			    		  icon: 0,
+			    	});
+			    	layer.close(loadingAuthConfig);
+		    	}else{
+		    		/* layer.open({
+		                type: 2,
+		                title: '权限配置',
+		                skin: '#f2f2f2',
+		                shadeClose: false,
+		                shade:[0.2, '#000000'],
+		                area: ['1318px', '840px'],
+		                content: '/device/showConfig?id='+id+'&termname='+termname,
+		                cancel: function (index, layero) {
+		                    var body = layer.getChildFrame('body', index);
+		                    layer.confirm('员工未修改完毕,是否退出?',{btn:['退出','继续'],icon:3,title:"提示"},function (index1) {
+		                        layer.close(index);
+		                        layer.close(index1);
+		                    },function (index1) {
+		                        layer.close(index1);
+		                    });
+		                    return false;
+		                },
+			    		success: function(index, layero){
+	                    	layer.close(loadingAuthConfig);
+	                    }
+		            }); */
+		    		layer.open({
+	                    type: 2,
+	                    title:'权限配置',
+	                    skin: '#f2f2f2',  
+	                    area: ['1318px', height+'px'], //宽高
+	                    content: '/device/showConfig?id='+id+'&termname='+termname,
+	                    closeBtn: 0,
+	                    shadeClose: false,
+	                    shade:[0.2, '#000000'],
+	                    success: function(layero, index){
+	                    	layer.close(loadingAuthConfig);
+	                    }
+	                }); 
+		    	}
+		    	
+		    	/* layer.open({
+		    	      type: 2,
+		    	      title: '权限配置',
+		    	      skin: 'layui-layer-lan',
+		    	      fixed: false,
+		    	      shadeClose: false,
+	                    shade:[0.2, '#000000'],
+		    	      area: ['1000px', '700px'],
+		    	      content: '/device/showConfig?id='+id+'&termname='+termname,
+		    	      success: function(layero, index){
+		    	    	  layer.close(loadingAuthConfig);
+	                  }
+		    	}); */
+		    	
+		    }else{
+		    	if(business_name.indexOf("会议")>-1){
+		    		layer.alert('请选择业务类型为门禁的设备操作', {
+			    		  title:"提示",
+			    		  icon: 0,
+			    	});
+			    	layer.close(loadingAuthConfig);
+		    	}else{
+		    		layer.confirm('你当前选择了多台设备 。后续操作将对所选设备统一生效 ，是否继续？',{btn:['是','否'],icon:3,title:"提示"},function(index){
+		                   layer.close(index);
+		                   layer.open({
+		                       type: 2,
+		                       title:'权限配置',
+		                       skin: '#f2f2f2',
+		                       area: ['1318px', height+'px'], //宽高
+		                       content: '/device/showConfig?id='+id+'&termname='+termname,
+		                       closeBtn: 0,
+		                       shadeClose: false,
+		                       shade:[0.2, '#000000'],
+		                       success: function(layero, index){
+		                       	layer.close(loadingAuthConfig);
+		                       }
+		                   });
+		                   /* layer.open({
+		          		     type: 2,
+		          		     title: '权限配置',
+		          		     skin: 'layui-layer-lan',
+		          		   shadeClose: false,
+		                    shade:[0.2, '#000000'],
+		          		     area: ['1000px', '700px'],
+		          		     content: '/device/showConfig?id='+id+'&termname='+termname
+		          		   }); */
+		               },function(){
+		                    layer.closeAll();
+		        	});
+		    	}
+		    	
+		    	/* layer.open({
+	               type:1,//类型   
+	               title:'权限配置  ',//题目
+	               skin: 'layui-layer-lan',   //蓝色皮肤 
+	               btn: ['继续  ','取消 '],
+	               shadeClose:true,//点击遮罩层打开 
+	               content: '<div style="padding: 20px 80px;">当前选择了多台设备 。后续操作将对所选设备都生效 ，是否继续？</div>'//打开的内容
+	               
+	               ,yes: function(index){
+	                   layer.close(index);
+	                   layer.open({
+	          		     type: 2,
+	          		     title: '权限配置',
+	          		     skin: 'layui-layer-lan',
+	          		     shadeClose: true,
+	          		     shade: false,
+	          		     area: ['1000px', '700px'],
+	          		     content: '/device/showConfig?id='+id+'&termname='+termname
+	          		   });
+	               }
+	               ,btn2: function(){
+	                    layer.closeAll();
+	               }
+	            }); */  
+		    }
+        });
+    	/* 
+    	$("#delete").on('click', function () {
+    		var checkStatus = table.checkStatus('deviceList');
+            var layer = layui.layer,$=layui.$;
+            var data = checkStatus.data;
+            var id = "";
+            var name="";
+            for(var i=0;i<data.length;i++){
+                id += data[i].term_id;
+                if(i<data.length-1){
+                    id += ",";
+                }
+            }
+            var url = encodeURI('/device/operations?id='+id+'&mode=0');
+	    	 var count=0;
+	        for(var i=0;i<data.length;i++){
+	        	if(data[i].status=="启用"){
+	        		count++;
+	        	}
+	        }
+	        if(count>0){
+	        	layer.alert('请先停用设备',{icon: 0,title:"提示"}, function(index){
+	  			  layer.close(index);
+	  			});
+	        	return false;
+	        }
+	        else {
+            if(data.length != 0){
+            		layer.confirm('此操作将删除所选中所有设备，是否继续？',{btn:['是','否'],icon:3,title:"提示"},function(index){
+		                   layer.close(index);
+		                   layer.open({
+		                       type: 2,
+		                       title:'删除设备',
+		                       skin: '#f2f2f2',
+		                       area:['500px','520px'], //宽高
+		                       content:url,//打开的内容
+		                       shadeClose: false,
+		                       resize:false,
+		                       shade:[0.2, '#000000'],
+			                   success: function(result) {
+	                 				if(result==0){
+	                 					layer.alert("设备删除成功", {
+	       	           					title:"提示",
+	       	           					icon: 1
+	       	           					},function(){
+	       	           						layer.closeAll();
+	       	                               	location.reload();
+	       	                           });
+	           					}
+	           					if(result==1){
+	           						layer.alert('设备删除失败', {
+	       	               		    		  title:"提示",
+	       	               		    		  icon: 2
+	       	               		    	});
+	           					}
+	           	         },
+	           	         error: function() {
+	           	        	 layer.alert('设备删除出错', {
+	             		    		  title:"提示",
+	             		    		  icon: 2
+	             		    	});
+		               }
+		        	   });
+		           });
+            }
+            else {
+            	layer.alert('请在设备列表中勾选需要操作的设备', {
+		    		  title:"提示",
+		    		  icon: 0,
+		    		  //skin: 'layui-layer-lan'
+		    	});  
+            }
+	       }
+    	}); */
+    	
+    	
+    	//管辖部门
+    	$("#deptManage").on('click', function () {
+    		
+            var checkStatus = table.checkStatus('deviceList');
+            var layer = layui.layer,$=layui.$;
+          /*   var loadingAuthConfig = layer.load(1, {
+                shade: [0.1,'#fff']
+              }); */
+            var data = checkStatus.data;
+            var name = "";
+            var dept="";
+            var id="";
+            var count=0;
+            for(var i=0;i<data.length;i++){
+            	if(data[i].status=="停用"){
+            		count++;
+            	}
+            }
+            if(count>0){
+            	layer.alert('请先开启设备',{icon: 0,title:"提示"}, function(index){
+      			  layer.close(index);
+      			});
+            	return false;
+            }
+            else {
+            for(var i=0;i<data.length;i++){
+                id += data[i].term_id;
+                if(i<data.length-1){
+                    id += ",";
+                }
+            }
+            for(var i=0;i<data.length;i++){
+                name += data[i].term_name;
+                if(i<data.length-1){
+                    name += ",";
+                }
+            }		
+            for(var i=0;i<data.length;i++){
+            	dept += data[i].depart_name;
+                if(i<data.length-1){
+                	dept += ",";
+                }
+            }
+           var url = encodeURI('/device/deptManage?name='+name+'&termid='+id);
+            if(data.length != 0&&count==0){
+            	if(data.length>1){
+            		layer.confirm('你当前选择了多台设备 。后续操作将对所选设备统一生效 ，是否继续？',{btn:['是','否'],icon:3,title:"提示"},function(index){
+		                   layer.close(index);
+		                   layer.open({
+		                       type: 2,
+		                       title:'管辖部门',
+		                       skin: '#f2f2f2',
+		                       area:['500px','520px'], //宽高
+		                       content:url,//打开的内容
+		                       shadeClose: false,
+		                       resize:false,
+		                       shade:[0.2, '#000000'],
+		                       /* success: function(layero, index){
+		                       	layer.close(loadingAuthConfig);
+		                       } */
+		                   });
+		               },function(){
+		                    layer.closeAll();
+		        	   });
+            		/* layer.open({
+                        type:1,//类型   
+                        title:'管辖部门  ',//题目
+                        btn: ['继续  ','取消 '],
+                        shadeClose: false,
+                        shade:[0.2, '#000000'],
+                        content: '<div style="padding: 20px 80px;">当前选择了多台设备 ,后续操作将对所选设备都生效 ,是否继续 </div>'//打开的内容
+                        ,yes: function(index){
+                        	layer.close(index);
+                        	layer.open({
+                                type:2,//类型
+                                area:['500px','500px'],//定义宽和高
+                                title:'管辖部门  ',//题目
+                                shadeClose: false,
+                                shade:[0.2, '#000000'],
+                                content:url//打开的内容
+                        	 });
+                          }
+                        ,btn2: function(){
+                            layer.closeAll();
+                          }
+                    }); */  
+            	  }
+            	  if(data.length==1){
+                  		layer.open({
+                              type:2,//类型
+                              area:['500px','520px'],//定义宽和高
+                              title:'管辖部门  ',//题目
+                              shadeClose: false,
+                              resize:false,
+                              shade:[0.2, '#000000'],
+                              content:url//打开的内容
+                            
+                  	});
+            	  }
+            	}        
+            else {
+                /* layer.open({
+                    type:1,//类型   
+                    title:'管辖部门   ',//题目
+                    btn: ['确定 ','取消 '],
+                    shadeClose: false,
+                    shade:[0.2, '#000000'],
+                    content: '<div style="padding: 20px 80px;">当前未选择任何设备，请先选择设备  </div>'//打开的内容
+                    ,yes: function(){
+                   	 layer.closeAll();
+                      }
+                    ,btn2: function(){
+                        layer.closeAll();
+                      }
+                }); */
+            	layer.alert('请在设备列表中勾选需要操作的设备', {
+		    		  title:"提示",
+		    		  icon: 0,
+		    		  //skin: 'layui-layer-lan'
+		    	});
+            }
+           }
+        });
+    	
+    	//参数设置 
+        $("#getDatas").on('click', function () {
+        	
+            var checkStatus = table.checkStatus('deviceList');
+            var layer = layui.layer,$=layui.$;
+            var data = checkStatus.data;
+            var id = "";
+            var name="";
+            for(var i=0;i<data.length;i++){
+                id += data[i].term_id;
+                if(i<data.length-1){
+                    id += ",";
+                }
+            }
+            for(var i=0;i<data.length;i++){
+                name += data[i].term_name;
+                if(i<data.length-1){
+                    name += ",";
+                }
+            }
+            var names = encodeURIComponent(name);
+            if(data.length != 0){
+            	if(data.length>1){
+            		 /* $.ajax({
+                     	url:"/device/checknull?ids="+id+"&names="+names,
+              			type:'post',
+              			async:false,	
+              			success: function(data) { */
+              				//if(data=="ok"){
+              					layer.confirm('你当前选择了多台设备 。后续操作将对所选设备统一生效 ，是否继续？',{btn:['是','否'],icon:3,title:"提示"},function(index){
+         		                   layer.close(index);
+         		                   layer.open({
+         		                       type: 2,
+         		                       title:'参数设置',
+         		                       skin: '#f2f2f2',
+         		                       area:['1138px','700px'], //宽高
+         		                       content:'/device/QueryTerm?id='+id+'&name='+names,//打开的内容
+         		                       shadeClose: false,
+         		                    //   resize:false,
+         		                       shade:[0.2, '#000000']
+         		                   });
+         		               },function(){
+         		                    layer.closeAll();
+         		        	   });
+              				//}
+              				/* else{
+              					layer.alert("设备[ "+data+" ]无任何参数属性,请对该设备单独进行参数设置",{
+              						 title:"提示",
+              			    		  icon: 0,
+              					});
+              				} */
+              			/* },
+              			error:function(){
+              				
+              			}
+                     }); */
+            	  }
+            	  if(data.length==1){
+                  		layer.open({
+                              type:2,//类型
+                              area:['1138px','700px'],//定义宽和高
+                              title:'参数设置  ',//题目 
+                              shadeClose: false,
+                              shade:[0.2, '#000000'],
+                             // resize:false,
+                              content:'/device/QueryTerm?id='+id+'&name='+names//打开的内容
+                  	});
+            	  }
+            	}
+            
+            else {
+                 /* layer.open({
+                     type:1,//类型   
+                     title:'参数设置  ',
+                     btn: ['确定 ','取消 '],
+                     shadeClose: false,
+                     shade:[0.2, '#000000'],
+                     content: '<div style="padding: 20px 80px;">当前未选择任何设备，请先选择设备  </div>'//打开的内容
+                     ,yes: function(){
+                    	 layer.closeAll();
+                       }
+                     ,btn2: function(){
+                         layer.closeAll();
+                       }
+                 });   */
+            	layer.alert('请在设备列表中勾选需要操作的设备', {
+		    		  title:"提示",
+		    		  icon: 0,
+		    		  //skin: 'layui-layer-lan'
+		    	});
+            }
+        });
+    	
+    
+      //设备列表查询     
+        $('#doSearch').on('click',function(){
+        	 doSearch();
+        });
+
+        document.onkeydown = function (e) { // 回车提交表单
+            var theEvent = window.event || e;
+            var code = theEvent.keyCode || theEvent.which;
+            if (code == 13) {
+                doSearch();
+            }
+        };
+		function containSpecial(s) {
+			var containSpecial = RegExp("^$|[^`~!@#$%^&*()_+<>?:\"{},.\\/\\\\;'[\\]·！#￥（——）：；“”‘、，|《。》？、【】[\\]]+$");
+			for(var i=0;i<s.length;i++){
+				if (!containSpecial.test(s.charAt(i))) {
+					return false;
+				}
+			}
+			return true;
+		}
+        function doSearch() {
+            var categoryval = document.getElementById("category").value;
+            var networkval  = document.getElementById("network").value;
+            var statusval   = document.getElementById("status").value;
+            //var queryval	 = document.getElementById("query").val;
+            var searchContent = $('#searchContent').val();
+			searchContent=searchContent.trim();
+            /* alert("categoryval="+categoryval);
+            alert("networkval="+networkval);
+            alert("statusval="+statusval);
+            alert("queryval="+queryval); */
+			if (!containSpecial(searchContent)) {
+				layer.msg('搜索条件不能含有特殊字符', {icon: 0, anim: 6});
+			}else {
+				table.reload('deviceList', {
+					where: {
+						categoryval: categoryval,
+						networkval: networkval,
+						statusval: statusval,
+						searchContent: searchContent,
+					}
+				});
+			}
+		}
+      
+      
+        //开通二维码     
+        $('#openModak').on('click',function(){
+        	 
+        	var layer = layui.layer;
+        	var $=layui.$;
+        	var img=document.getElementById("npcImg");
+        	img.src = '/device/getQRCode';
+        	layer.msg('二维码加载中...', {icon: 16});
+        	img.onload = function () {
+        		layer.closeAll();
+        		layer.open({
+                	type:1,//类型
+                    area:['400px','400px'],//定义宽和高
+                    title:'开通二维码 ',//题目 
+                    btn: ['保存至本地','取消 '],
+                    shadeClose: false,
+                    shade:[0.2, '#000000'],
+                    resize:false,
+                   // shadeClose:true,//点击遮罩层打开 
+                    content:$('#motaikunag')//打开的内容
+                    ,cancel: function(){ 
+                    	layer.closeAll();
+                    	} 
+                    	
+                    ,yes: function(){
+                    	layer.closeAll();
+                    	gotourl('/device/downloadQRCode');
+                    	
+                      }
+                    ,btn2: function(){
+                        layer.closeAll();
+                      }
+                    
+                }); 
+        	}  
+             });
+    });
+   
+    
+    //页面加载时查询终端在线数显示
+   /* $(document).ready(function(){
+    	$.ajax({ 
+	        url:"/device/deviceOnline",
+			type:'post',
+			async:false,	
+			success: function(data) {
+				document.getElementById('show1').innerHTML=data.online;
+				document.getElementById('show2').innerHTML=data.underline;
+			},
+		});
+    }); */
+    
+	/* //隔10秒刷新终端在线状态
+    var t=10;
+	setInterval("refer()",1000);
+	function refer(){ 
+		if(t==0){
+			$.ajax({ 
+				url:"/device/deviceOnline",
+				type:'post',
+				async:false,	
+				success: function(data) {
+					document.getElementById('show1').innerHTML=data.online;
+					document.getElementById('show2').innerHTML=data.underline; 
+				},
+			}); 
+			 
+			layui.use(['table'], function(){
+				var table = layui.table;
+				var data = table.cache;
+				var datalist = data.deviceList;
+				var obj = datalist[0];
+				console.log(obj); 
+				
+				var checkStatus = table.checkStatus('deviceList');
+	            var checkdata = checkStatus.data;
+	            var checkterm_id = 0;
+	            if(checkdata.length > 0){
+	            	checkterm_id = checkdata[0].term_id;
+	            }  
+	            
+				table.reload('deviceList', {
+					done:function(res, curr, count){
+						var data = res.data;
+						if(checkterm_id!=0){
+							for(var i=0;i<data.length;i++){
+								var term_id = data[i].term_id;
+								if(term_id == checkterm_id){
+									data[i]["lAY_CHECKED"]=true;
+									$('.layui-table tr[data-index=' + i + '] input[type="checkbox"]').prop('checked', true);
+								    $('.layui-table tr[data-index=' + i + '] input[type="checkbox"]').next().addClass('layui-form-checked');
+			                    }
+							}
+						}
+					} 
+		        });  
+			});
+		t=10;
+		} 
+		t--;
+	}  */
+	
+</script>
+<script type="text/javascript">
+//设备列表刷新
+var t = [[${time}]];
+setInterval("refer()",1000);
+function refer(){ 
+	if(t==0){
+		//查询设备内容状态是否改变
+		var term_record_status="";
+		$.ajax({ 
+			url:"/device/QueryDevicerecordStatus",
+			type:'post',
+			async:false,	
+			success: function(data) {
+				term_record_status = data; 
+			},
+		});
+		
+		if(term_record_status=="change"){
+			layui.use(['table','form'], function(){
+				var table = layui.table;
+				
+				/* var form = layui.form;
+				var checkStatus = table.checkStatus('deviceList');
+	            var checkdata = checkStatus.data;
+	            var checkterm_id = "";
+	            for(var i=0;i<checkdata.length;i++){
+	            	checkterm_id += checkdata[i].term_id;
+	                if(i<checkdata.length-1){
+	                	checkterm_id += ",";
+	                }
+	            }
+		        
+			    table.reload('deviceList', {
+					done:function(res){
+						//找到框架渲染的表格
+			            var tbl = $('#deviceList').next('.layui-table-view');
+			            data = res.data;
+			            //.遍历当前页数据，对比已选中项中的 id
+			            var termlist = checkterm_id.split(",");
+			            for(var i=0;i<data.length;i++){
+							var term_id = data[i].term_id;
+							for(var j=0;j<termlist.length;j++){  
+	            			  if(termlist[j] == term_id){  
+	            			    tbl.find('table>tbody>tr').eq(i).find('td').eq(0).find('input[type=checkbox]').prop('checked', true);  
+	            			  }  
+	            			}
+						}
+			            //.暂时只能这样渲染表单
+			            form.render('checkbox');
+					} 
+		        },true);   */
+			    
+				table.reload('deviceList',{});
+				//table.reload('deviceList',{},true);  
+			});
+			
+			$.ajax({ 
+				url:"/device/deviceOnline",
+				type:'post',
+				async:false,	
+				success: function(data) {
+					document.getElementById('show1').innerHTML=data.online;
+					document.getElementById('show2').innerHTML=data.underline; 
+				},
+			});
+		}
+		
+	    t=[[${time}]];
+	} 
+	t--;
+}  
+</script>
+</body>
+</html>

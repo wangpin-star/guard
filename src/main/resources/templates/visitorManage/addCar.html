@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>添加车辆</title>
+<link rel="stylesheet" href="/layui/css/layui.css" media="all"/>
+<style>
+.button2 {
+            width: 85px;
+            height: 25px;
+            line-height: 25px;
+            color: #ffffff;
+            font-size: 12px;
+            border: none;
+            border-radius: 4px;
+            background-color: #54b5ff;
+            cursor: pointer;
+        }
+</style>
+</head>
+<body style="margin:0;">
+<form class='layui-form' id='addCar'>
+	<div style="width:100%;float:left;height:200px;">
+		<div style="width: 3%;height: 100%;float:left;"></div>
+		<div style="width:97%;float:left;height:200px;">
+			<div class="layui-form-item" style="margin-bottom: 14px;margin-top:20px;">
+				<label class="layui-form-label" style="line-height: 14px;padding-right: 32px;color: #333333;">车牌号</label>
+				<div class="layui-input-inline" style="width:420px;">
+					<input type='text' id="carNum" name='carNum' maxlength="80" style="height: 32px;line-height: 32px;border-radius: 4px;" class='layui-input' lay-verify="carNum" placeholder="如：鄂A·NB123">
+				</div>
+			</div>
+			
+			<div class="layui-form-item" style="margin-bottom: 14px;">
+				<label class="layui-form-label" style="line-height: 14px;padding-right: 32px;color: #333333;">车辆类型</label>
+				<div class="layui-input-inline" style="width:420px;">
+					<select id="carKind" name="carKind" style="height: 32px;line-height: 32px;border-radius: 4px;" lay-verify="carKind">
+						<option value="请选择" selected>请选择</option>
+						<option value="绿色牌照">绿色牌照</option>
+						<option value="白色牌照">蓝色牌照</option>
+						<option value="白色牌照">白色牌照</option>
+						<option value="其它">其它</option>
+						<option value="0">0</option>
+					</select>
+					<!-- <input type='text' id="carKind" name='carKind' maxlength="80" style="height: 32px;line-height: 32px;border-radius: 4px;" class='layui-input'> -->
+				</div>
+			</div>
+			<div class="layui-form-item" style="margin-bottom: 14px;">
+				<label class="layui-form-label" style="line-height: 14px;padding-right: 32px;color: #333333;">车颜色</label>
+				<div class="layui-input-inline" style="width:420px;">
+					<input type='text' id="carColor" name='carColor' maxlength="80" style="height: 32px;line-height: 32px;border-radius: 4px;" class='layui-input' lay-verify="carColor" placeholder="如：银灰色">
+				</div>
+			</div>
+			<div class="layui-form-item" style="margin-bottom: 14px;">
+				<label class="layui-form-label" style="line-height: 14px;padding-right: 32px;color: #333333;">车类型</label>
+				<div class="layui-input-inline" style="width:420px;">
+					<input type='text' id="carBrand" name='carBrand' maxlength="80" style="height: 32px;line-height: 32px;border-radius: 4px;" class='layui-input' lay-verify="carBrand" placeholder="请输入车辆类型，如：奥迪">
+				</div>
+			</div>
+			
+			<div style="width:100%;float:right;height:34px;margin-right:50px;margin-bottom:0px;">
+				<button type="button" lay-submit='' lay-filter="addCarFilterCancel" class="button2" style="float:right;margin-left:12px;">取消</button>
+				<button type="button" lay-submit='' lay-filter="addCarFilterSave" class="button2" style="float:right;">保存</button>
+				<button id="hid-btn" type="button" lay-submit='' lay-filter="loadPage" class="button2" style="float:right;display:none">隐藏按钮</button>
+			</div>
+		</div>
+	</div>
+</form>
+<script type="text/javascript" src="/js/jquery.min.js"></script>
+<script type="text/javascript" src="/layui/layui.js"></script>
+<script>
+	var carId = 0;
+	layui.use(['layer', 'form'],function(){
+		var $ = layui.$;
+		var layer = layui.layer;
+		var form = layui.form;
+		form.render();
+		//var data = ${data};
+		//console.log(data);
+		//点击按钮
+		form.on('submit(addCarFilterSave)',function(){
+			save();
+		});
+		form.on('submit(addCarFilterCancel)',function(obj){
+			$("#carKind").val("其它");
+			form.render();
+			//cancelss();
+		});
+		form.on('submit(loadPage)',function(){
+			form.render();
+		});
+		
+		function save() {
+			parent.layer.closeAll('iframe');
+		}
+		function cancelss() {
+			var index = parent.layer.getFrameIndex(window.name);
+			
+			parent.layer.close(index);
+		}
+		
+		
+		/* form.verify({
+			carNum: function (value) {
+				if(value == ""){
+					return "请输入车牌号";
+				}	
+			},
+			
+			carKind: function (value) {
+				if(value == "请选择"){
+					return "请选择车辆类型" ;
+				}
+			},
+			
+			carColor: function (value) {
+				if(value == "请选择") {
+					return "请选择车辆颜色" ;
+				}
+			},
+			
+			carBrand: function (value) {
+				if(value == "") {
+					return "请输入";
+				}
+			}
+		});  */
+		
+		
+	});
+
+	var callbackdata = function() {
+		var carNum = $("#carNum").val();
+		var carKind = $("#carKind").val();
+		var carColor = $("#carColor").val();
+		var carBrand = $("#carBrand").val();
+		console.log("callbackInfo");
+		var data = {
+				carId:carId,				
+				carNum:carNum,
+				carKind:carKind,
+				carColor:carColor,
+				carBrand:carBrand
+		};
+		return data;
+	}
+	function editInit(data){
+		console.log(data);
+		carId = data.carId;
+		$("#carNum").val(data.carNum);
+		$("#carKind").val(data.carKind);
+		//$("#select_id option[text='"+data.carKind+"']").attr("selected", true);   //设置Select的Text值为jQuery的项选中
+		$("#carColor").val(data.carColor);
+		$("#carBrand").val(data.carBrand);
+		$('#hid-btn').trigger("click");	//触发form.render(),否则无法正常显示select内容
+		
+	}
+	
+	
+
+</script>
+</body>
+</html>

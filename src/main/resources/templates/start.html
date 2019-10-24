@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>人脸门禁智能管理平台</title>
+    <base href="/"/>
+    <link rel="stylesheet" href="/layui/css/layui.css">
+    <style>
+        .layui-this a {
+            color: #54b5ff !important;
+        }
+        body{
+            font-family: \5FAE\8F6F\96C5\9ED1 !important;
+        }
+        .text-overflow{
+display:block;/*内联对象需加*/
+width:31em;
+word-break:keep-all;/* 不换行 */
+white-space:nowrap;/* 不换行 */
+overflow:hidden;/* 内容超出宽度时隐藏超出部分的内容 */
+text-overflow:ellipsis;/* 当对象内文本溢出时显示省略标记(...) ；需与overflow:hidden;一起使用。*/
+}
+    </style>
+</head>
+<body class="layui-layout-body">
+<div class="layui-layout layui-layout-admin">
+    <div class="layui-header">
+        <div style="width: 20%;font-size: 22px;color: white;line-height: 60px;margin-left: 30px;float: left;">人脸门禁智能管理平台</div>
+        <!-- 头部区域（可配合layui已有的水平导航） -->
+        <ul class="layui-nav" style="float: left;width: 60%;">
+          <shiro:hasPermission name="查看员工列表">   <li id="toEmployeeManageLi" class="layui-nav-item"><a id="toEmployeeManageA" href="javascript:;" onclick="toEmployeeManage(this)" style="font-size: 16px;">员工管理</a></li></shiro:hasPermission>
+          <shiro:hasPermission name="查看访客列表">  <li id="toVisitorManageLi" class="layui-nav-item" style="margin-left: 5%;"><a id="toVisitorManageA" href="javascript:;" onclick="toVisitorManage(this)" style="font-size: 16px;">访客管理</a></li></shiro:hasPermission>
+            <shiro:hasPermission name="查看考勤列表"><li id="toAttendanceManageLi" class="layui-nav-item" style="margin-left: 5%;"><a id="toAttendanceManageA" href="javascript:;" onclick="toAttendanceManage(this)" style="font-size: 16px;">考勤管理</a></li></shiro:hasPermission>
+
+<!--
+            <shiro:hasPermission name="会议管理"><li id="toConferenceManageLi" class="layui-nav-item" style="margin-left: 5%;"><a id="toConferenceManageA" href="javascript:;" onclick="toConferenceManage(this)" style="font-size: 16px;">会议管理</a></li></shiro:hasPermission>
+-->
+
+            <!--<shiro:hasPermission name="车辆管理"><li id="toCarManageLi" class="layui-nav-item" style="margin-left: 5%;"><a id="toCarManageA" href="javascript:;" onclick="toCarManage(this)" style="font-size: 16px;">车辆记录</a></li></shiro:hasPermission>-->
+
+            <!--<li class="layui-nav-item"><a href="javascript:;">会议管理</a></li>-->
+           <!-- <shiro:hasPermission name="嘉宾管理"> <li id="toGuestManageLi" class="layui-nav-item" style="margin-left: 5%;"><a id="toGuestManageA" href="javascript:;" onclick="toGuestManage(this)" style="font-size: 16px;">嘉宾管理</a></li></shiro:hasPermission> -->
+           <shiro:hasPermission name="查看设备列表"> <li id="toDeviceManageLi" class="layui-nav-item" style="margin-left: 5%;"><a id="toDeviceManageA" href="javascript:;" onclick="toDeviceManage(this)" style="font-size: 16px;">设备管理</a></li></shiro:hasPermission>
+           <shiro:hasPermission name="系统设置"> <li id="toSysManageLi" class="layui-nav-item" style="margin-left: 5%;"><a id="toSysManageA" href="javascript:;" onclick="toSysManage(this)" style="font-size: 16px;">系统设置</a></li></shiro:hasPermission>
+           <shiro:hasPermission name="创建公司"> <li id="toCompanyManageLi" class="layui-nav-item" style="margin-left: 5%;"><a id="toCompanyManageA" href="javascript:;" onclick="toCompanyManage(this)" style="font-size: 16px;">创建公司</a></li></shiro:hasPermission>
+        </ul>
+        <div id="version" style="position: relative;right: 200px;font-size: 13px;color: white;line-height: 60px;float: right;">当前版本:[[${deployVersion}]]</div>
+        <ul class="layui-nav layui-layout-right" style="padding-right: 30px;">
+          <li class="layui-nav-item">
+            <a href="javascript:;">
+              <img src="/css/img/headPhotoDefault.png" class="layui-nav-img">
+              <span>[[${name}]]</span>
+            </a>
+            <dl class="layui-nav-child">
+             <dd><a style="background-color: #ffffff;color:black !important" href="javascript:;" onclick="toeditPwd(this)">修改密码</a></dd>
+              <dd><a href="/logout">注销</a></dd>
+            </dl>
+          </li>
+        </ul>
+    </div>
+    <iframe id="firstIframe" frameborder="0" width="100%">
+    </iframe>
+
+</div>
+<script type="text/javascript" src="/js/jquery.min.js"></script>
+<script type="text/javascript" src="/layui/layui.js"></script>
+<script type="text/javascript" src="/js/ajaxFilter.js"></script>
+<script>
+	layui.use(['element','layer'], function(){
+	    var element = layui.element;
+	});
+
+	$(document).ready(function(){
+		var name="[[${name}]]";
+			changeFrameHeight();
+			var iframeContents = "css/img/firstpage.png";
+			$("#firstIframe").attr('src', '/' + iframeContents);
+			//var height=document.documentElement.clientHeight;
+			var width=(document.documentElement.clientWidth-640)/2;
+			var ifr = document.getElementById("firstIframe");
+			ifr.style.cssText="margin-left:"+width+"px;"+"margin-top:"+60+"px;";
+		if(name!="plsy"){
+			$("#toEmployeeManageA").click();
+		}
+		if(name=="plsy"){
+			//toSysManage(this);
+			$("#toCompanyManageA").click();
+		}
+    });
+    function toEmployeeManage(obj) {
+        $("#firstIframe").removeAttr("style","");
+        $(obj).parent().siblings("li").removeClass("layui-this");
+        $(obj).parent().addClass("layui-this");
+        $("#firstIframe").attr("src","/employeeManage/toEmployeeManage");
+        changeFrameHeight();
+    }
+    function toeditPwd(obj) {
+      /*   $(obj).parent().siblings("li").removeClass("layui-this"); */
+        /* $(obj).parent().addClass("layui-this"); */
+        $("#firstIframe").removeAttr("style","");
+
+        var loginResult = [[${loginResult}]];
+        $("#firstIframe").attr("src","/user/editPwd?loginResult="+loginResult);
+        changeFrameHeight();
+
+        /* top.layer.open({
+            type: 2,
+            title: '修改密码',
+            shadeClose: false,
+            shade:[0.2, '#000000'],
+            area: ['320px', '280px'],
+            content: '/user/editPwd'
+        });  */
+    }
+    function toAttendanceManage(obj) {
+    	$("#firstIframe").removeAttr("style","");
+        $(obj).parent().siblings("li").removeClass("layui-this");
+        $(obj).parent().addClass("layui-this");
+        $("#firstIframe").attr("src","/attendance/toAttendanceManage");
+        changeFrameHeight();
+    }
+    function toConferenceManage(obj) {
+        $("#firstIframe").removeAttr("style","");
+        $(obj).parent().siblings("li").removeClass("layui-this");
+        $(obj).parent().addClass("layui-this");
+        $("#firstIframe").attr("src","/conferenceManage/toConferenceManage");
+        changeFrameHeight();
+    }
+    function toCarManage(obj) {
+        $("#firstIframe").removeAttr("style","");
+        $(obj).parent().siblings("li").removeClass("layui-this");
+        $(obj).parent().addClass("layui-this");
+        $("#firstIframe").attr("src","/carManage/toCarManage");
+        changeFrameHeight();
+    }
+    function toGuestManage(obj) {
+    	$("#firstIframe").removeAttr("style","");
+        $(obj).parent().siblings("li").removeClass("layui-this");
+        $(obj).parent().addClass("layui-this");
+        $("#firstIframe").attr("src","/guest/showGuest");
+        changeFrameHeight();
+    }
+    function toDeviceManage(obj) {
+    	$("#firstIframe").removeAttr("style","");
+        $(obj).parent().siblings("li").removeClass("layui-this");
+        $(obj).parent().addClass("layui-this");
+        $("#firstIframe").attr("src","/device/showDevice");
+        changeFrameHeight();
+    }
+    function toSysManage(obj) {
+    	$("#firstIframe").removeAttr("style","");
+        $(obj).parent().siblings("li").removeClass("layui-this");
+        $(obj).parent().addClass("layui-this");
+        $("#firstIframe").attr("src","/systemManage/toSystemManageNav");
+        changeFrameHeight();
+    }
+    function toVisitorManage(obj) {
+    	$("#firstIframe").removeAttr("style","");
+        $(obj).parent().siblings("li").removeClass("layui-this");
+        $(obj).parent().addClass("layui-this");
+        $("#firstIframe").attr("src","/visitorManage/toVisitorManage");
+        changeFrameHeight();
+    }
+    
+    function toCompanyManage(obj) {
+    	$("#firstIframe").removeAttr("style","");
+        $(obj).parent().siblings("li").removeClass("layui-this");
+        $(obj).parent().addClass("layui-this");
+        $("#firstIframe").attr("src","/companyManage/toCompanyManage");
+        changeFrameHeight();
+    }
+    
+    function changeFrameHeight(){
+        var ifm= document.getElementById("firstIframe");
+        ifm.height=document.documentElement.clientHeight-60;
+    }
+    window.onresize=function(){
+        changeFrameHeight();
+    };
+    $(window).resize(function(){
+        var cliWidth=document.body.clientWidth;
+        var cliHeight=document.body.clientHeight;
+        if(cliWidth<1273){
+            document.getElementById("version").setAttribute("style","position: relative;right: 200px;font-size: 13px;color: white;line-height: 60px;float: right;display:none;");
+        }if(cliWidth>1273){
+            document.getElementById("version").setAttribute("style","position: relative;right: 200px;font-size: 13px;color: white;line-height: 60px;float: right;");
+        }
+    });
+</script>
+</body>
+</html>

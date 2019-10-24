@@ -1,0 +1,34 @@
+<style>
+    .icon1 {
+        background-image: url(/css/img/depart.png);
+        display: inline-block;
+        /*i标签是行内元素必须设置他的display属性才能设置宽高*/
+        width: 20px;
+        height: 25px;
+    }
+    .layui-icon-addition:before {
+        content: "\e602";
+        font-size: 14px;
+    }
+
+    .layui-icon-subtraction:before {
+        content: "\e61a";
+        font-size: 14px;
+    }
+
+    .layui-tree-icon {
+        border: 0px;
+    }
+    /* 去除图标边框 */
+
+    .layui-tree {
+        line-height: 20px;
+    }
+
+    .layui-progress-text {
+        position: static;
+        padding: 0 10px;
+        color: #fff;
+    }
+
+</style><!-- 图标样式 进度条字体样式 -->

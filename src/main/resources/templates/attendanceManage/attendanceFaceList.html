@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>详细刷脸记录</title>
+    <link rel="stylesheet" href="/layui/css/layui.css">
+    <link rel="stylesheet" href="/font-awesome/css/font-awesome.css">
+</head>
+<body>
+    <div style="">
+	<table  id="attendanceFaceList" lay-filter="attendanceFaceList"></table>
+</div>
+</body>
+<script type="text/javascript" src="/js/jquery.min.js"></script>
+<script type="text/javascript" src="/layui/layui.js"></script>
+<script type="text/javascript" src="/js/ajaxFilter.js"></script>
+<script>
+layui.use(['tree','table','layer','form','upload'], function(){
+	var $ = layui.$;
+    var table = layui.table;
+    var layer = layui.layer;
+    var form = layui.form;
+    var upload = layui.upload;
+
+
+    var face_id=[[${face_id}]];
+    var date="[[${date}]]";
+    var starttime="[[${starttime}]]";
+    var endtime="[[${endtime}]]";
+    var parentHeight = document.documentElement.clientHeight;
+	var height = parentHeight*0.9;
+    table.render({
+        elem: '#attendanceFaceList'
+        ,url:'/attendance/selectAttendanceFaceList?date='+date+'&endtime='+endtime+'&face_id='+face_id+'&starttime='+starttime
+        ,title: '详细刷脸记录'
+        ,height: height
+        ,cols: [
+            [
+            	{field:'name', title:'姓名',fixed: 'left'}
+                ,{field:'term_name', title:'设备名称'}
+                ,{field:'time', title:'刷脸时间'}
+            ]
+        ]
+       ,page: true
+    });
+});
+
+    
+</script>
+</html>

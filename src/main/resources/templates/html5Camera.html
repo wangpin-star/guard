@@ -1,0 +1,117 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset ="utf-8">
+    <title>camera test</title>
+    <link rel="stylesheet" href="/layui/css/layui.css">
+</head>
+<body>
+    <div style="text-align:center">
+        <button id="makeVideo" onclick="makeVideo()" style="display: none;">打开摄像头</button>
+        <video id="video1" width="320">
+            您的浏览器不支持 HTML5 video 标签。
+        </video>
+        <div style="width: 10px;float: left;height: 240px;"></div>
+        <canvas id="canvas" style="width: 320px;height: 240px" width="640" height="480"></canvas>
+        <button class='layui-btn' id="snapBtn" type="button" onclick="capture()">拍照</button>
+        <img id="base64image" width="320" height="240" style="display: none;"/>
+    </div>
+    <script src="/js/jquery.min.js"></script>
+    <script type="text/javascript" src="/layui/layui.js"></script>
+    <script type="text/javascript" src="/js/ajaxFilter.js"></script>
+<script>
+
+    var myVideo = document.getElementById("video1");
+    var canvas = document.getElementById("canvas");
+    var context = canvas.getContext("2d");
+    $(function () {
+        if (navigator.mediaDevices === undefined) {
+            navigator.mediaDevices = {};
+        }
+        if (navigator.mediaDevices.getUserMedia === undefined) {
+            navigator.mediaDevices.getUserMedia = function (constraints) {
+                var getUserMedia = navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
+                if (!getUserMedia) {
+                    return Promise.reject(new Error('getUserMedia is not implemented in this browser'));
+                }
+                return new Promise(function (resolve, reject) {
+                    getUserMedia.call(navigator, constraints, resolve, reject);
+                });
+            }
+        }
+        window.URL = (window.URL || window.webkitURL || window.mozURL || window.msURL);
+        $("#makeVideo").click();
+    });
+
+function playPause()
+{
+	if (myVideo.paused)
+	  myVideo.play();
+	else
+	  myVideo.pause();
+}
+
+function makeBig()
+{
+	myVideo.width=560;
+}
+
+function makeSmall()
+{
+	myVideo.width=320;
+}
+
+function makeNormal()
+{
+	myVideo.width=420;
+}
+
+function capture() {
+    context.drawImage(myVideo, 0, 0, canvas.width, canvas.height);
+    var imgData = canvas.toDataURL("image/jpeg");
+    $("#base64image").attr('src',imgData);
+}
+
+function getData() {
+    var imgData = canvas.toDataURL("image/jpeg");
+}
+
+var mediaOpts = {
+    audio: false,
+    video: true,
+}
+
+function successFunc(stream) {
+    //var video = document.querySelector('video');
+    if ("srcObject" in myVideo) {
+        myVideo.srcObject = stream
+    } else {
+        myVideo.src = window.URL && window.URL.createObjectURL(stream) || stream
+    }
+    myVideo.play();
+}
+
+function errorFunc(err) {
+    layui.use(['layer'], function() {
+        var layer = layui.layer;
+        if (err.name == "NotFoundError") {
+            layer.alert("检测到您的设备未安装摄像头",{end:function () {
+                parent.layer.closeAll();
+            }});
+        }
+    });
+}
+
+function makeVideo()
+{
+    if (navigator.getUserMedia) {
+        //调用用户媒体设备，访问摄像头
+        navigator.getUserMedia(mediaOpts, successFunc, errorFunc);
+    } else {
+        alert("you exploer isn't support to access media device");
+    }
+}
+</script>
+
+</body>
+</html>

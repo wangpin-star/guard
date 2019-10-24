@@ -1,0 +1,808 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+  <meta charset="utf-8">
+  <title>访客列表</title>
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <base href="/"/>
+  <link rel="stylesheet" href="/layui/css/layui.css">
+	<link rel="stylesheet" href="/font-awesome/css/font-awesome.css">
+  <style type="text/css">
+        .layui-input:hover {
+			border-color: #54b5ff !important;
+		}
+		.layui-input::-webkit-input-placeholder {
+	       color: #c8c8c8;
+    	}
+		.layui-input,.layui-select,.layui-textarea {
+    		height:30px;
+    		line-height:1.3;
+		    line-height:30px;
+		    border-width:1px;
+		    border-style:solid;
+		    background-color:#fff;
+		    border-radius:2px
+		}
+		.layui-table th {
+			font-weight: bold;
+		}
+		.layui-table-view .layui-table td, .layui-table-view .layui-table th {
+			padding: 2px 0px !important;
+		}
+		.layui-table-cell a{
+			margin-bottom: 2px;
+		}
+  </style>
+</head>
+<body>
+<div style="background-color: #f2f2f2;width: 100%;height:46px;">
+  <div style="margin-bottom: 16px;">
+  <div class="layui-inline">  
+    <form class="layui-form" lay-filter="visitorform">
+	  <div class="layui-inline">
+	      <div class="layui-input-inline" style="width:150px;margin-left:30px;">
+	        <select id="status" name="status">
+	          <option value ="">--来访状态--</option>
+	          <option value ="1">预约</option>
+	          <option value ="2">在访</option>
+	          <option value ="3">离开</option>
+	        </select>
+	      </div>
+	  </div>
+	  <div class="layui-inline" style="margin-left: 30px;">
+				<div class="layui-input-inline" style="width:150px;">
+					<select id="photoNumStatus" name="photoNumStatus">
+						<option value ="">--比对照片--</option>
+						<option value ="1">已添加</option>
+						<option value ="2">未添加</option>
+					</select>
+				</div>
+	  </div>
+	  <div class="layui-inline">
+      	<label class="layui-form-label" style="padding:8px 15px;line-height:30px;">开始时间</label>
+      	<div class="layui-input-inline" style="margin-top: 8px">
+        	<input type="text" style="height: 30px;line-height: 30px;" name="startdate" id="startdate" lay-verify="startdate" class="layui-input">
+      	</div>
+      </div>
+      <div class="layui-inline">
+      	<label class="layui-form-label" style="padding:8px 15px;line-height:30px;">结束时间</label>
+      	<div class="layui-input-inline" style="margin-top: 8px">
+        	<input type="text" style="height: 30px;line-height: 30px;" name="enddate" id="enddate" lay-verify="enddate" class="layui-input">
+      	</div>
+      </div>
+  	</form>
+  	</div>
+	  <!-- <div class="layui-inline">
+        <input class="layui-input" id="searchContent" placeholder="搜索...">
+      </div>
+      <button class="layui-btn layui-btn-normal" id="doSearch">搜索</button> -->
+	<div class="layui-inline" style="margin-left: 30px;width: 12.5%;">
+			<input class="layui-input" style="height: 30px;line-height: 30px;" id="searchContent" placeholder="搜索...">
+	</div>
+	<button onmouseover="changeImg(this,2)" onmouseout="changeImg(this,1)" onmousedown="changeImg(this,3)" onmouseup="changeImg(this,2)" class="select-on layui-btn layui-btn" style="padding:0 0px;border: none;height: 30px;line-height: 30px;background-color: #f2f2f2;color: black;" id="doSearch"><img imgName="searchImg" src="/css/img/searchImg1.png">    </img></button>
+	
+  <div style="margin-top:8px;float:right;">  
+  	<!-- <button data-type="auto" class="layui-btn layui-btn-normal" id="VisitToday">今日来访</button> -->
+  	<!-- <button data-type="auto" class="layui-btn layui-btn-normal" id="deptManage">访客登记</button> -->
+  	<!-- <button data-type="auto" class="layui-btn layui-btn-normal"  id="toAuthConfig">导出访客流水</button> -->
+  	<!-- <button data-type="auto" class="layui-btn layui-btn-normal"  id="getDatas">查看批量登记</button> -->
+  	<button onmouseover="changeImg(this,2)" onmouseout="changeImg(this,1)" onmousedown="changeImg(this,3)" onmouseup="changeImg(this,2)" class="select-on layui-btn1" style="border: none;height: 30px;line-height: 30px;background-color: #f2f2f2;" id="VisitToday"><img imgName="VisitToday" style="margin-bottom: 3px;" src="/css/img/VisitToday1.png">    </img>今日来访</button>
+  <shiro:hasPermission name="访客登记">	<button onmouseover="changeImg(this,2)" onmouseout="changeImg(this,1)" onmousedown="changeImg(this,3)" onmouseup="changeImg(this,2)" class="select-on layui-btn1" style="border: none;height: 30px;line-height: 30px;background-color: #f2f2f2;" id="deptManage"><img imgName="Visitoreg" style="margin-bottom: 3px;" src="/css/img/Visitoreg1.png">    </img>访客登记</button></shiro:hasPermission>
+  <shiro:hasPermission name="访客登记">	<button onmouseover="changeImg(this,2)" onmouseout="changeImg(this,1)" onmousedown="changeImg(this,3)" onmouseup="changeImg(this,2)" class="select-on layui-btn1" style="margin-right:16px;border: none;height: 30px;line-height: 30px;background-color: #f2f2f2;" id="getDatas"><img imgName="Querybatchreg" style="margin-bottom: 3px;" src="/css/img/Querybatchreg1.png">    </img>多人来访管理</button></shiro:hasPermission>
+  </div>
+</div>
+</div>
+<!-- <div class="layui-table-main" style="float: left;width: 100%;" id="divtest">
+    <table class="layui-hide" id="visitorList" lay-size="sm" lay-filter="test"></table>
+</div> -->
+<div style="width:100%;float: left;margin-top:6px;">
+	<table class="layui-hide" id="visitorList" lay-size="sm" lay-filter="test"></table>
+</div>
+<div style="width: 100%;height:46px;float: left;">
+	<!-- <div style="left:1200px;top:550px;height:30px;width:400px;line-height: 30px;text-align: center;position: absolute;background-color: #54b5ff;border:1px solid #e2e2e2">
+	      预约人数：<span id="subscribe"></span>人，在访人数：<span id="visit"></span>人，离开人数：<span id="leave"></span>人
+	</div> -->
+	<!-- <div style="background-color: #54b5ff;height:36px;line-height: 30px;text-align: center;margin-right:30px;border:1px solid #e2e2e2;float: left;">
+		预约人数：<span id="subscribe"></span>人，在访人数：<span id="visit"></span>人，离开人数：<span id="leave"></span>人
+	</div> -->
+</div>
+<script type="text/html" id="barDemo">
+<shiro:hasPermission name="查看访客详情"><a class="layui-btn layui-btn-xs" lay-event="details">详情</a></shiro:hasPermission>
+{{# if(d.statustr==='预约'){ }} 
+    <shiro:hasPermission name="编辑访客信息">  <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a></shiro:hasPermission>
+	<shiro:hasPermission name="取消来访">  <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="leave">取消来访</a></shiro:hasPermission>
+{{# } }} 
+
+ {{# if(d.statustr==='在访'){ }} 
+	<shiro:hasPermission name="查看来访历史"> <a class="layui-btn layui-btn-xs" lay-event="history">来访历史</a></shiro:hasPermission>
+	<shiro:hasPermission name="访客离开"> <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="leave">访客离开</a> </shiro:hasPermission>
+{{# } }} 
+
+{{# if(d.statustr==='离开'){ }} 
+	 <shiro:hasPermission name="查看来访历史"><a class="layui-btn layui-btn-xs" lay-event="history">来访历史</a> </shiro:hasPermission>
+{{# } }}
+</script>
+<script type="text/html" id="authTpl">
+        {{#if (d.attribute === 0) { }}
+         <span>员工</span>
+        {{# }else if(d.attribute === 1){ }}
+        <span>访客</span>
+        {{# } }}
+</script>
+<script type="text/html" id="battitleTpl">
+{{# if(d.bat_title ===undefined){ }}
+{{# } else { }}
+<shiro:hasPermission name="访客登记"><span id="toDetail" style="text-decoration:underline;cursor: pointer">{{d.bat_title}}</span></shiro:hasPermission>
+<shiro:lacksPermission name="访客登记"><span id="toDetail" style="cursor:auto">{{d.bat_title}}</span></shiro:lacksPermission>
+{{# } }}
+</script>
+<script type="text/html" id="photoNum">
+	{{#  if(d.pic_num > 0){ }}
+	已添加{{d.pic_num}}张
+	{{#  } else{}}
+	未添加
+	{{#  } }}
+</script>
+<script src="/js/jquery.min.js"></script>
+<script src="/layui/layui.js"></script>
+<script type="text/javascript" src="/js/ajaxFilter.js"></script>
+<script>
+    $(function () {
+        window.parent.$("#toVisitorManageLi").siblings("li").removeClass("layui-this");
+        window.parent.$("#toVisitorManageLi").addClass("layui-this");
+    });
+function changeImg(obj,status) {
+    var imgName = $(obj).find("img").attr("imgName");
+    $(obj).find("img").attr("src","/css/img/" + imgName + status + ".png");
+}
+
+    layui.use(['table','laydate','form','layer'], function(){
+        var table = layui.table;
+        var laydate = layui.laydate;
+        var form = layui.form;
+        var parentHeight = document.documentElement.clientHeight;
+		var height = parentHeight-100;
+      	//执行一个laydate实例
+        laydate.render({
+          elem: '#startdate' //指定元素
+          ,type: 'datetime'
+        });
+        laydate.render({
+            elem: '#enddate' //指定元素
+            ,type: 'datetime'
+        });
+      
+        table.on('checkbox(test)', function(obj){
+          console.log(obj);
+        });
+        
+        $(document).ready(function() {       
+            // select下拉框选中触发事件
+            form.on("select", function(data){
+            	doSearch();
+            });
+        });
+      
+        //获取系统当前时间
+        function getNowFormatDate(num) {
+            var date = new Date();
+            var seperator1 = "-";
+            var seperator2 = ":";
+            var month = "";
+            var month = date.getMonth() + 1;
+            var strDate = date.getDate();
+            var hour = date.getHours();
+            var minutes = date.getMinutes();
+            var seconds = date.getSeconds();
+            if (month >= 1 && month <= 9) {
+                month = "0" + month;
+            }
+            if (strDate >= 0 && strDate <= 9) {
+                strDate = "0" + strDate;
+            }
+            if (hour >= 0 && hour <= 9) {
+            	hour = "0" + hour;
+            }
+            if (minutes >= 0 && minutes <= 9) {
+            	minutes = "0" + minutes;
+            }
+            if (seconds >= 0 && seconds <= 9) {
+            	seconds = "0" + seconds;
+            }
+            var currentdate ="";
+            if(num!=null){
+            	//获取起始日期
+            	currentdate = date.getFullYear() + seperator1 + month + seperator1 + strDate
+                + " " + "00" + seperator2 + "00" + seperator2 + "00";
+            }else{
+            	/* currentdate = date.getFullYear() + seperator1 + month + seperator1 + strDate
+            	+ " " + hour + seperator2 + minutes + seperator2 + seconds; */
+            	currentdate = date.getFullYear() + seperator1 + month + seperator1 + strDate
+            	+ " " + "23" + seperator2 + "59" + seperator2 + "59";
+            }
+            
+            return currentdate;
+        }
+        var enddate = getNowFormatDate();
+        var startdate =getNowFormatDate("start");
+        
+        function isdatetime(str) {
+            var result = str.match(/^(\d{4})(-|\/)(\d{1,2})\2(\d{1,2}) (\d{1,2}):(\d{1,2}):(\d{1,2})$/);
+            if (result == null) return false;
+            var d = new Date(result[1], result[3] - 1, result[4], result[5], result[6], result[7]);
+            return (d.getFullYear() == result[1] && (d.getMonth() + 1) == result[3] && d.getDate() == result[4] && d.getHours() == result[5] && d.getMinutes() == result[6] && d.getSeconds() == result[7]);
+        }
+        
+      	//表单初始赋值
+        form.val('visitorform', {
+          "startdate": startdate 
+          ,"enddate": enddate
+        })
+        $("#VisitToday").on('click', function () {
+        	location.reload();
+        });
+        $("#deptManage").on('click', function () {
+            var parentHeight = document.documentElement.clientHeight;
+            var height = parentHeight*0.95;
+            layer.open({
+                type: 2,
+                title: '访客登记',
+                shadeClose: false,
+                shade:[0.2, '#000000'],
+                area: ['1488px', height+'px'],
+                content: '/visitorManage/toVisitorRegister',
+				end:function () {
+					window.location.reload();
+                },
+                cancel: function (index, layero) {
+                    var body = layer.getChildFrame('body', index);
+                    if (body.find("#ifWriteFlag").val() != "0") {
+                        layer.confirm('访客未登记完毕,是否退出?',{btn:['是','否'],icon:3,title:"提示"},function (index1) {
+                            layer.close(index);
+                            layer.close(index1);
+                        },function (index1) {
+                            layer.close(index1);
+                        });
+                    } else {
+                        layer.close(index);
+                    }
+                    return false;
+                }
+            });
+        });
+        table.render({
+            elem: '#visitorList'
+            ,url:'/visitorManage/queryAllVisitor?visit_time='+startdate+'&expire_time='+enddate
+            //,width:1400
+            ,height:height
+			,limit:20
+            ,cols: [
+            	[
+              		{field:'statustr', width:100, title: '状态'}
+              		,{field:'name', title: '访客姓名'}
+              		,{field:'attribute', width:100,title: '身份',templet: '#authTpl'}
+              		,{field:'content', title: '来访事由'}
+              		,{field:'employee',title: '被访人/会议'}
+              		,{field:'visit_time',width:180, title: '到访时间'}
+              		,{field:'expire_time',width:180, title: '离开时间'}
+              		,{field:'bat_title', event:'toDetail',/* style:'cursor: pointer', */ title: '来访主题',templet: '#battitleTpl'}
+              		,{field:'pic_num',width:180, title:'比对照片',templet: '#photoNum'}
+              		,{fixed: 'right', width:350, title:'操作', toolbar: '#barDemo'}
+           			]
+          		]
+        	,page: true
+        	,done:function(res, curr, count){  //res 接口返回的信息
+        		//var data = res.data;
+        		/* var subscribe_count = 0;
+        		var visit_count = 0;
+        		var leave_count = 0;
+                for(var i=0;i<data.length;i++){
+                	var statustr = data[i].statustr;
+                	if(statustr.indexOf("离开")>-1){
+                		leave_count++;
+                    }else if(statustr.indexOf("在访")>-1){
+                    	visit_count++
+                    }else if(statustr.indexOf("预约")>-1){
+                    	subscribe_count++
+                    }
+                } */
+        		
+                 var book_num=0;
+                var visiting_num=0;
+                var leave_num=0;
+                var contentElement =document.querySelectorAll("a[class='layui-btn layui-btn-xs']");
+                var contentElements =document.querySelectorAll("a[class='layui-btn layui-btn-danger layui-btn-xs']");
+                var counts=contentElement.length+contentElements.length;
+                if(counts==0&&count!=0){
+        		     $("[data-field='9']").css('display','none');
+        	    }
+        		 var map = res.map;
+        	    for(var key in map){
+        	    	if(key.indexOf("visiting_num")>-1){
+        	    		visiting_num = map[key];
+        	    	}else if(key.indexOf("book_num")>-1){
+        	    		book_num = map[key];
+        	    	}else{
+        	    		leave_num = map[key];
+        	    	}
+        	    }
+                $("#layui-table-page1").prepend("<div class=\"layui-box\" style=\"display: inline-block;" +
+                	      "background-color: #54b5ff;height:24px;line-height: 24px;text-align: center;width:15%;" +
+                	      "margin-left:30px;border:1px solid #e2e2e2;font-size: 14px;\">" +
+                	      "预约人数："+book_num+",在访人数："+visiting_num+",离开人数："+leave_num+"</div>");
+        	}  
+          });
+      	
+        //监听行工具事件//启用\停用\删除 
+        table.on('tool(test)', function(obj){ 
+          var data = obj.data //获得当前行数据
+          ,layEvent = obj.event; //获得 lay-event 对应的值
+          
+          var status = data.status;
+          var faceid = data.face_id;
+          var recid = data.rec_id;
+          var bookid = data.book_id;
+          var attribute = data.attribute;
+          var visitime = data.visit_time;
+          var expiretime = data.expire_time;
+          var bat_id = data.bat_id;
+          var employee_id = data.employee_id;
+          var depart_id = data.depart_id;
+          var reason_id = data.reason_id;
+          var bat_title = data.bat_title;
+          
+          var parentHeight = document.documentElement.clientHeight;
+          var height = parentHeight*0.95;
+          var height1 = parentHeight*0.82;
+          if(layEvent === 'details'){
+        	  var loadingTips = layer.load(1, {
+                  shade: [0.1,'#fff']
+              });
+        	  layer.open({
+                  type:2,//类型
+                  //area:['650px','700px'],//定义宽和高
+                  area: ['600px', height1+'px'],
+                  title: '详情',
+                  skin: '#f2f2f2',   
+                  shadeClose: false,
+                  shade:[0.2, '#000000'],
+                  content:'/visitorManage/showVisitorDetails?status='+status+'&faceid='+faceid+'&recid='+recid+'&bookid='+bookid
+                  +'&bat_id='+bat_id+'&employee_id='+employee_id+'&depart_id='+depart_id+'&visit_time='+visitime
+                  +'&expire_time='+expiretime+'&reason_id='+reason_id+'&attribute='+attribute,
+                  success: function(layero, index){
+                    	layer.close(loadingTips);
+                  },
+                  cancel: function (index, layero) {
+                	  layer.close(loadingTips);
+                  }
+          	  });
+          }else if(layEvent === 'leave'){
+        	  if(status==0){//取消来访
+        		  layer.confirm('确定取消本次来访吗',{icon: 3,title:'提示',}, function(index){
+        			btn: ['确定', '取消']
+  	          		$.ajax({ 
+  	         	        url:"/visitorManage/VisitorLeave",
+  	         			type:'post',
+  	         			data:{attribute:attribute,recid:recid,bookid:bookid,status:status},
+  	         			async:false,	
+  	         			success: function(code) {
+  	         				if(code==0){
+   	               				layer.alert("取消来访成功", {
+   	               					title:"提示",
+   	               				    icon: 1,
+   	               					},function(){
+   	                                   	layer.closeAll();
+   	                                   	//修改成功后刷新父界面
+   	                                   	location.reload();
+   	                               });
+   	               			}else{
+   	               				layer.alert('取消来访失败', {
+   	               		    		  title:"提示",
+   	               		    		  icon: 2
+   	               		    		  //skin: 'layui-layer-lan'
+   	               		    	});
+   	               			}
+  	         			},
+  	         		});
+                  });
+        		  /* layer.open({
+   	               type:1,//类型   
+   	               title:'系统提示  ',//题目
+   	               skin: 'layui-layer-lan',   //蓝色皮肤 
+   	               btn: ['确认  ','取消 '],
+   	               shadeClose:true,//点击遮罩层打开 
+           	  	   content: '<div style="padding: 20px 80px;">确认取消来访吗</div>',
+   	               yes: function(){
+   	            	   $.ajax({ 
+   	             	        url:"/visitorManage/VisitorLeave",
+   	             			type:'post',
+   	             			data:{attribute:attribute,recid:recid,bookid:bookid},
+   	             			async:false,	
+   	             			success: function(code) {
+   	             				if(code==0){
+   	               				layer.alert("取消来访成功", {
+   	               					title:"系统提示",
+   	               		    		skin: 'layui-layer-lan'
+   	               					},function(){
+   	                                   	layer.closeAll();
+   	                                   	//修改成功后刷新父界面
+   	                                   	location.reload();
+   	                               });
+   	               			}else if(code==1){
+   	               				layer.alert("访客离开成功", {
+   	               					title:"系统提示",
+   	               		    		skin: 'layui-layer-lan'
+   	               					},function(){
+   	               						layer.closeAll();
+   	                                   	//修改成功后刷新父界面
+   	                                   	location.reload();
+   	                               });
+   	               			}else{
+   	               				layer.alert('访客离开/取消来访失败', {
+   	               		    		  title:"系统提示",
+   	               		    		  skin: 'layui-layer-lan'
+   	               		    	});
+   	               			}
+   	             			},
+   	             		});
+   	               }
+   	               ,btn2: function(){
+   	                    layer.closeAll();
+   	               }
+   	          	}); */	
+          	  }else{//访客离开
+          		layer.confirm('确定该访客离开吗', {icon: 3,title:'提示',},function(index){
+                	btn: ['确定', '取消']
+	          		$.ajax({ 
+	         	        url:"/visitorManage/VisitorLeave",
+	         			type:'post',
+	         			data:{attribute:attribute,recid:recid,bookid:bookid,status:status},
+	         			async:false,	
+	         			success: function(code) {
+	         			 if(code==1){
+	           				layer.alert("访客离开成功", {
+	           					title:"提示",
+	           					icon: 1,
+	           					},function(){
+	           						layer.closeAll();
+	                               	//修改成功后刷新父界面
+	                               	location.reload();
+	                           });
+	           			}else{
+	           				layer.alert('访客离开失败', {
+	           		    		  title:"提示",
+	           		    		  icon: 2,
+	           		    	});
+	           			}
+	         			},
+	         		});
+                  });
+          		  /* layer.open({
+    	               type:1,//类型   
+    	               title:'系统提示  ',//题目
+    	               skin: 'layui-layer-lan',   //蓝色皮肤 
+    	               btn: ['确认  ','取消 '],
+    	               shadeClose:true,//点击遮罩层打开 
+            	  	   content: '<div style="padding: 20px 80px;">确认访客离开吗</div>',
+    	               yes: function(){
+    	            	   $.ajax({ 
+    	             	        url:"/visitorManage/VisitorLeave",
+    	             			type:'post',
+    	             			data:{attribute:attribute,recid:recid,bookid:bookid},
+    	             			async:false,	
+    	             			success: function(code) {
+    	             				if(code==0){
+    	               				layer.alert("取消来访成功", {
+    	               					title:"系统提示",
+    	               		    		skin: 'layui-layer-lan'
+    	               					},function(){
+    	                                   	layer.closeAll();
+    	                                   	//修改成功后刷新父界面
+    	                                   	location.reload();
+    	                               });
+    	               			}else if(code==1){
+    	               				layer.alert("访客离开成功", {
+    	               					title:"系统提示",
+    	               		    		skin: 'layui-layer-lan'
+    	               					},function(){
+    	               						layer.closeAll();
+    	                                   	//修改成功后刷新父界面
+    	                                   	location.reload();
+    	                               });
+    	               			}else{
+    	               				layer.alert('访客离开/取消来访失败', {
+    	               		    		  title:"系统提示",
+    	               		    		  skin: 'layui-layer-lan'
+    	               		    	});
+    	               			}
+    	             			},
+    	             		});
+    	               }
+    	               ,btn2: function(){
+    	                    layer.closeAll();
+    	               }
+    	          }); */	
+              } 
+        	    
+        	  /* $.ajax({ 
+      	        url:"/visitorManage/VisitorLeave",
+      			type:'post',
+      			data:{attribute:attribute,recid:recid,bookid:bookid},
+      			async:false,	
+      			success: function(code) {
+      				if(code==0){
+        				layer.alert("取消来访成功", {
+        					title:"系统提示",
+        		    		skin: 'layui-layer-lan'
+        					},function(){
+                            	layer.closeAll();
+                            	//修改成功后刷新父界面
+                            	location.reload();
+                        });
+        			}else if(code==1){
+        				layer.alert("访客离开成功", {
+        					title:"系统提示",
+        		    		skin: 'layui-layer-lan'
+        					},function(){
+        						layer.closeAll();
+                            	//修改成功后刷新父界面
+                            	location.reload();
+                        });
+        			}else{
+        				layer.alert('访客离开/取消来访失败', {
+        		    		  title:"系统提示",
+        		    		  skin: 'layui-layer-lan'
+        		    	});
+        			}
+      			},
+      		  }); */
+          }else if(layEvent === 'history'){
+        	  var loadingTips = layer.load(1, {
+                  shade: [0.1,'#fff']
+              });
+        	  layer.open({
+                  type:2,//类型
+                  area:['600px','650px'],//定义宽和高
+                  title: '来访历史',
+                  //skin: 'layui-layer-lan',   //蓝色皮肤
+                  shadeClose: false,
+                  shade:[0.2, '#000000'],
+                  content:'/visitorManage/VisitorHistory?faceid='+faceid+'&attribute='+attribute
+                		  +'&visitime='+visitime+'&expiretime='+expiretime,
+                  success: function(layero, index){
+                     layer.close(loadingTips);
+                  }
+          	  });
+          } else if (layEvent === 'edit') {
+              var parentHeight = document.documentElement.clientHeight;
+              var height = parentHeight*0.95;
+              var bat_id = data.bat_id;
+              var attribute = data.attribute;
+              if (bat_id == "0" && attribute == "0") {
+                  layer.alert("该访客为公司员工,如需修改其基本信息请前往员工管理进行编辑!",{icon: 0,title:"提示"},function (index) {
+                      layer.close(index);
+                  });
+			  } else {
+                  var face_id = faceid;
+                  var book_id = bookid;
+                  var rec_id = data.rec_id;
+                  var employee_id = data.employee_id;
+                  var depart_id = data.depart_id;
+                  var visit_time = data.visit_time;
+                  var expire_time = data.expire_time;
+                  var reason_id = data.reason_id;
+                  layer.open({
+                      type:2,//类型
+                      area:['900px',height+'px'],//定义宽和高
+                      title: '编辑',
+                      shadeClose: false,
+                      shade:[0.2, '#000000'],
+                      content:'/visitorManage/toEditVisitor?&face_id='+face_id+'&book_id='+book_id+'&rec_id='+rec_id+'&employee_id='+employee_id+'&depart_id='+depart_id+'&visit_time='+visit_time+'&expire_time='+expire_time+'&bat_id='+bat_id+'&reason_id='+reason_id+'&attribute='+attribute
+                      ,end:function () {
+                          window.location.reload();
+                      },
+                      cancel: function (index, layero) {
+                          var body = layer.getChildFrame('body', index);
+                          if (body.find("#ifWriteFlag").val() != "0") {
+                              layer.confirm('访客未修改完毕,是否退出?',{btn:['是','否'],icon:3,title:"提示"},function (index1) {
+                                  layer.close(index);
+                                  layer.close(index1);
+                              },function (index1) {
+                                  layer.close(index1);
+                              });
+                          } else {
+                              layer.close(index);
+                          }
+                          return false;
+                      }
+                  });
+			  }
+		  }else if (layEvent === 'toDetail'){
+              if(bat_title.length>0&&$("#toDetail").css("cursor")=="pointer"){
+            	  $.ajax({
+                      url: "/visitorManage/selectEmployeeInfo",
+                      type: "post",
+                      data: {'employee_id':employee_id},
+                      async: false,
+                      success: function(data1) {
+                          var parentHeight = document.documentElement.clientHeight;
+                          var height=parentHeight*0.8;
+                    	  layer.open({
+                              type:2,//类型
+                              area:['1200px',height+'px'],//定义宽和高
+                              title: '多人来访详情',
+                              shadeClose: false,
+                              shade:[0.2, '#000000'],
+                              content:'/visitorManage/visitorDetail?bat_id='+bat_id,//打开的内容
+                              cancel: function (index, layero) {
+                            	  layer.close(index);
+                            	  location.reload();
+                              },
+                              success:function(layero,index){
+                            	  var body = layer.getChildFrame('body', index);
+                            	  body.find('#name').attr("value",data.bat_title);
+                            	  body.find('#reason').attr("value",data.content);
+                            	  body.find('#dept').attr("value",data1.departName);
+                            	  body.find('#visitored').attr("value",data1.name);
+                            	  body.find('#phone').attr("value",data1.tel_no);
+                            	  body.find('#start').attr("value",data.visit_time);
+                            	  body.find('#end').attr("value",data.expire_time);
+                              }
+                    	  });
+                      }
+              	 });
+              }
+		  }
+        });
+        
+        //访客列表模糊查询     
+        $('#doSearch').on('click',function(){
+        	 doSearch();
+        });
+
+        document.onkeydown = function (e) { // 回车提交表单
+            var theEvent = window.event || e;
+            var code = theEvent.keyCode || theEvent.which;
+            if (code == 13) {
+                doSearch();
+            }
+        };
+
+		function containSpecial(s) {
+			var containSpecial = RegExp("^$|[^`~!@#$%^&*()_+<>?:\"{},.\\/\\\\;'[\\]·！#￥（——）：；“”‘、，|《。》？、【】[\\]]+$");
+			for(var i=0;i<s.length;i++){
+				if (!containSpecial.test(s.charAt(i))) {
+					return false;
+				}
+			}
+			return true;
+		}
+
+        function doSearch() {
+            var layer = layui.layer,$=layui.$;
+
+            var statusval   = document.getElementById("status").value;
+            var photonumval   = document.getElementById("photoNumStatus").value;
+            var visit_time = $('#startdate').val();
+            var expire_time = $('#enddate').val();
+            var searchContent = $('#searchContent').val();
+			searchContent=searchContent.trim();
+            var startflag = isdatetime(visit_time);
+            var endflag = isdatetime(expire_time);
+			if(visit_time == ""){
+                layer.alert('开始时间不能为空', {
+                	icon: 0,
+                	title:"提示",
+                });
+                return false;
+            }
+            if(expire_time == ""){
+                layer.alert('结束时间不能为空', {
+                	icon: 0,
+                	title:"提示",
+                    // skin: 'layui-layer-lan'
+                });
+                return false;
+            }
+            if(!startflag || !endflag){
+                layer.alert('请按yyyy-mm-dd hh:mm:ss格式输入时间', {
+                	icon: 0,
+                	title:"提示",
+                });
+                return false;
+            }
+            if(visit_time > expire_time){
+                layer.alert('结束时间不得早于开始时间', {
+                	icon: 0,
+                	title:"提示",
+                });
+                return false;
+            }
+			if (!containSpecial(searchContent)){
+				layer.msg('搜索条件不能含有特殊字符', {icon: 0, anim: 6});
+			}else {
+				table.reload('visitorList', {
+					//url:'/visitorManage/queryAllVisitor',
+					where: {
+						statusval: statusval,
+						photonumval:photonumval,
+						visit_time: visit_time,
+						expire_time: expire_time,
+						searchContent: searchContent,
+					}
+					, page: {
+						curr: 1 //重新从第 1 页开始
+					}
+					/* ,done: function(res, curr, count){
+                        this.where={};
+                    } */
+				});
+			}
+        }
+        
+        $("#getDatas").on('click', function () {
+        	var parentHeight = document.documentElement.clientHeight;
+            var height = parentHeight*0.95;
+        	var layer = layui.layer,$=layui.$;
+            layer.open({
+                type:2,//类型
+                area: ['1500px', height+'px'],//定义宽和高
+                title:'多人来访管理  ',
+                maxmin: true, 
+              //  btn: ['保存','取消 '],
+                shadeClose: false,
+                shade:[0.2, '#000000'],
+                content:'/visitorManage/showbatVisitor',//打开的内容
+                cancel: function (index, layero) {
+                   layer.close(index);
+                   location.reload();
+                }
+        	});
+   	    });
+    });
+    
+    /* $(document).ready(function(){
+    	var book_num = "[[${book_num}]]";
+    	var visiting_num = "[[${visiting_num}]]";
+    	var leave_num = "[[${leave_num}]]";
+    	document.getElementById('subscribe').innerHTML=book_num;
+        document.getElementById('visit').innerHTML=visiting_num;
+        document.getElementById('leave').innerHTML=leave_num;
+    }); */
+</script>
+<script type="text/javascript">
+//隔10秒刷新
+var t = [[${time}]];
+setInterval("refer()",1000);
+function refer(){ 
+	if(t==0){
+		//查询修订号是否改变
+		var visit_record_status="";
+		$.ajax({ 
+			url:"/visitorManage/QueryVisitrecordStatus",
+			type:'post',
+			async:false,	
+			success: function(data) {
+				visit_record_status = data; 
+			},
+		});
+		
+		if(visit_record_status=="change"){
+			layui.use(['table'], function(){
+				var table = layui.table;
+				
+				table.reload('visitorList', {
+					 
+		        });  
+			});
+		}
+		
+	    t=[[${time}]];
+	} 
+	t--;
+}  
+</script>
+</body>
+</html>

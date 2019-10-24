@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>多人来访详情</title>
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <base href="/"/>
+  <link rel="stylesheet" href="/layui/css/layui.css">
+    <link rel="stylesheet" href="/font-awesome/css/font-awesome.css">
+  <style>
+   .layui-table-view{
+       margin:0
+   }
+   .layui-input-block input{
+       color: #999999 !important;
+       border: none;
+       padding-left: 25px;
+   }
+   .layui-input-inline input{
+       color: #999999 !important;
+       border: none;
+   }
+  </style>
+</head>
+<body>
+ <div style="width: 100%;float: left;height: 24px;margin-top:10px">
+          <div style="width: 40%;float: left;height: 100%;">
+             <fieldset class="layui-elem-field layui-field-title" style="float: left;width: 100%;">
+                 <legend style="color: #999999;font-size: 14px;">来访详情</legend>
+             </fieldset>
+           </div>
+          <div style="width: 49.2%;float: left;margin-left:8.6%;height: 100%;">
+             <fieldset class="layui-elem-field layui-field-title">
+                <legend style="color: #999999;font-size: 14px;">登记记录</legend>
+           </fieldset>
+          </div>
+</div>
+<form class="layui-form" id="sign" style="float:left;margin-left:10px;margin-top:40px" action=""> 
+  <div class="layui-form-item">
+    <label class="layui-form-label">来访主题</label>
+    <div class="layui-input-block" style='width: 200px;'>
+      <input type="text" id="name"  required  lay-verify="required" autocomplete="off" class="layui-input layui-disabled" 
+       readonly unselectable="on">
+    </div>
+  </div>
+   
+  <div class="layui-form-item">
+    <label class="layui-form-label">来访事由</label>
+    <div class="layui-input-block" style='width: 200px;'>
+      <input type="text" id="reason"   autocomplete="off" class="layui-input layui-disabled"
+       readonly unselectable="on">
+      
+    </div>
+  </div>
+   <div class="layui-form-item">
+    <label class="layui-form-label">被访人部门</label>
+    <div class="layui-input-block" style='width: 200px;'>
+     <input type="text" id="dept"  required  lay-verify="required" autocomplete="off" class="layui-input layui-disabled" 
+      readonly unselectable="on">
+    </div>
+  </div>
+   <div class="layui-form-item">
+    <label class="layui-form-label">被访人</label>
+    <div class="layui-input-block" style='width: 200px;'>
+      <input type="text" id="visitored"  required  lay-verify="required" autocomplete="off" class="layui-input layui-disabled" 
+       readonly unselectable="on">
+      
+    </div>
+  </div>
+   <div class="layui-form-item">
+    <label class="layui-form-label">被访人手机</label>
+    <div class="layui-input-block" style='width: 200px;'>
+      <input type="text" id="phone" required  lay-verify="required" placeholder="请输入手机号" autocomplete="off" class="layui-input layui-disabled"
+      readonly unselectable="on">
+    </div>
+  </div>
+  
+   <div class="layui-form-item">
+      <label class="layui-form-label">来访时间</label>
+      <div class="layui-input-inline" style='width: 170px;'>
+        <input type="text"  id="start" placeholder="开始时间"  class="layui-input layui-disabled" style="padding-left: 25px;" readonly unselectable="on">
+      </div>
+      <div class='layui-input-inline' style='width: 5px;line-height: 36px;'>
+                  -
+     </div>
+      <div class="layui-input-inline" style='width: 200px;'>
+         <input type="text" id="end" placeholder="结束时间"  class="layui-input layui-disabled"  readonly unselectable="on">
+      </div>
+    </div>
+    
+  
+  
+   <div class="layui-form-item">
+    <label class="layui-form-label">权限设备</label>
+    <div class="layui-input-block" style='width: 200px;'>
+      <!-- <input type="text" id="device"   autocomplete="off" class="layui-input layui-disabled"
+      style="white-space:nowrap;text-overflow:ellipsis; overflow:hidden;height: 32px;line-height: 32px;border-radius: 4px;"   readonly unselectable="on"> -->
+      <span th:if="${namelength}>1">
+		 <input type="text" id="device" name="device" class="layui-input" style="overflow: hidden;text-overflow: ellipsis;white-space: nowrap;width: 450px;color: #999999;" disabled="disabled">
+	     <div id="auto_div" style="bottom:30px;left:25px;border:1px solid #e2e2e2;border-radius: 5px;display: none;background-color: #efefef;position: absolute;z-index:1;">
+         </div>
+	     <button type="button" class="select-on layui-btn" onmousedown="secound(this)" onmouseup="first(this)" onclick="change()"
+             style="position:absolute;left:100px;top:8px;padding:0 0px;mborder: none;width:22px;height: 22px;line-height: 22px;background-color: #ffffff;color: black;" id="rightClick">
+        	 <img imgName="operation" id="operation" src="/css/img/openup.png"></img></button>
+	 </span>
+	 <span th:if="${namelength}==1">
+		<input type="text" id="device" name="device" class="layui-input" style="overflow: hidden;text-overflow: ellipsis;white-space: nowrap;width: 450px;color: #999999;" disabled="disabled">
+	 </span>
+    </div>
+  </div>
+
+</form>
+<div style="float: left;margin-top:40px; border: #e6e6e6 1px solid;margin-left:60px">
+ <table class="layui-table"  id="visitorRecordList" style="margin:0" lay-filter="visitorRecord"></table>
+</div>
+ <div class="layui-form-item">
+    <div class="layui-input-block" style="float:right;margin-right:140px;margin-top:10px !important">
+      <button class="layui-btn layui-btn-ks" lay-submit lay-filter="auth" id="btn_edit" style="display:none">编辑</button>
+    </div>
+</div>
+
+<script type="text/html" id="barDemo">
+{{# if(d.expire_time > d.current_time){ }} 
+ 	{{# if(d.status===0){ }} 
+ 		<a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+	{{# } }}
+{{# } }}
+</script>  
+<script src="/layui/layui.js"></script>
+<script src="/js/jquery.min.js"></script>
+ <script type="text/javascript" src="/js/ajaxFilter.js"></script>
+<script type="text/javascript">
+layui.use(['table','layer','form'], function(){
+    var $ = layui.$;
+    var table = layui.table;
+    var layer = layui.layer;
+    var form = layui.form;
+});
+    
+var term = "[[${term_name}]]";
+var termlist = term.split(",");
+if(termlist.length>1){
+	$("#device").attr('value',termlist[0]+'...');
+}else{
+	if(term==""){
+		$("#device").attr("value","暂未设置");
+	}else{
+		$("#device").attr("value","[[${term_name}]]");
+	}
+}
+function change(){
+	var x = document.getElementById("operation").getAttribute("src");
+
+    if (x=="/css/img/openup.png"){
+        document.getElementById("operation").src="/css/img/closedown.png";
+        
+        var term = "[[${term_name}]]";
+    	var termlist = term.split(",");
+    	var photo = "[[${term_model}]]";
+    	var photolist = photo.split(",");
+        AutoComplete("auto_div",  termlist, photolist);
+        
+        for (i in termlist) {
+            var div = document.getElementById(''+i);
+            var wordNode = termlist[i];
+            div.innerHTML = div.innerHTML+'&nbsp;&nbsp;&nbsp;<span style="font-size:14px;color:#333333;">'+wordNode+'</span>'; 
+        }
+        
+    }
+    else{
+        document.getElementById("operation").src="/css/img/openup.png";
+        $("#auto_div").hide();
+    }
+}
+
+function secound(obj){
+    obj.src="/css/img/closedown.png";
+}
+
+function first(obj){
+    obj.src="/css/img/openup.png";
+}
+
+function AutoComplete(auto, mylist,photolist) {
+        var autoNode = $("#" + auto);   //缓存对象（弹出框）
+        autoNode.empty();
+        for (i in mylist) {
+        	var wordNode = mylist[i];   //弹出框里的每一条内容
+        	var photomode = photolist[i];
+        	
+        	var newDivNode = $("<div>").attr("id", i);
+        	newDivNode.attr("style", "height:25px;margin-top:10px;margin-left:10px;margin-bottom:10px;");
+        	var imgDivNode = $("<img>").attr("id", "img"+i);
+        	//1.14T，2.facecheck动态，3.iDR系列，4.未知
+        	if(photomode==1){
+        		imgDivNode.attr('src','/css/img/14T.png');
+        	}else if(photomode==2){
+        		imgDivNode.attr('src','/css/img/facecheck.png');
+        	}else if(photomode==3){
+        		imgDivNode.attr('src','/css/img/iDR.png');
+        	}else{
+        		imgDivNode.attr('src','/css/img/unknow.png');
+        	}
+        	
+        	imgDivNode.appendTo(newDivNode); 
+        	newDivNode.appendTo(autoNode); 
+            
+            if (mylist.length > 0) {    //如果返回值有内容就显示出来
+                autoNode.show();
+            } else {               //服务器端无内容返回 那么隐藏弹出框
+                autoNode.hide();
+                //弹出框隐藏的同时，高亮节点索引值也变成-1
+                highlightindex = -1;
+            }
+        }
+}
+
+    /* $("#device").attr("value","[[${term_name}]]"); 
+    $("#device").attr("title","[[${term_name}]]"); */ 
+			if(new Date(("[[${expire_time}]]").replace(/-/g,"/"))>new Date()){
+				$("#btn_edit").show();
+			}
+			$("#btn_edit").on('click', function () {
+				var indexs = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
+				parent.layer.close(indexs);
+				 var val=$("#device").val();
+           	    if(val==null||val!=undefined||val==""){
+           		  var term_list=[];
+           	    }
+           	   else {
+           		  var  term_list=[[${term_list}]]; 
+           	    }
+				 $.ajax({
+	                  url: "/visitorManage/selectEmployeeInfo",
+	                  type: "post",
+	                  data: {'employee_id':[[${employee_id}]]},
+	                  async: false,
+	                  success: function(data1) {
+	                parent.layer.open({
+	                          type:2,//类型
+	                          area: ['800px', '600px'],//定义宽和高
+	                          title:'编辑批量信息  ',
+	                          shadeClose: false,
+	                          shade:[0.2, '#000000'],
+	                        //  btn: ['保存','取消 '],
+	                         // shadeClose:true,//点击遮罩层打开 
+	                          content:'/visitorManage/editBatVisitor?term_list='+term_list+'&depart_id='
+                              +data1.depart_id+'&face_id='+data1.face_id+'&tel_no='+data1.tel_no+'&bat_id='+[[${bat_id}]]+'&flag=2',//打开的内容
+	                         /* success:function(layero,index){
+	                        	  var body = $(layero).find("iframe").contents();
+	                        	  var value=data1.face_id+","+data1.tel_no;
+	                        	  body.find('#batchName').attr("value","[[${title}]]");
+	                        	  
+	                        	  body.find('#startTime').attr("value","[[${visit_time}]]");
+	                        	  body.find('#endTime').attr("value","[[${expire_time}]]");
+	                        	  
+	                        	  body.find('#visitReasondiv').find("[lay-value='"+reason+ "']").click();
+	                        	  body.find('#departdiv').find("[lay-value='" + data1.depart_id + "']").click();
+	                        	  body.find('#employeediv').find("[lay-value='" + value + "']").click();
+	                        	  body.find('#telNum').attr("value",data1.tel_no);  */
+	                    //} 
+	                });
+	             }
+	        });
+	 });
+			$("#close").on('click', function () {
+		           parent.layer.closeAll();
+		        });					
+			
+				
+
+</script>
+
+<script>
+layui.use(['table','layer','form','laydate','upload'], function() {
+        var $ = layui.$;
+        var table = layui.table;
+        var layer = layui.layer;
+        var form = layui.form;
+        var laydate = layui.laydate;
+        var upload = layui.upload;
+        var bat_id=[[${bat_id}]];
+        table.render({
+            elem: '#visitorRecordList'
+            ,url: '/visitorManage/visitRecordQuery?bat_id='+bat_id//数据接口
+            ,width:590
+            ,height:350
+            ,cols: [
+                [ //表头
+                    {field: 'name', title: '姓名'}
+                    ,{field: 'visit_time', title: '到访时间'}
+                    ,{field: 'expire_time', title: '结束时间'}
+                    ,{fixed: 'right',  title:'操作', toolbar: '#barDemo'}
+                ]
+            ]
+            ,done:function(res, curr, count){  //res 接口返回的信息
+            	var data = res.data; 
+            	for(var i=0;i<data.length;i++){
+                	var expire_time = data[i].expire_time;
+                	if(new Date(("[[${expire_time}]]").replace(/-/g,"/"))<new Date()){
+                		/* $("[data-field='3']").css('display','none');
+                		$("[data-field='visit_time']").css('width','250');
+                		$("[data-field='expire_time']").css('width','250'); */
+                		table.render({
+                            elem: '#visitorRecordList'
+                            ,url: '/visitorManage/visitRecordQuery?bat_id='+bat_id//数据接口
+                            ,width:590
+                            ,height:350
+                            ,cols: [
+                                [ //表头
+                                    {field: 'name', title: '姓名'}
+                                    ,{field: 'visit_time', title: '到访时间'}
+                                    ,{field: 'expire_time', title: '结束时间'}
+                                ]
+                            ]
+                        });
+                	}
+                } 
+            	
+            }
+        });
+        
+        table.on('tool(visitorRecord)', function(obj){ 
+            var data = obj.data //获得当前行数据
+            ,layEvent = obj.event; //获得 lay-event 对应的值
+            if(layEvent === 'del'){
+            	layer.confirm('确定删除该条访客记录么?',{btn:['确定', '取消'],icon:3,title:"提示"},function (index1) {
+            		$.ajax({ 
+              	        url:"/visitorManage/visitorDel",
+              			type:'get',
+              			data:{
+           	        	 'rec_id':data.rec_id
+           	             },
+            			async:false,	
+            			success: function(result) {
+              				if(result==0){
+              					 obj.del(); //删除对应行（tr）的DOM结构
+              					 layer.close(layer.index);
+              					 location.reload();
+        					}
+        	         },
+        	         error: function() {
+        	        	 layer.alert('删除出错', {
+          		    		  title:"提示",
+          		    		  icon: 2,
+          		    	});
+        	         }
+            		});
+                },function (index1) {
+                    layer.close(index1);
+                });
+            	
+            	/* layer.confirm('确定删除该条访客记录么', function(index){
+                	btn: ['确定', '取消']
+            	$.ajax({ 
+          	        url:"/visitorManage/visitorDel",
+          			type:'get',
+          			data:{
+       	        	 'rec_id':data.rec_id
+       	             },
+        			async:false,	
+        			success: function(result) {
+          				if(result==0){
+          					 obj.del(); //删除对应行（tr）的DOM结构
+          					layer.close(layer.index);
+          					 location.reload();
+    					}
+    	         },
+    	         error: function() {
+    	        	 layer.alert("删除出错 ");
+    	         }
+        		});
+                  
+                }); */
+              }
+        });
+        
+        if(new Date(("[[${expire_time}]]").replace(/-/g,"/"))>=new Date()){
+			$("#start_regist").show();
+		}
+		
+		$("#close").on('click', function () {
+           parent.layer.closeAll();
+        });
+		
+		$("#start_regist").on('click', function () {
+			var indexs = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
+			parent.layer.close(indexs);
+			location.reload();
+			parent.layer.open({
+                type: 2,
+                title: '访客登记',
+                shadeClose: false,
+                shade:[0.2, '#000000'],
+                maxmin: true, //开启最大化最小化按钮
+                area: ['1120px', '700px'],
+                content: '/visitorManage/StartRegist?bat_id='+bat_id
+            });
+		});
+			
+});
+</script>
+</body>
+</html>

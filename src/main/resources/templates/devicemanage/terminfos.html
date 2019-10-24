@@ -1,0 +1,1009 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>   
+<title>
+</title>    
+<meta charset="UTF-8"></meta>    
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"></meta>    
+<meta name="viewport" content="width=device-width, initial-scale=1.0"></meta>    
+<meta http-equiv="pragma" content="no-cache"></meta>    
+<meta http-equiv="cache-control" content="no-cache"></meta>    
+<meta http-equiv="expires" content="0"></meta>    
+<link rel="stylesheet" href="/layui/css/layui.css" media="all" />
+<style type="text/css"> 
+   /*  .layui-form-item{ width: 90% } 
+     .layui-form-radio {
+            line-height: 28px;
+            margin: 6px 10px 0 0;
+            padding-right: 10px;
+            cursor: pointer;
+            font-size: 0;
+            width:160px;
+        }
+        .layui-input-block{
+        width:720px!important
+        } */
+.layui-form-pane .layui-input {
+    border-radius: 4px 4px 4px 4px;
+}
+        .layui-form-item{ width: 90% } 
+     .layui-form-radio {
+            line-height: 28px;
+            margin: 6px 1px 0 0;
+            padding-right: 10px;
+            cursor: pointer;
+            font-size: 0;
+            width:212px;
+        }
+        .layui-input-block{
+        width:640px
+        }
+.layui-btn + .layui-btn{
+    margin-right:30px;
+}
+.layui-form-pane .layui-form-radio, .layui-form-pane .layui-form-switch {
+    margin-top: 6px;
+    margin-left:0!important;
+}
+</style>
+</head>
+<body>
+<div style="width:400px;padding: 20px;height:20%">
+   <p style="float:left;margin-bottom: 13px;"> <font color="#1E9FFF" size="5px">当前选择设备：</font></p>
+   <p id="name"  style="margin-top:3px;width:150px;white-space:nowrap;font-size:20px;color:#1E9FFF;float:left" th:title="${names}" th:text="${names}" ></p>
+      	
+</div>
+
+  <div id="shows" class="layui-collapse" lay-filter="test" style="overflow-y: auto;width:99.9%;margin-top:10px">
+   <div class="layui-colla-item">  
+     <h2 class="layui-colla-title">设备参数</h2>    
+        <div class="layui-colla-content layui-show">
+            <form class="layui-form layui-form-pane"  id="doorcontrol" action="" onsubmit="return check()">
+                <div class="layui-form-item" th:each="paramInfo:${paramInfo}"  th:id=${paramInfo.param_key} th:if="${paramInfo.param_sheet}=='开门控制参数'">
+                  <div style="margin-left:20px;float:right"> 
+                  <input type="checkbox"   th:value="${paramInfo.param_key}" name="close" lay-skin="switch" lay-filter="switchText" title="开关" lay-text="ON|OFF"></div>
+                  <div th:if="${paramInfo.type}=='OPTION'" style="float:left;">
+                      <label class="layui-form-label"  style="width:30%;border:none;background-color:transparent" th:title="${paramInfo.param_name}" th:text="${paramInfo.param_name}"></label>
+                       <div  class="layui-input-block" >
+                          <div style="float:left" th:each="values,loopstatus:${paramInfo.set}">
+                           <input  type="radio" th:name="${paramInfo.param_key}" th:id="${paramInfo.param_key}+${loopstatus.index+2}"  th:value="${values.value}"  th:title="${values.dispaly}" lay-filter="radio">
+                          </div>
+                       </div>
+                    </div>
+                    
+                    <div th:if="${paramInfo.type}=='TEXT'" style="float:left;">
+                      <label class="layui-form-label"  style="width:30%;border:none;background-color:transparent" th:title="${paramInfo.param_name}" th:text="${paramInfo.param_name}"></label>
+                       <div  class="layui-input-block" >
+                           <input  type="text" style="height:30px;width:345px" th:name="${paramInfo.param_key}" th:id="${paramInfo.param_key+5}"
+                            autocomplete="off"  class="layui-input" >
+                          
+                       </div>
+                    </div>
+                    
+                    <div th:if="${paramInfo.type}=='NUMBER'" style="float:left;">
+                      <label class="layui-form-label"  style="width:30%;border:none;background-color:transparent" th:title="${paramInfo.param_name}" th:text="${paramInfo.param_name}"></label>
+                       <div  class="layui-input-block" >
+                           <input type="text" style="height:30px;width:345px"  th:name="${paramInfo.param_key}" th:id="${paramInfo.param_key+6}"
+                             autocomplete="off"  class="layui-input" onkeyup="this.value=this.value.replace(/\D/g,'')" onafterpaste="this.value=this.value.replace(/\D/g,'')">
+                       </div>
+                    </div>
+                    
+                   <div th:if="${paramInfo.type}=='JSON'" style="float:left;">
+                      <label class="layui-form-label"  style="width:30%;border:none;background-color:transparent" th:title="${paramInfo.param_name}" th:text="${paramInfo.param_name}"></label>
+                         <div  class="layui-input-block">
+                           <div th:id="${paramInfo.param_key+8}" >
+                           <div style="width:830px" th:each="value1,loopcount:${paramInfo.sets}" 
+                                th:if="${#strings.contains(paramInfo.param_value,value1.key)}">
+                             <div  th:if="${loopcount.index==0}" style="margin-left:10px;float:right;margin-top:37px">
+                               <input type="checkbox" th:value="${value1.key}" th:id="${value1.key}" name="close" lay-skin="switch" lay-filter="switchText" title="开关" lay-text="ON|OFF"></div>
+                             <div th:if="${loopcount.index!=0}" style="margin-left:20px;float:right;margin-top:8px">
+                               <input type="checkbox" th:value="${value1.key}" th:id="${value1.key}" name="close" lay-skin="switch" lay-filter="switchText" title="开关" lay-text="ON|OFF"></div>  
+                                <div th:if="${value1.type}=='OPTION'" style="float:left;">
+                                 
+			                     <label class="layui-form-label"  style="width:25%;border:none;background-color:transparent" th:title="${value1.name}" th:text="${value1.name}"></label>
+			                       <div  class="layui-input-block">
+			                          <div style="float:left;width:29.2%" th:each="value2,loopstate:${value1.set}">
+			                           <input type="radio" th:id="${value1.key}+${loopstate.index+2}" th:name="${value1.key}"  th:value="${value2.value}" th:title="${value2.dispaly}" lay-filter="radio">
+			                          </div>
+			                       </div>
+			                    </div>
+			                    
+			                    <div th:if="${value1.type}=='TEXT'" style="float:left;">
+			                      <label class="layui-form-label"  style="width:30%;border:none;background-color:transparent" th:title="${value1.param_name}" th:text="${value1.param_name}"></label>
+			                       <div  class="layui-input-block" th:each="paramvalue:${#strings.arraySplit(paramInfo.param_value,',')}" th:if="${#strings.contains(paramvalue,value1.key)}">
+			                           <input  type="text" style="height:30px;width:345px" th:name="${value1.key}" th:id="${value1.key+5}"
+			                            autocomplete="off"  class="layui-input">
+			                          
+			                       </div>
+			                    </div>
+			                    
+			                    <div th:if="${value1.type}=='NUMBER'" style="float:left;">
+			                      <label class="layui-form-label"  style="width:30%;border:none;background-color:transparent" th:title="${value1.param_name}" th:text="${value1.param_name}"></label>
+			                       <div  class="layui-input-block" th:each="paramvalue:${#strings.arraySplit(paramInfo.param_value,',')}" th:if="${#strings.contains(paramvalue,value1.key)}">
+			                           <input type="text" style="height:30px;width:345px"  th:name="${value1.key}" th:id="${value1.key+6}"
+			                             autocomplete="off"  class="layui-input" onkeyup="this.value=this.value.replace(/\D/g,'')" onafterpaste="this.value=this.value.replace(/\D/g,'')">
+			                       </div>
+			                    </div>
+			                  </div>  
+                            </div>
+                        </div>
+                    </div>
+               </div>
+        </form> 
+     </div>
+   </div> 
+   
+   <div class="layui-colla-item">    
+       <h2 class="layui-colla-title">软件参数</h2>   
+       <div class="layui-colla-content layui-show">
+           <form class="layui-form layui-form-pane"  action="" onsubmit="return check()">
+              <div class="layui-form-item" th:each="paramInfo:${paramInfo}" th:if="${paramInfo.param_sheet}=='软件参数'">
+                  <div style="margin-left:20px;float:right"> 
+                  <input type="checkbox"   th:value="${paramInfo.param_key}" th:id="${paramInfo.param_value}" name="close" lay-skin="switch" lay-filter="switchText" title="开关" lay-text="ON|OFF"></div>
+                  <div th:if="${paramInfo.type}=='OPTION'" style="float:left;">
+                      <label class="layui-form-label"  style="width:30%;border:none;background-color:transparent" th:title="${paramInfo.param_name}" th:text="${paramInfo.param_name}"></label>
+                       <div  class="layui-input-block" >
+                          <div style="float:left" th:each="values,loopstatus:${paramInfo.set}">
+                           <input  type="radio" th:name="${paramInfo.param_key}" th:id="${paramInfo.param_key}+${loopstatus.index+2}" th:value="${values.value}" th:title="${values.dispaly}" lay-filter="radio">
+                          </div>
+                       </div>
+                    </div>
+                    
+                    <div th:if="${paramInfo.type}=='TEXT'" style="float:left;">
+                      <label class="layui-form-label"  style="width:30%;border:none;background-color:transparent" th:title="${paramInfo.param_name}" th:text="${paramInfo.param_name}"></label>
+                       <div  class="layui-input-block" >
+                           <input  type="text" style="height:30px;width:345px" th:name="${paramInfo.param_key}" th:id="${paramInfo.param_key+5}"
+                            autocomplete="off"  class="layui-input" >
+                          
+                       </div>
+                    </div>
+                    
+                    <div th:if="${paramInfo.type}=='NUMBER'" style="float:left;">
+                      <label class="layui-form-label"  style="width:30%;border:none;background-color:transparent" th:title="${paramInfo.param_name}" th:text="${paramInfo.param_name}"></label>
+                       <div  class="layui-input-block" >
+                           <input type="text" style="height:30px;width:345px"  th:name="${paramInfo.param_key}" th:id="${paramInfo.param_key+6}"
+                             autocomplete="off"  class="layui-input" onkeyup="this.value=this.value.replace(/\D/g,'')" onafterpaste="this.value=this.value.replace(/\D/g,'')">
+                       </div>
+                    </div>
+                    
+                     <div th:if="${paramInfo.type}=='JSON'" style="float:left;">
+                      <label class="layui-form-label"  style="width:30%;border:none;background-color:transparent" th:title="${paramInfo.param_name}" th:text="${paramInfo.param_name}"></label>
+                         <div  class="layui-input-block">
+                           <div th:id="${paramInfo.param_key+8}" >
+                           <div style="width:830px" th:each="value1,loopcount:${paramInfo.sets}" 
+                                th:if="${#strings.contains(paramInfo.param_value,value1.key)}">
+                             <div  th:if="${loopcount.index==0}" style="margin-left:10px;float:right;margin-top:37px">
+                               <input type="checkbox" th:value="${value1.key}" th:id="${value1.key}" name="close" lay-skin="switch" lay-filter="switchText" title="开关" lay-text="ON|OFF"></div>
+                             <div th:if="${loopcount.index!=0}" style="margin-left:20px;float:right;margin-top:8px">
+                               <input type="checkbox" th:value="${value1.key}" th:id="${value1.key}" name="close" lay-skin="switch" lay-filter="switchText" title="开关" lay-text="ON|OFF"></div>  
+                                <div th:if="${value1.type}=='OPTION'" style="float:left;">
+                                 
+			                     <label class="layui-form-label"  style="width:25%;border:none;background-color:transparent" th:title="${value1.name}" th:text="${value1.name}"></label>
+			                       <div  class="layui-input-block">
+			                          <div style="float:left;width:29.2%" th:each="value2,loopstate:${value1.set}">
+			                           <input type="radio" th:id="${value1.key}+${loopstate.index+2}" th:name="${value1.key}"  th:value="${value2.value}" th:title="${value2.dispaly}" lay-filter="radio">
+			                          </div>
+			                       </div>
+			                    </div>
+			                    
+			                     <div th:if="${value1.type}=='TEXT'" style="float:left;">
+			                      <label class="layui-form-label"  style="width:30%;border:none;background-color:transparent" th:title="${value1.param_name}" th:text="${value1.param_name}"></label>
+			                       <div  class="layui-input-block" th:each="paramvalue:${#strings.arraySplit(paramInfo.param_value,',')}" th:if="${#strings.contains(paramvalue,value1.key)}">
+			                           <input  type="text" style="height:30px;width:345px" th:name="${value1.key}" th:id="${value1.key+5}"
+			                            autocomplete="off"  class="layui-input">
+			                          
+			                       </div>
+			                    </div>
+			                    
+			                    <div th:if="${value1.type}=='NUMBER'" style="float:left;">
+			                      <label class="layui-form-label"  style="width:30%;border:none;background-color:transparent" th:title="${value1.param_name}" th:text="${value1.param_name}"></label>
+			                       <div  class="layui-input-block" th:each="paramvalue:${#strings.arraySplit(paramInfo.param_value,',')}" th:if="${#strings.contains(paramvalue,value1.key)}">
+			                           <input type="text" style="height:30px;width:345px"  th:name="${value1.key}" th:id="${value1.key+6}"
+			                             autocomplete="off"  class="layui-input" onkeyup="this.value=this.value.replace(/\D/g,'')" onafterpaste="this.value=this.value.replace(/\D/g,'')">
+			                       </div>
+			                    </div>
+			                    
+			                  </div>  
+                            </div>
+                        </div>
+                    </div>
+               </div>
+        </form>    
+       </div>  
+   </div>                    
+   <div class="layui-colla-item">    
+      <h2 class="layui-colla-title">应用参数</h2>    
+      <div class="layui-colla-content layui-show">   
+        <form class="layui-form layui-form-pane"  action="" onsubmit="return check()">
+            <div class="layui-form-item" th:each="paramInfo:${paramInfo}" th:if="${paramInfo.param_sheet}=='应用参数'">
+                  <div style="margin-left:20px;float:right" > 
+                  <input type="checkbox"  th:value="${paramInfo.param_key}" th:id="${paramInfo.param_value}" name="close" lay-skin="switch" lay-filter="switchText" title="开关" lay-text="ON|OFF"></div>
+                  <div th:if="${paramInfo.type}=='OPTION'" style="float:left;">
+                      <label class="layui-form-label"  style="width:30%;border:none;background-color:transparent" th:title="${paramInfo.param_name}" th:text="${paramInfo.param_name}"></label>
+                       <div  class="layui-input-block" >
+                          <div style="float:left" th:each="values,loopstatus:${paramInfo.set}">
+                           <input  type="radio" th:name="${paramInfo.param_key}" th:id="${paramInfo.param_key}+${loopstatus.index+2}"  th:value="${values.value}" th:title="${values.dispaly}" lay-filter="radio">
+                          </div>
+                       </div>
+                    </div>
+                    
+                    <div th:if="${paramInfo.type}=='TEXT'" style="float:left;">
+                      <label class="layui-form-label"  style="width:30%;border:none;background-color:transparent" th:title="${paramInfo.param_name}" th:text="${paramInfo.param_name}"></label>
+                       <div  class="layui-input-block" >
+                           <input  type="text" style="height:30px;width:345px" th:name="${paramInfo.param_key}" th:id="${paramInfo.param_key+5}"
+                            autocomplete="off"  class="layui-input" >
+                          
+                       </div>
+                    </div>
+                    
+                    <div th:if="${paramInfo.type}=='NUMBER'" style="float:left;">
+                      <label class="layui-form-label"  style="width:30%;border:none;background-color:transparent" th:title="${paramInfo.param_name}" th:text="${paramInfo.param_name}"></label>
+                       <div  class="layui-input-block" >
+                           <input type="text" style="height:30px;width:345px"  th:name="${paramInfo.param_key}" th:id="${paramInfo.param_key+6}"
+                             autocomplete="off"  class="layui-input" onkeyup="this.value=this.value.replace(/\D/g,'')" onafterpaste="this.value=this.value.replace(/\D/g,'')">
+                       </div>
+                    </div>
+                    
+                     <div th:if="${paramInfo.type}=='JSON'" style="float:left;background-color: #f7f7f7;margin-left: 50px;width: 850px;">
+                      <label class="layui-form-label"  style="width:30%;border:none;background-color:transparent;text-align: left;"
+                        th:title="${paramInfo.param_name}" th:text="${paramInfo.param_name}"></label>
+                         <div  class="layui-input-block">
+                           <div th:id="${paramInfo.param_key+8}" >
+                           <div style="width:828px" th:each="value1,loopcount:${paramInfo.sets}">
+                             <div  th:if="${loopcount.index==0}" style="margin-left:10px;float:right;margin-top:37px">
+                               <input type="checkbox" th:value="${value1.key}" th:id="${value1.key}" name="close" lay-skin="switch" lay-filter="switchText" title="开关" lay-text="ON|OFF"></div>
+                             <div th:if="${loopcount.index!=0}" style="margin-left:20px;float:right;margin-top:8px">
+                               <input type="checkbox" th:value="${value1.key}" th:id="${value1.key}" name="close" lay-skin="switch" lay-filter="switchText" title="开关" lay-text="ON|OFF"></div>  
+                               <div th:if="${value1.type}=='OPTION'" style="float:left;">
+                                 
+			                     <label class="layui-form-label"  style="width:25%;border:none;background-color:transparent" th:title="${value1.name}" th:text="${value1.name}"></label>
+			                       <div  class="layui-input-block">
+			                          <div style="float:left;width:29.2%" th:each="value2,loopstate:${value1.set}">
+			                           <input type="radio" th:id="${value1.key}+${loopstate.index+2}" th:name="${value1.key}"  th:value="${value2.value}" th:title="${value2.dispaly}" lay-filter="radio">
+			                          </div>
+			                       </div>
+			                    </div>
+			                    
+			                    
+			                    
+			                    <div th:if="${value1.type}=='TEXT'" style="float:left;">
+			                      <label class="layui-form-label"  style="width:25%;border:none;background-color:transparent" th:title="${value1.param_name}" th:text="${value1.param_name}"></label>
+			                       <div  class="layui-input-block" th:each="paramvalue:${#strings.arraySplit(paramInfo.param_value,',')}" th:if="${#strings.contains(paramvalue,value1.key)}">
+			                           <input  type="text" style="height:30px;width:345px" th:name="${value1.key}" th:id="${value1.key+5}"
+			                            autocomplete="off"  class="layui-input">
+			                          
+			                       </div>
+			                    </div>
+			                    
+			                    <div th:if="${value1.type}=='NUMBER'" style="float:left;">
+			                      <label class="layui-form-label"  style="width:25%;border:none;background-color:transparent" th:title="${value1.param_name}" th:text="${value1.param_name}"></label>
+			                       <div  class="layui-input-block" th:each="paramvalue:${#strings.arraySplit(paramInfo.param_value,',')}" th:if="${#strings.contains(paramvalue,value1.key)}">
+			                           <input type="text" style="height:30px;width:345px"  th:name="${value1.key}" th:id="${value1.key+6}"
+			                             autocomplete="off"  class="layui-input" onkeyup="this.value=this.value.replace(/\D/g,'')" onafterpaste="this.value=this.value.replace(/\D/g,'')">
+			                       </div>
+			                    </div>
+			                  </div>  
+                            </div>
+                        </div>
+                    </div>
+               </div>
+            </form>    
+       </div>  
+   </div>
+                               
+   <div class="layui-colla-item" id="terminal">    
+     <h2 class="layui-colla-title">终端提示参数</h2>    
+    <div class="layui-colla-content layui-show">
+            <div style="float:left;margin-left:8%"><p style="font-size:18px">提示信息名称</p></div>
+            <div style="float:left;margin-left:17%"><p style="font-size:18px">语言提示文本</p></div>
+             <div style="float:left;margin-left:15%"><p style="font-size:18px">文字提示文本</p></div>
+             <div style="float:left;margin-left:13%"><button class="layui-btn layui-btn-danger layui-btn-xs" id="reset_">重置</button></div>
+         <form class="layui-form layui-form-pane" id="prompt" style="margin-top:50px;"  action="" onsubmit="return check()">
+         <div class="layui-form-item"  th:each="hintInfo,count:${hintInfo}">
+          
+            <div style="margin-left:20px;float:right"> <input type="checkbox" style="width:35%"  th:value="${hintInfo.hint_key}"  name="close" lay-skin="switch" lay-filter="switchText" title="开关" lay-text="ON|OFF"></div>
+             <div style="float:left;margin-left:10px">
+                 <label class="layui-form-label"  style="width:30%;border:none;background-color:transparent;"  th:title="${hintInfo.hint_name}" th:text="${hintInfo.hint_name}" th:id="${hintInfo.hint_key+1}" ></label>
+                 <div th:id="${'block_'+count.count}" class="layui-input-block" >
+                    <div style="float:left;margin-left: 20px;"> <input type="text" style="height:30px;width:270px" th:id="${hintInfo.hint_key+6}" th:name="${hintInfo.hint_key}" lay-verify="required" autocomplete="off"  class="layui-input"></div>
+                     <div style="float:left;margin-left: 10px;"><input type="text" style="height:30px;width:270px" th:id="${hintInfo.hint_key+7}" th:name="${hintInfo.hint_key}" lay-verify="required" autocomplete="off"  class="layui-input"></div>
+                 </div>
+             </div>
+         </div>
+       </form>
+     </div> 
+  </div>
+</div>
+<div  style="position: fixed; bottom:40px;right:40px;margin:1">
+             <button lay-submit="" id="save"  class="layui-btn layui-btn-ks">保存</button>
+             <button lay-submit="" id="cancel" class="layui-btn layui-btn-ks">取消</button>
+ </div>
+<script type="text/javascript" src="/layui/layui.js"></script>
+<script type="text/javascript" src="/js/jquery.min.js"></script>
+<script type="text/javascript" src="/js/param.js"></script>
+<script type="text/javascript" src="/js/ajaxFilter.js"></script>
+<script th:inline="javascript">
+$(document).ready(function() {
+	
+	 var height=document.documentElement.clientHeight;
+	 var h=height-170;
+	 $("#shows").css('height',h);
+	changeFrameHeight();
+	function changeFrameHeight(){
+		 var h = document.documentElement.clientHeight*0.75;
+		 var w = document.documentElement.clientWidth*0.5;
+		 var w_ = document.documentElement.clientWidth*0.75;
+	     $("#show").css('height',h);
+	     for(var i=1;i<100;i++){
+	    	 $("#block_"+i).css('width',w+200);
+	     }
+	     
+	}
+	function changeheight(){
+		 var h1 = document.documentElement.clientHeight-170;
+		$("#shows").css('height',h1);
+		var w1 = document.documentElement.clientWidth*0.99;
+		$("#shows").css('width',w1);
+	}
+	window.onresize=function(){
+	    changeFrameHeight();
+	    changeheight();
+	} 
+	
+	
+	$("#name").attr("title",[[${names}]]);
+layui.use(['layer', 'form', 'element'], function(){
+	
+	var layer = layui.layer  
+	,form= layui.form  
+	,element = layui.element; 
+	 var paramInfo=[[${paramInfo}]]; 
+	   for(var i=0;i<paramInfo.length;i++){
+		   paramInfo[i].param_value="";
+		   $("#"+paramInfo[i].param_key).hide();
+		   $("#"+paramInfo[i].param_key+8).hide();
+		   $("#is_control_door").show(); 
+	   }
+	   var l=paramConfig(paramInfo);
+		var params=l.params;
+		var results=l.results;
+		var list=l.list;
+	//监听指定开关  
+	$("input[type='text']").attr("disabled",true);
+	$("input[type='radio']").attr("disabled",true);
+	form.render('radio');
+	form.on('radio(radio)', function(data){
+		if((this.checked ? 'true' : 'false')=='true'){
+			/* if($(this).attr("name")=="is_control_door"){
+				if($(this).attr("value")==0){
+					$("#switch_mode").hide();
+					$("#lock_type").hide();
+					$("#switch_brake_direction").hide();
+					$("#switch_ip").hide();
+					$("#switch_cmd_on").hide();
+					$("#switch_cmd_off").hide();
+					$("#switch_ctrmod").hide();
+					$("#switch_param").hide();
+					$("#switch_delay").hide();
+					
+				}
+				if($(this).attr("value")==1){
+					$("#switch_brake_direction").hide();
+					$("#switch_ip").hide();
+					$("#switch_cmd_on").hide();
+					$("#switch_cmd_off").hide();
+					$("#switch_ctrmod").hide();
+					$("#switch_param").hide();
+					$("#switch_delay").hide();
+					$("#switch_mode").show();
+					$("#lock_type").show();
+					$('input:radio[name="switch_mode"]').each(function(){
+						if((this.checked ? 'true' : 'false')=='true'){
+							if($(this).attr("value")=="TCP"){
+								$("#switch_ip").show();
+								$("#lock_type").show();
+								$("#switch_cmd_on").show();
+								$("#switch_cmd_off").show();
+								$("#switch_ctrmod").show();
+								$("#switch_param").show();
+							}
+							if($(this).attr("value")=="IO"){
+								$("#lock_type").show();
+							}
+							if($(this).attr("value")=="SERIAL"){
+								$("#switch_brake_direction").show();
+							}
+						}
+					});
+					
+					$('input:radio[name="lock_type"]').each(function(){
+						if((this.checked ? 'true' : 'false')=='true'){
+							if($(this).attr("value")=="SWITCH"){
+								$("#switch_delay").show();
+							}
+						}
+					});
+				}
+				if($(this).attr("value")==2){
+					$("#switch_mode").show();
+					$("#lock_type").show();
+					$("#switch_brake_direction").show();
+					$("#switch_ip").hide();
+					$("#switch_cmd_on").hide();
+					$("#switch_cmd_off").hide();
+					$("#switch_ctrmod").hide();
+					$("#switch_param").hide();
+					$("#switch_delay").hide();
+					$('input:radio[name="switch_mode"]').each(function(){
+						if((this.checked ? 'true' : 'false')=='true'){
+							if($(this).attr("value")=="TCP"){
+								$("#switch_ip").show();
+								$("#lock_type").show();
+								$("#switch_cmd_on").show();
+								$("#switch_cmd_off").show();
+								$("#switch_ctrmod").show();
+								$("#switch_param").show();
+							}
+							if($(this).attr("value")=="IO"){
+								$("#lock_type").show();
+							}
+							if($(this).attr("value")=="SERIAL"){
+								$("#switch_brake_direction").show();
+							}
+						}
+					});
+					
+					$('input:radio[name="lock_type"]').each(function(){
+						if((this.checked ? 'true' : 'false')=='true'){
+							if($(this).attr("value")=="SWITCH"){
+								$("#switch_delay").show();
+							}
+						}
+					});
+				}
+			}
+			
+			if($(this).attr("name")=="switch_mode"){
+				if($(this).attr("value")=="TCP"){
+					$("#switch_ip").show();
+					$("#lock_type").show();
+					$("#switch_cmd_on").show();
+					$("#switch_cmd_off").show();
+					$("#switch_ctrmod").show();
+					$("#switch_param").show();
+					$('input:radio[name="lock_type"]').each(function(){
+						if((this.checked ? 'true' : 'false')=='true'){
+							if($(this).attr("value")=="SWITCH"){
+								$("#switch_delay").show();
+							}
+						}
+					});
+					
+				}
+				if($(this).attr("value")=="IO"){
+					$("#switch_ip").hide();
+					$("#switch_cmd_on").hide();
+					$("#switch_cmd_off").hide();
+					$("#switch_ctrmod").hide();
+					$("#switch_param").hide();
+					$("#lock_type").show();
+					$('input:radio[name="lock_type"]').each(function(){
+						if((this.checked ? 'true' : 'false')=='true'){
+							if($(this).attr("value")=="SWITCH"){
+								$("#switch_delay").show();
+							}
+						}
+					});
+				}
+				if($(this).attr("value")=="SERIAL"){
+					$("#switch_ip").hide();
+					$("#switch_cmd_on").hide();
+					$("#switch_cmd_off").hide();
+					$("#switch_ctrmod").hide();
+					$("#switch_param").hide();
+					$("#switch_brake_direction").show();
+				}
+			}
+			
+			if($(this).attr("name")=="lock_type"){
+				if($(this).attr("value")=="PULSE"){
+					$("#switch_delay").hide();
+				}
+				if($(this).attr("value")=="SWITCH"){
+					$("#switch_delay").show();
+				}
+			} */
+			for(var i=0;i<params.length;i++){
+				if($(this).attr("name")==params[i].key&&$(this).attr("value")==params[i].value){
+					if(params[i].display==false){
+						hideOrShow(params[i].sheet,results);
+						for(var j=0;j<params[i].controlled.length;j++){
+							if(params[i].controlled[j]!=""){
+								$("#"+params[i].controlled[j]).show();  //下一级radio 
+							}
+							$('input:radio[name='+params[i].controlled[j]+']').each(function(){
+								if((this.checked ? 'true' : 'false')=='true'){
+									hideOrShows($(this).attr("name"),list);
+									for(var k=0;k<params.length;k++){
+										if($(this).attr("name")==params[k].key&&$(this).attr("value")==params[k].value){
+											for(var o=0;o<params[k].controlled.length;o++){
+												if(params[k].controlled[o]!=""){
+													$("#"+params[k].controlled[o]).show();
+												}
+											}
+										}
+									}
+								}
+							});
+						}
+					}
+					else{
+						hideOrShows($(this).attr("name"),list);
+						for(var m=0;m<params[i].controlled.length;m++){
+							if(params[i].controlled[m]!=""){
+								$("#"+params[i].controlled[m]).show();
+							}
+							$('input:radio[name='+params[i].controlled[m]+']').each(function(){
+								if((this.checked ? 'true' : 'false')=='true'){
+									hideOrShows($(this).attr("name"),list);
+									for(var n=0;n<params.length;n++){
+										if($(this).attr("name")==params[n].key&&$(this).attr("value")==params[n].value){
+											for(var c=0;c<params[n].controlled.length;c++){
+												if(params[n].controlled[c]){
+													$("#"+params[n].controlled[c]).show();
+												}
+												
+											}
+										}
+									}
+								}
+							});
+						}
+					}
+						
+				}
+			}
+		}
+	});
+	
+	
+ form.on('switch(switchText)', function(data){	  
+		if((this.checked ? 'true' : 'false')=='true'){
+			var value = $(this).attr("value");
+			var r2="#"+value+"2";
+			var r3="#"+value+"3";
+			var r4="#"+value+"4";	
+			var r5=value+"5";
+			var r6=value+"6";
+			var r7=value+"7";
+			var r8=value+"8";
+			
+			$(r2).attr("disabled",false);
+			$(r3).attr("disabled",false);
+			$(r4).attr("disabled",false);
+			$("#"+r5).attr("disabled",false);
+			$("#"+r6).attr("disabled",false);
+			$("#"+r7).attr("disabled",false);
+			
+			$("#"+r8).show();
+			
+			$("#"+r5).focus();
+			$("#"+r6).focus();
+			
+			if($("#"+r7).attr("id")=="mod_face_only7") {
+				$("#"+r7).val("请刷脸");
+				
+			}
+			if($("#"+r6).attr("id")=="mod_face_only6") {
+				$("#"+r6).val("请刷脸");
+				
+			}
+			if($("#"+r7).attr("id")=="mod_card_only7") {
+				$("#"+r7).val("请刷卡");
+				
+			}
+			if($("#"+r6).attr("id")=="mod_card_only6") {
+				$("#"+r6).val("请刷卡");
+				
+			}
+			if($("#"+r7).attr("id")=="mod_face_or_card7") {
+				$("#"+r7).val("请刷脸或刷卡");
+				
+			}
+			if($("#"+r6).attr("id")=="mod_face_or_card6") {
+				$("#"+r6).val("请刷脸或刷卡");
+				
+			}
+			if($("#"+r7).attr("id")=="auth_emp_wel7") {
+				$("#"+r7).val("%s您好");
+				
+			}
+			if($("#"+r6).attr("id")=="auth_emp_wel6") {
+				$("#"+r6).val("%s您好");
+				
+			}
+			if($("#"+r7).attr("id")=="unauth_emp_wel7") {
+				$("#"+r7).val("%s欢迎来访");
+				
+			}
+			if($("#"+r6).attr("id")=="unauth_emp_wel6") {
+				$("#"+r6).val("%s欢迎来访");
+				
+			}
+			if($("#"+r7).attr("id")=="auth_visitor_wel7") {
+				$("#"+r7).val("%s欢迎来访");
+				
+			}
+			if($("#"+r6).attr("id")=="auth_visitor_wel6") {
+				$("#"+r6).val("%s欢迎来访");
+				
+			}
+			if($("#"+r7).attr("id")=="unauth_visitor_wel7") {
+				$("#"+r7).val("%s欢迎来访");
+				
+			}
+			if($("#"+r6).attr("id")=="unauth_visitor_wel6") {
+				$("#"+r6).val("%s欢迎来访");
+				
+			}
+			if($("#"+r7).attr("id")=="cmp_timeout7") {
+				$("#"+r7).val("比对超时");
+				
+			}
+			if($("#"+r6).attr("id")=="cmp_timeout6") {
+				$("#"+r6).val("比对超时");
+				
+			}
+			if($("#"+r7).attr("id")=="cmp_unpass7") {
+				$("#"+r7).val("比对不通过");
+				
+			}
+			if($("#"+r6).attr("id")=="cmp_unpass6") {
+				$("#"+r6).val("比对不通过");
+				
+			}
+			if($("#"+r7).attr("id")=="cmp_pphoto7") {
+				$("#"+r7).val("请刷脸进行比对");
+				
+			}
+			if($("#"+r6).attr("id")=="cmp_pphoto6") {
+				$("#"+r6).val("请刷脸进行比对");
+				
+			}
+			if($("#"+r7).attr("id")=="cmp_pcard7") {
+				$("#"+r7).val("请刷脸进行比对");
+				
+			}
+			if($("#"+r6).attr("id")=="cmp_pcard6") {
+				$("#"+r6).val("请刷脸进行比对");
+				
+			}
+			if($("#"+r7).attr("id")=="unauth_emp_tip7") {
+				$("#"+r7).val("%s未授权");
+				
+			}
+			if($("#"+r6).attr("id")=="unauth_emp_tip6") {
+				$("#"+r6).val("%s未授权");
+				
+			}
+			if($("#"+r7).attr("id")=="unauth_visitor_face_only_tip7") {
+				$("#"+r7).val("%s您未登记");
+				
+			}
+			if($("#"+r6).attr("id")=="unauth_visitor_face_only_tip6") {
+				$("#"+r6).val("%s您未登记");
+				
+			}
+			if($("#"+r7).attr("id")=="unauth_visitor_face_tip7") {
+				$("#"+r7).val("%s请刷身份证");
+				
+			}
+			if($("#"+r6).attr("id")=="unauth_visitor_face_tip6") {
+				$("#"+r6).val("%s请刷身份证");
+				
+			}
+			if($("#"+r7).attr("id")=="unauth_visitor_empcard_tip7") {
+				$("#"+r7).val("%s请刷身份证");
+				
+			}
+			if($("#"+r6).attr("id")=="unauth_visitor_empcard_tip6") {
+				$("#"+r6).val("%s请刷身份证");
+				
+			}
+			if($("#"+r7).attr("id")=="unauth_visitor_idcard_tip7") {
+				$("#"+r7).val("%s未授权");
+				
+			}
+			if($("#"+r6).attr("id")=="unauth_visitor_idcard_tip6") {
+				$("#"+r6).val("%s未授权");
+				
+			}
+			if($("#"+r7).attr("id")=="cmp_unmatch7") {
+				$("#"+r7).val("%s请使用本人身份证");
+				
+			}
+			if($("#"+r6).attr("id")=="cmp_unmatch6") {
+				$("#"+r6).val("%s请使用本人身份证");
+				
+			}
+			 
+			form.render('checkbox');
+			form.render('radio');
+		}
+		if((this.checked ? 'true' : 'false')=='false'){
+			
+			var value = $(this).attr("value");
+			var r2="#"+value+"2";
+			var r3="#"+value+"3";
+			var r4="#"+value+"4";	
+			var r5="#"+value+"5";
+			var r6="#"+value+"6";
+			var r7="#"+value+"7";
+			var r8="#"+value+"8";
+			$(r7).val("");
+			$(r5).val("");
+			$(r6).val("");
+			
+			$(r2).prop("checked", false);
+            $(r3).prop("checked", false);
+            $(r4).prop("checked", false);
+            
+			$(r2).attr("disabled",true);
+			$(r3).attr("disabled",true);
+			$(r4).attr("disabled",true);
+			$(r5).attr("disabled",true);
+			$(r6).attr("disabled",true);
+			$(r7).attr("disabled",true);
+			$(r8).hide();
+			form.render('radio');
+	           $(r8+" input:checkbox").each(function () {
+	        	   $(this).prop("checked", false);
+	        	   
+	   			   form.render('checkbox');
+	           });
+	           $(r8+" input:radio").each(function () {
+            	   $(this).prop("checked", false);
+            	   $(this).attr("disabled",true);
+            	   form.render('radio');
+           });
+			
+	        hideOrShows(value,list);
+	        for(var m=0;m<list.length;m++){
+	        	if(list[m].display==false){
+	        		hideOrShow(list[m].sheet,results);
+	        	}
+	        }
+			/* if(value=="is_control_door"){
+					$("#switch_mode").hide();
+					$("#lock_type").hide();
+					$("#switch_brake_direction").hide();
+					$("#switch_ip").hide();
+					$("#switch_cmd_on").hide();
+					$("#switch_cmd_off").hide();
+					$("#switch_ctrmod").hide();
+					$("#switch_param").hide();
+					$("#switch_delay").hide();
+				}
+			
+			if(value=="switch_mode"){
+				$("#switch_ip").hide();
+				$("#switch_cmd_on").hide();
+				$("#switch_cmd_off").hide();
+				$("#switch_ctrmod").hide();
+				$("#switch_param").hide();
+			}
+			if(value=="lock_type"){
+					$("#switch_delay").hide();
+				} */
+			
+		}
+	});
+  });
+ });
+	
+
+$('#cancel').on('click',function(){
+	parent.layer.closeAll();
+});
+$('#reset_').on('click',function(){
+	$('#prompt')[0].reset();
+});
+$('#save').on('click',function(){
+	var paramInfo=[[${paramInfo}]];
+	var paramInfos=[];
+	var hintInfo=[[${hintInfo}]];
+	var param=[];
+	var hint=[];
+	var flag=0;
+	for(var i=0;i<paramInfo.length;i++){
+		paramInfo[i].param_value="";
+	}
+	for(var i=0;i<hintInfo.length;i++){
+		hintInfo[i].hint_sound_text="";
+		hintInfo[i].hint_text="";
+	}
+	$("input[type='checkbox']").each(function(){ 
+		if((this.checked ? 'true' : 'false')=='true'){
+			 var value = $(this).attr("value");
+			 $("input[type='text']").each(function(){
+				 if($(this).val()!=""&&$(this).attr("name")==value){
+					 for(var i=0;i<paramInfo.length;i++){
+							if(paramInfo[i].type!="JSON"&&value==paramInfo[i].param_key){
+								 var values={};
+								 values.param_key=paramInfo[i].param_key;
+								 values.param_value=$(this).val();
+								 paramInfos.push(values);
+							}
+							if(paramInfo[i].type=="JSON"){
+								for(var j=0;j<paramInfo[i].sets.length;j++){
+									if(value==paramInfo[i].sets[j].key){
+										var values={};
+										values.param_key=paramInfo[i].param_key;
+										if(paramInfo[i].sets[j].value_type=="TEXT"){
+											values.param_value='"'+$(this).attr("name")+'":'+'"'+$(this).val()+'"';
+											//paramInfo[i].param_value+='"'+$(this).attr("name")+'":'+'"'+$(this).attr("id")+'"'+',';
+										}
+										if(paramInfo[i].sets[j].value_type=="BOOL"){
+											values.param_value='"'+$(this).attr("name")+'":'+$(this).val();
+											//paramInfo[i].param_value+='"'+$(this).attr("name")+'":'+$(this).attr("id")+',';
+										}
+										 paramInfos.push(values);
+									}
+								}
+							}
+					 }
+					
+				 }
+			 });
+			 $("input[type='radio']").each(function(){
+				 if($(this).attr("name")==value){
+					 var params={};
+					 if((this.checked ? 'true' : 'false')=='true'){
+						 for(var i=0;i<paramInfo.length;i++){
+								if(paramInfo[i].type!="JSON"&&value==paramInfo[i].param_key){
+									var values={};
+									 values.param_key=$(this).attr("name");
+									 values.param_value=$(this).attr("value");
+									 paramInfos.push(values); 
+								}
+								if(paramInfo[i].type=="JSON"){
+									for(var j=0;j<paramInfo[i].sets.length;j++){
+										if(value==paramInfo[i].sets[j].key){
+											var values={};
+											 values.param_key=paramInfo[i].param_key;
+											 values.param_value='"'+$(this).attr("name")+'":'+$(this).attr("value");
+											 paramInfos.push(values); 
+											
+										}
+									}
+								}
+						 }
+					 }
+				 }
+			 });
+			 
+			 $("#terminal").find("input[type='text']").each(function(){
+				 if(value==$(this).attr("name")){
+					 console.log($(this).attr("id"));
+					 for(var i=0;i<hintInfo.length;i++){
+						 console.log(hintInfo[i]);
+			        	 if(hintInfo[i].hint_key+6==$(this).attr("id")){
+			        		 hintInfo[i].hint_sound_text=$(this).val();
+			        	 }
+			        	 if(hintInfo[i].hint_key+7==$(this).attr("id")){
+			        		 hintInfo[i].hint_text=$(this).val();
+			        	 }
+			         }
+				 }
+		        
+		     });
+		}
+	});
+	
+	for(var i=0;i<paramInfos.length;i++){
+		var dname=paramInfos[i].param_key;
+		if($("#"+dname).is(':hidden')){
+			paramInfos[i].param_value="";
+		}
+		for(var j=0;j<paramInfo.length;j++){
+			if(paramInfos[i].param_key==paramInfo[j].param_key){
+				if(paramInfo[j].type!="JSON"){
+					paramInfo[j].param_value=paramInfos[i].param_value;
+				}
+				else{
+					paramInfo[j].param_value=paramInfos[i].param_value+","+paramInfo[j].param_value;
+				}
+				
+			}
+		}
+	}
+	for(var i=0;i<paramInfo.length;i++){
+		if(paramInfo[i].param_value!=""){
+			if(paramInfo[i].type=="JSON"){
+				var val=paramInfo[i].param_value;
+				paramInfo[i].param_value='{'+val.substring(0,val.length-1)+'}';
+			}
+			param.push(paramInfo[i]);
+		} 
+	}
+	for(var i=0;i<hintInfo.length;i++){
+		if(hintInfo[i].hint_sound_text!=""||hintInfo[i].hint_text!=""){
+			hint.push(hintInfo[i]);
+		} 
+	}
+	
+	for(var i=0;i<param.length;i++){
+		if(param[i].param_value!=""){
+			if(param[i].param_key=="switch_ip"||param[i].param_key=="net_server"){
+				if(!isValidIP(param[i].param_value)){
+					flag=1;
+				}
+			}
+			if(param[i].param_key=="report_url"){
+				if(!isUrL(param[i].param_value)){
+					flag=2;
+				}
+			}
+		}
+	}
+	var termInfo={};
+	termInfo.paramInfo=param;
+	termInfo.hintInfo=hint;
+	if(null==param&&null==hint){
+		layer.alert('无任何修改', {icon: 0,title:"提示"},function(index){
+			window.parent.location.reload();
+			layer.close(index);
+		});
+	}
+	else{
+		if(flag==0){
+			$.ajax({
+		        url: "/device/TermConfig",
+		        type: "post",
+		        async:false,
+		        data:JSON.stringify(termInfo),
+		        dataType:"json",
+		        contentType : 'application/json',
+		        success: function(result) {
+
+						if(result==0){
+							layer.alert('修改成功', {icon: 1,title:"提示"},function(index){
+								window.parent.location.reload();
+								layer.close(index);
+							});
+						}
+						if(result==1){
+							layer.alert('无任何修改',{icon: 0,title:"提示"}, function(index){
+								window.parent.location.reload();
+								layer.close(index);
+							});
+						}
+		        },
+		        error: function() {
+		       	 layer.alert('修改失败',{icon: 2,title:"提示"}, function(index){
+							window.parent.location.reload();
+							layer.close(index);
+						});
+		        }
+		    });
+		}
+		if(flag==1){
+			layer.alert('请输入合法的IP', {icon: 0,title:"提示"},function(index){
+				layer.close(index);
+			});
+		}
+		if(flag==2){
+			layer.alert('请输入合法的url', {icon: 0,title:"提示"},function(index){
+				layer.close(index);
+			});
+		}
+	}
+			
+});
+
+</script>
+<script>
+
+</script>
+</body>
+</html>

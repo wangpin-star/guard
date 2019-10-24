@@ -1,0 +1,903 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>添加会议</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport"
+          content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi"/>
+    <base href="/">
+    <link rel="stylesheet" href="/layui/css/layui.css">
+    <link rel="stylesheet" href="/font-awesome/css/font-awesome.css">
+    <link rel="stylesheet" href="/css/index.css"/>
+    <style>
+
+        body {
+            background-color: #f8f8f8;
+        }
+
+        .layui-form-label {
+            width: 86px;
+        }
+
+        .layui-input-block {
+            margin-left: 116px;
+        }
+
+        .laydate-theme-calendar .layui-laydate-main {
+            width: 472px;
+        }
+
+        .laydate-theme-calendar .layui-laydate-content th,
+        .laydate-theme-calendar .layui-laydate-content td {
+            width: 65px;
+            height: 38px;
+        }
+
+        .laydate-theme-calendar .layui-laydate-content td:hover {
+            /*border: 1px solid #ffb27a;*/
+        }
+
+        .laydate-theme-calendar .laydate-day-mark::after {
+            display: none;
+        }
+
+        .laydate-theme-calendar .laydate-day-mark {
+            line-height: 38px;
+        }
+
+        .laydate-theme-calendar .laydate-day-mark .layui-icon {
+            position: absolute;
+            top: 8px;
+            right: 3px;
+            line-height: 0;
+            font-size: 12px;
+            color: #FFB800;
+            /*left: auto;*/
+        }
+
+        .button2 {
+            width: 110px;
+            height: 34px;
+            line-height: 34px;
+            color: #ffffff;
+            font-size: 16px;
+            border: none;
+            border-radius: 4px;
+            background-color: #54b5ff;
+            cursor: pointer;
+        }
+
+        .button2 :hover {
+            background-color: #77c4ff;
+        }
+
+        .button2 :active {
+            background-color: #4a96ec;
+        }
+
+        .layui-form-switch {
+            margin-top: 0;
+        }
+
+        .disablEvevt {
+            pointer-events: none;
+        }
+
+        .button1 {
+            width: 44px;
+            height: 30px;
+            line-height: 30px;
+            color: #666666;
+            font-size: 12px;
+            border: 1px solid #d8d8d8;
+            border-radius: 4px;
+            background-color: white;
+            cursor: pointer;
+        }
+
+        .button1 :hover {
+            border: #999999;
+        }
+
+        .button1 :active {
+            border: #54b5ff;
+        }
+
+        .layui-form-radio {
+            line-height: 28px;
+            margin: 6px 10px 0 0;
+            padding-right: 10px;
+            cursor: pointer;
+            font-size: 0;
+            width: 230px;
+        }
+    </style>
+</head>
+<body>
+<form class="layui-form" id='addConferenceOne' action="">
+    <div id="content" class="layui-collapse" lay-filter="test"
+         style="overflow-x: hidden; overflow-y: auto; height: 100%; width:1058px;border: none;">
+        <div class="layui-collapse">
+
+            <div class="layui-colla-item">
+                <h2 class="layui-colla-title">基本信息</h2>
+                <div id="baseInfoDIV" class="layui-colla-content layui-show">
+                    <div style="height: 100%;width:168px;float: right;margin-right: 20px;">
+                        <div style="height: 168px;width: 100%;float: left;text-align: center;line-height: 168px;">
+                            <img class='layui-upload-img' id='conlogo' picId="0"
+                                 style="border-radius: 50%;border: 2px solid #d8d8d8;" width='164' height='164'
+                                 src="/css/img/headPhotoDefault.png">
+                            <img id="hidePhoto1" style="display: none;">
+                        </div>
+                        <div style="height: 30px;width: 100%;float: left;">
+                            <button type='button' class="button1 uploadBtn" id="uploadPhoto4" style="width: 80px;">
+                                上传会议logo
+                            </button>
+                            <button type='button' class="button1" onclick="deletePhoto(4)"
+                                    style="width: 80px;margin-left: 4px;">
+                                删除
+                            </button>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="layui-inline" style="">
+                            <label class="layui-form-label" style="height: 32px;padding-right: 11px">会议名称</label>
+                            <img src="/css/img/required.png" style="margin-top: 13px;float: left;margin-right: 11px;">
+                            <div class="layui-input-inline" style="width: 420px;">
+                                <input type="text" style="margin-top: 4px;border-radius:4px;line-height: 32px;height: 32px;width: 420px"
+                                       required lay-verify="required" placeholder="请输入会议名称..."
+                                       name="conferenceName" id="conferenceName" class="layui-input">
+                            </div>
+                        </div>
+                        <div>
+                            <div class="layui-inline" style="">
+                                <label class="layui-form-label" style="height: 32px;padding-right: 11px">会议地点</label>
+                                <img src="/css/img/required.png"
+                                     style="margin-top: 13px;float: left;margin-right: 11px;">
+                                <div class="layui-input-inline" style="width: 420px;">
+                                    <input type="text"
+                                           style="margin-top: 4px;border-radius:4px;line-height: 32px;height: 32px;width: 420px" required
+                                           lay-verify="required" placeholder="请输入会议地点..."
+                                           name="conferencePlace" id="conferencePlace" class="layui-input">
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="layui-inline" style="">
+                                <label class="layui-form-label" style="height: 32px;padding-right: 11px">签到时间</label>
+                                <img src="/css/img/required.png"
+                                     style="margin-top: 13px;float: left;margin-right: 11px;">
+                                <input style="display: none;" lay-verify="date">
+                                <div class="layui-input-inline" style="float: left;width: 200px;">
+                                    <input type="text"
+                                           style="line-height: 32px;margin-top: 4px;border-radius:4px;height: 32px;width: 200px" required
+                                           lay-verify="required" placeholder="开始时间yyyy-MM-dd HH:mm"
+                                           name="startdate" id="startdate" class="layui-input">
+                                </div>
+                                <label class="layui-form-label"
+                                       style="text-align:center;width:15px;float: left;height: 32px">至</label>
+                                <div class="layui-input-inline" style="width: 200px;float: left;">
+                                    <input type="text"
+                                           style="line-height: 32px;margin-top: 4px;border-radius:4px;height: 32px;width: 200px" required
+                                           lay-verify="required" placeholder="结束时间yyyy-MM-dd HH:mm"
+                                           name="enddate" id="enddate" class="layui-input">
+                                </div>
+                            </div>
+                        </div>
+                        <div style="float: left;width: 750px;margin-left: 13px;margin-top: 8px">
+                            <div class="layui-form-item" style="margin-bottom: 0px">
+                                <label class="layui-form-label"
+                                       style="height: 32px;padding-right: 11px">选择时间段</label>
+                                <img src="/css/img/required.png"
+                                     style="margin-top: 11px;float: left;margin-right: 11px;">
+                                <div class="layui-input-inline" style="width: 600px;">
+                                    <div style="float: left;width: 420px;height: 32px">
+                                        <!--<textarea style="width: 300px;height: 30px"
+                                                  class="layui-textarea " name="timetest" id="timetest" rows="5"></textarea>-->
+                                        <input class="layui-form-input" style="line-height: 32px;float:left;margin-top: 4px;border-radius:4px;width: 420px"
+                                               type="text" name="tags" id="timetest"
+                                               placeholder="" autocomplete="on"/>
+                                    </div>
+                                    <div style="float: left">
+                                        <button id="timebtn1" class='button2' type='button' onclick="timebtn();"
+                                                style="float: right;margin-left: 10px;">选择时间
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-colla-content layui-show layui-form-item"
+                     style="margin-left: 8px;border-top-style: none;">
+                    <label style="margin-left: 38px;height: 32px" class="layui-label">需要门禁</label>
+                    <label style="color:white;" class="layui-label">..</label>
+                    <input class="layui-input-block" style="height: 32px" type="checkbox" name="detail"
+                           lay-skin="switch" checked="" lay-filter="switchTest2" lay-text="ON|OFF">
+                </div>
+            </div>
+
+            <div class="layui-colla-item">
+                <h2 class="layui-colla-title">门禁设备</h2>
+                <div id="header" style="" class="layui-colla-content layui-show">
+                    <div id="listhe" class="" style="width:1060px;float: left;box-sizing: border-box;">
+                        <table class="layui-hide" id="doordevicelist" lay-filter="doordevicelist"></table>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="layui-colla-item">
+                <h2 class="layui-colla-title">会议设备</h2>
+                <div id="con" style="" class="layui-colla-content layui-show">
+                    <div id="conlist" class="" style="width:1060px;float: left;box-sizing: border-box;">
+                        <table class="layui-hide" id="conferencedeviceList" lay-filter="conferencedeviceList"></table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="layui-colla-item">
+                <h2 class="layui-colla-title">会议参数</h2>
+                <div id="parameter" style="height: 850px;" class="layui-colla-content layui-show">
+                    <div style="float:left;width: 100%;margin-top: 12px">
+                        <label class="layui-form-label"
+                               style="margin-left:80px;text-align:left;width:180px;border:none;background-color:transparent"
+                               title="（1008）识别方式">（1008）识别方式</label>
+                        <div id="parameter6" class="layui-input-block" style="width:100%">
+                            <input type="radio" id="recognition_mode1" name="recognition_mode" lay-filter="radio"
+                                   value="card_only" title="仅刷卡" checked>
+                            <input type="radio" id="recognition_mode2" name="recognition_mode" lay-filter="radio"
+                                   value="face_only" title="仅刷脸">
+                            <input type="radio" id="recognition_mode3" name="recognition_mode" lay-filter="radio"
+                                   value="card_and_face" title="刷卡或刷脸">
+                        </div>
+                    </div>
+                    <div style="float:left;width: 100%;margin-top: 12px">
+                        <div>
+                            <label class="layui-form-label"
+                                   style="margin-left:80px;text-align:left;width:180px;border:none;background-color:transparent"
+                                   title="（1009）人证比对">（1009）人证比对</label>
+                        </div>
+                        <div id="parameter1" class="layui-input-block" style="width:100%">
+                            <input type="radio" id="people_card1" name="people_card" lay-filter="radio" value="1"
+                                   title="是" checked>
+                            <input type="radio" id="people_card2" name="people_card" lay-filter="radio" value="0"
+                                   title="否">
+                        </div>
+                    </div>
+                    <div style="float:left;width: 100%;margin-top: 12px">
+                        <label class="layui-form-label"
+                               style="margin-left:80px;text-align:left;width:180px;border:none;background-color:transparent"
+                               title="（1028）签到模式">（1028）签到模式</label>
+                        <div id="parameter3" class="layui-input-block" style="width:100%">
+                            <input type="radio" id="sign_in_mode1" name="sign_in_mode" lay-filter="radio" value="0"
+                                   title="离线" checked>
+                            <input type="radio" id="sign_in_mode2" name="sign_in_mode" lay-filter="radio" value="1"
+                                   title="在线">
+                        </div>
+                    </div>
+                    <div style="float:left;width: 100%;margin-top: 12px">
+                        <label class="layui-form-label"
+                               style="margin-left:80px;text-align:left;width:180px;border:none;background-color:transparent"
+                               title="（1030）权限等级">（1030）权限等级</label>
+                        <div id="parameter7" class="layui-input-block" style="width:100%">
+                            <div>
+                                <input type="radio" id="permission_level1" name="permission_level" lay-filter="radio"
+                                       value="0" title="无限制" checked>
+                                <input type="radio" id="permission_level2" name="permission_level" lay-filter="radio"
+                                       value="1" title="仅注册人员">
+                                <input type="radio" id="permission_level3" name="permission_level" lay-filter="radio"
+                                       value="2" title="仅报名人员">
+                            </div>
+                            <div style="margin-top: 12px;margin-left: 173px;">
+                                <input type="radio" id="permission_level4" name="permission_level" lay-filter="radio"
+                                       value="3" title="无交互">
+                            </div>
+                        </div>
+                    </div>
+                    <div style="float:left;width: 100%;margin-top: 12px">
+                        <label class="layui-form-label"
+                               style="margin-left:80px;text-align:left;width:180px;border:none;background-color:transparent"
+                               title="（1043）显示精伦log">（1043）显示精伦log</label>
+                        <div id="parameter2" class="layui-input-block" style="width:100%">
+                            <input type="radio" id="routon_log1" name="routon_log" lay-filter="radio" value="1"
+                                   title="是" checked>
+                            <input type="radio" id="routon_log2" name="routon_log" lay-filter="radio" value="0"
+                                   title="否">
+                        </div>
+                    </div>
+
+                    <div style="float:left;width: 100%;margin-top: 12px">
+                        <label class="layui-form-label"
+                               style="margin-left:80px;text-align:left;width:180px;border:none;background-color:transparent"
+                               title="（1044）新增公司">（1044）新增公司</label>
+                        <div id="parameter4" class="layui-input-block" style="width:100%">
+                            <input type="radio" id="add_company1" name="add_company" lay-filter="radio" value="1"
+                                   title="允许" checked>
+                            <input type="radio" id="add_company2" name="add_company" lay-filter="radio" value="0"
+                                   title="不允许">
+                        </div>
+                    </div>
+                    <div style="float:left;width: 100%;margin-top: 12px">
+                        <label class="layui-form-label"
+                               style="margin-left:80px;text-align:left;width:180px;border:none;background-color:transparent"
+                               title="（1045）现场注册方式">（1045）现场注册方式</label>
+                        <div id="parameter5" class="layui-input-block" style="width:100%">
+                            <input type="radio" id="scene_register_mode1" name="scene_register_mode" lay-filter="radio"
+                                   value="0" title="采集人脸" checked>
+                            <input type="radio" id="scene_register_mode2" name="scene_register_mode" lay-filter="radio"
+                                   value="1" title="人证比对">
+                        </div>
+                    </div>
+                    <div style="float:left;width: 100%;margin-top: 12px">
+                        <label class="layui-form-label"
+                               style="margin-left:80px;text-align:left;width:180px;border:none;background-color:transparent"
+                               title="（1056）报名链接">（1056）报名链接</label>
+                        <div id="parameter10" class="layui-input-block" style="margin-left:0px;float:left;">
+                            <input type="text" style="line-height: 32px;margin-top: 4px;border-radius:4px;height: 32px;width: 420px"
+                                   required lay-verify="required" placeholder="请输入报名链接..."
+                                   name="sign_up_link" id="sign_up_link" class="layui-input">
+                        </div>
+                    </div>
+                    <div style="float:left;width: 100%;margin-top: 12px">
+                        <label class="layui-form-label"
+                               style="margin-left:80px;text-align:left;width:180px;border:none;background-color:transparent"
+                               title="（1057）报名logo">（1057）报名logo</label>
+                        <div id="parameter11" class="layui-input-block" style="margin-left:0px;float:left;">
+                            <div style="height: 100%;width:168px;float: right;margin-right: 20px;">
+                                <div style="height: 168px;width: 100%;float: left;text-align: center;line-height: 168px;">
+                                    <img class='layui-upload-img' id='register_logo' picId="0"
+                                         style="border-radius: 50%;border: 2px solid #d8d8d8;" width='164' height='164'
+                                         src="/css/img/headPhotoDefault.png">
+                                    <img id="hidePhoto2" style="display: none;">
+                                </div>
+                                <div style="height: 30px;width: 100%;float: left;">
+                                    <button type='button' class="button1 uploadBtn" id="uploadPhoto_sign_up"
+                                            style="width: 80px;">
+                                        上传报名logo
+                                    </button>
+                                    <button type='button' class="button1" onclick="deletePhoto(4)"
+                                            style="width: 80px;margin-left: 4px;">
+                                        删除
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="float:left;width: 100%;margin-top: 12px">
+                        <label class="layui-form-label"
+                               style="margin-left:80px;text-align:left;width:180px;border:none;background-color:transparent"
+                               title="（1059）是否允许手动通过">（1059）是否允许手动通过</label>
+                        <div id="parameter8" class="layui-input-block" style="width:100%">
+                            <input type="radio" id="manual_pass1" name="manual_pass" lay-filter="radio" value="0"
+                                   title="不允许">
+                            <input type="radio" id="manual_pass2" name="manual_pass" lay-filter="radio" value="1"
+                                   title="允许" checked>
+                        </div>
+                    </div>
+                    <div style="float:left;width: 100%;margin-top: 12px">
+                        <label class="layui-form-label"
+                               style="margin-left:80px;text-align:left;width:180px;border:none;background-color:transparent"
+                               title="（1063）网络报名截止时间">（1063）网络报名截止时间</label>
+                        <div id="parameter9" class="layui-input-block" style="margin-left:0px;float:left;">
+                            <input type="text" style="line-height: 32px;margin-top: 4px;border-radius:4px;height: 32px;width: 420px"
+                                   required lay-verify="required" placeholder="报名截止时间 yyyy-MM-dd HH:mm"
+                                   name="deadline" id="deadline" class="layui-input">
+                        </div>
+                    </div>
+                    <div style="float:left;width: 100%;margin-top: 12px">
+                        <label class="layui-form-label"
+                               style="margin-left:80px;text-align:left;width:180px;border:none;background-color:transparent"
+                               title="（1079）是否显示签到列表">（1079）是否显示签到列表</label>
+                        <div id="parameter12" class="layui-input-block" style="width:100%">
+                            <input type="radio" id="sign_list1" name="sign_list" lay-filter="radio" value="0"
+                                   title="不显示">
+                            <input type="radio" id="sign_list2" name="sign_list" lay-filter="radio" value="1"
+                                   title="显示" checked>
+                        </div>
+                    </div>
+                    <div style="float:left;width: 100%;margin-top: 12px">
+                        <label class="layui-form-label"
+                               style="margin-left:80px;text-align:left;width:180px;border:none;background-color:transparent"
+                               title="（1081）初始业务控制">（1081）初始业务控制</label>
+                        <div id="parameter13" class="layui-input-block" style="width:100%">
+                            <input type="radio" id="init_controller1" name="init_controller" lay-filter="radio"
+                                   value="0"
+                                   title="手动启动签到">
+                            <input type="radio" id="init_controller2" name="init_controller" lay-filter="radio"
+                                   value="1"
+                                   title="自动启动签到" checked>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <div style="width: 100%;float: right;height: 34px;margin-right: 140px;">
+        <button id="step2Save" class='button2' type='button' lay-submit='' lay-filter='addConference'
+                style="float: right;margin-left: 10px;">保存
+        </button>
+    </div>
+</form>
+
+
+<script type="text/javascript" src="/js/jquery.min.js"></script>
+<script type="text/javascript" src="/layui/layui.js"></script>
+<script type="text/javascript" src="/js/ajaxFilter.js"></script>
+<script type="text/javascript" src="/layui/lay/extra-modules/jtagsinput/jtagsinput.js"></script>
+<script>
+    var list = new Array();
+    //注意：折叠面板 依赖 element 模块，否则无法进行功能性操作
+    layui.config({
+        base: '/layui/lay/extra-modules/', //改成你的路径
+        version: true
+    }).extend({
+        jtagsinput: 'jtagsinput/jtagsinput'
+    });
+    layui.use(['jquery', 'jtagsinput', 'layer', 'laydate', 'element', 'form'], function () {
+        var element = layui.element;
+        var laydate = layui.laydate;
+        var form = layui.form;
+        var layer = layui.layer;
+        var $ = layui.jquery;
+        var contentHeight = document.documentElement.clientHeight - 78;
+        $("#content").css("height", contentHeight);
+
+        $("#timetest").tagsInput({
+            'width': 'auto',
+            'height': 'auto',
+            'defaultText': '选择时间段',
+            'removeText': '删除时间段',
+            'placeholderColor': '#cccccc',
+            'maxCount': 7
+        });
+
+        form.on('radio(custom)', function (data) {
+            if (data.value == "1") {
+                //$("#tree").removeClass("disablEvevt");
+                //$("#dateDiv").addClass("disablEvevt");
+                document.getElementById("fixationdateDiv").setAttribute("style", "display:;");
+                document.getElementById("costomdateDiv").setAttribute("style", "display:none;");
+            }
+            if (data.value == "0") {
+                //$("#dateDiv").removeClass("disablEvevt");
+                document.getElementById("fixationdateDiv").setAttribute("style", "display:none;");
+                document.getElementById("costomdateDiv").setAttribute("style", "display:;");
+                //$("#tree").addClass("disablEvevt");
+            }
+        });
+        var classVal = document.getElementById("header").getAttribute("class");
+        form.on('switch(switchTest2)', function (data) {
+            if (data.elem.checked == true) {
+                classVal = classVal.replace("layui-hide", "layui-show");
+                document.getElementById("header").setAttribute("class", classVal);
+            }
+            if (data.elem.checked == false) {
+                classVal = classVal.replace("layui-show", "layui-hide");
+                document.getElementById("header").setAttribute("class", classVal);
+            }
+        });
+
+
+        laydate.render({
+            elem: '#startdate'
+            , type: 'datetime'
+        });
+        laydate.render({
+            elem: '#enddate'
+            , type: 'datetime'
+        });
+        laydate.render({
+            elem: '#deadline'
+            , type: 'datetime'
+        });
+        laydate.render({
+            elem: '#startdate1'
+            , type: 'datetime'
+        });
+        laydate.render({
+            elem: '#enddate1'
+            , type: 'datetime'
+        });
+        form.verify({
+            date: function (value, item) {
+                var starttime = $('#startdate').val();
+                var endtime = $('#enddate').val();
+                if (starttime == "") {
+                    return '开始时间不能为空';
+                }
+                if (endtime == "") {
+                    return '结束时间不能为空';
+                }
+                if (starttime > endtime) {
+                    return '开始时间不能晚于结束时间';
+                }
+            }
+        });
+        //点击第三步的保存按钮
+        form.on('submit(addConference)', function (obj) {
+            addConference();
+        });
+        form.render();
+    });
+    layui.use(['table', 'layer', 'form', 'upload'], function () {
+        var $ = layui.$;
+        var table = layui.table;
+        var layer = layui.layer;
+        var form = layui.form;
+        var upload = layui.upload;
+
+        //门禁
+        table.render({
+            elem: '#doordevicelist'
+            , url: '/conferenceManage/selectDoorDevice'
+            , title: '门禁设备列表'
+            , cols: [
+                [
+                    {type: 'checkbox'}
+                    , {field: 'device_type', title: '设备型号'}
+                    , {field: 'term_name', title: '设备名称'}
+                    , {field: 'depart_name', title: '所管辖部门'}
+                ]
+            ]
+            , done: function (res, curr, count) {  //res 接口返回的信息
+
+            }
+        });
+        //会议设备
+        table.render({
+            elem: '#conferencedeviceList'
+            , url: '/conferenceManage/selectConferenceDevice'
+            , title: '会议设备列表'
+            , cols: [
+                [
+                    {type: 'checkbox'}
+                    , {field: 'device_type', title: '设备型号'}
+                    , {field: 'term_name', title: '设备名称'}
+                ]
+            ]
+            , done: function (res, curr, count) {  //res 接口返回的信息
+
+            }
+        });
+
+        table.on('checkbox(doordevicelist)', function (obj) {
+            list.push(obj.data.term_id);
+        });
+        table.on('checkbox(conferencedeviceList)', function (obj) {
+            list.push(obj.data.term_id);
+        });
+
+        //头像
+        var uploadListIns1 = upload.render({
+            elem: '#uploadPhoto4'
+            , auto: false
+            , acceptMime: '.jpg,.png,.bmp'
+            , size: 1024
+            , choose: function (obj) {
+                obj.preview(function (index, file, result) {
+                    $("#ifWriteFlag").val("1");
+                    uploadListIns1.config.elem.next()[0].value = '';
+                    //根据图片原本宽高比压缩
+                    $("#hidePhoto1").attr('src', result);
+                    var theImage = new Image();
+                    theImage.src = $("#hidePhoto1").attr("src");
+                    theImage.onload = function () {
+                        var width = "164";
+                        var height = "164";
+                        $("#conlogo").attr('width', "164");
+                        $("#conlogo").attr('height', "164");
+                        if (width / height > this.width / this.height) {
+                            var changeWidth = (this.width / this.height) * height;
+                            $("#conlogo").attr('width', changeWidth);
+                        } else {
+                            var changeHeight = (width * this.height) / this.width;
+                            $("#conlogo").attr('height', changeHeight);
+                        }
+                        $("#conlogo").attr('src', result);
+                    };
+                });
+            }
+        });
+
+        //报名logo
+        var uploadListIns2 = upload.render({
+            elem: '#uploadPhoto_sign_up'
+            , auto: false
+            , acceptMime: '.jpg,.png,.bmp'
+            , size: 1024
+            , choose: function (obj) {
+                obj.preview(function (index, file, result) {
+                    $("#ifWriteFlag").val("1");
+                    uploadListIns2.config.elem.next()[0].value = '';
+                    //根据图片原本宽高比压缩
+                    $("#hidePhoto2").attr('src', result);
+                    var theImage = new Image();
+                    theImage.src = $("#hidePhoto2").attr("src");
+                    theImage.onload = function () {
+                        var width = "164";
+                        var height = "164";
+                        $("#register_logo").attr('width', "164");
+                        $("#register_logo").attr('height', "164");
+                        if (width / height > this.width / this.height) {
+                            var changeWidth = (this.width / this.height) * height;
+                            $("#register_logo").attr('width', changeWidth);
+                        } else {
+                            var changeHeight = (width * this.height) / this.width;
+                            $("#register_logo").attr('height', changeHeight);
+                        }
+                        $("#register_logo").attr('src', result);
+                    };
+                });
+            }
+        });
+
+    })
+
+    //图标的鼠标移入/移出/点击切换图标
+    function changeImg(obj, status) {
+        var imgName = $(obj).find("img").attr("imgName");
+        $(obj).find("img").attr("src", "/css/img/" + imgName + status + ".png");
+    }
+
+    var detailHTML = "<form class=\"layui-form\">" +
+        "<div>\n" +
+        "                                <div style=\"width: 500px\" class=\"layui-inline\">\n" +
+        "                                    <div style=\"float: left;\">\n" +
+        "                                        <div style=\"width: 30px;float: left;margin-top: 7px;padding-right: 0px\">\n" +
+        "                                            <input style=\"margin-top: 8px\" type=\"radio\" name=\"cq\" title=\"\"\n" +
+        "                                                   id=\"cq1\" lay-filter=\"cq\" value=\"0\"\n" +
+        "                                                   >\n" +
+        "                                        </div>\n" +
+        "                                        <div style=\"float: left\">\n" +
+        "                                            <label class=\"layui-form-label\"\n" +
+        "                                                   style=\"text-align: left;padding-left: 0px;width: 150px\">会议期间每天时间范围</label>\n" +
+        "                                            <input disabled type=\"text\" style=\"width: 150px;\" name=\"timetest\" class=\"layui-input\"\n" +
+        "                                                   id=\"everydaytime\"\n" +
+        "                                                   placeholder=\" - \">\n" +
+        "                                        </div>\n" +
+        "                                    </div>\n" +
+        "                                </div>\n" +
+        "\n" +
+        "                                <div style=\"width: 720px\" class=\"layui-inline\">\n" +
+        "\n" +
+        "                                    <div style=\"width: 30px;float: left;margin-top: 7px;padding-right: 0px\">\n" +
+        "                                        <input type=\"radio\" name=\"cq\" title=\"\"\n" +
+        "                                               id=\"cq2\" lay-filter=\"cq\" value=\"1\" title=\"\"\n" +
+        "                                        >\n" +
+        "                                    </div>\n" +
+        "\n" +
+        "                                    <div style=\"float: left\">\n" +
+        "                                        <div style=\"float: left\">\n" +
+        "                                            <label class=\"layui-form-label\"\n" +
+        "                                                   style=\"text-align: left;padding-left: 0px;width: 150px\">选择日期</label>\n" +
+        "                                            <input disabled style=\"width: 150px;\" type=\"text\" class=\"layui-input\" id=\"date\"\n" +
+        "                                                   placeholder=\"yyyy-MM-dd\">\n" +
+        "\n" +
+        "                                        </div>\n" +
+        "                                    </div>\n" +
+        "\n" +
+        "                                    <div style=\"float: left\">\n" +
+        "                                        <label class=\"layui-form-label\">时间范围</label>\n" +
+        "                                        <div class=\"layui-input-inline\">\n" +
+        "                                            <input disabled type=\"text\" class=\"layui-input\" id=\"time\" placeholder=\" - \">\n" +
+        "                                        </div>\n" +
+        "                                    </div>\n" +
+        "                                </div>\n" +
+        "                            </div>" +
+        "</form>";
+    var flag = 3;
+
+    function timebtn() {
+        var startdate = document.getElementById("startdate").value;
+        var enddate = document.getElementById("enddate").value;
+        var start = startdate.substring(0, 10);
+        var end = enddate.substring(0, 10);
+        if (startdate == "" || enddate == "") {
+            layer.alert('请选择会议签到时间后，再选择签到时段！', function (index) {
+                layer.close(index);
+            });
+        } else {
+            layer.open({
+                type: 1,
+                title: '选择时间',
+                area: ['800px', '200px'], //宽高
+                content: detailHTML,
+                shadeClose: false,
+                shade: [0.2, '#000000'],
+                btn: ['确定', '取消'],
+                yes: function (index, layero) {
+                    var everydaytime = $('#everydaytime').val();
+                    var timetest = $('#timetest').val();
+
+                    var date = document.getElementById("date").value;
+                    var time = document.getElementById("time").value;
+
+                    if (flag == 0) {
+                        /*var result = start + "-" + end + " " + everydaytime;
+                        document.getElementById("timetest").value = timetest + everydaytime + ";";*/
+                        $('#timetest').addTag(everydaytime);
+                    }
+                    if (flag == 1) {
+                        $('#timetest').addTag(date +" "+ time);
+                        //document.getElementById("timetest").value = timetest + date + " " + time + ";";
+                    }
+                    layer.close(index); //如果设定了yes回调，需进行手工关闭
+                }
+            });
+            layui.use(['layer', 'laydate', 'element', 'form'], function () {
+                var element = layui.element;
+                var laydate = layui.laydate;
+                var form = layui.form;
+                var layer = layui.layer;
+                // 日期
+                laydate.render({
+                    elem: '#date'
+                    , min: start
+                    , max: end
+                });
+                //时间范围
+                laydate.render({
+                    elem: '#time'
+                    , range: true
+                    , type: 'time'
+                    , format: 'HH:mm'
+                });
+                laydate.render({
+                    elem: '#everydaytime'
+                    , format: 'HH:mm'
+                    , type: 'time'
+                    , range: true
+                });
+
+                form.on('radio(cq)', function (data) {
+                    if (data.value == "1") {
+                        flag = 1;
+                        //$("#tree").removeClass("disablEvevt");
+                        //$("#dateDiv").addClass("disablEvevt");
+                        document.getElementById("everydaytime").setAttribute("disabled", "");
+                        document.getElementById("date").removeAttribute("disabled");
+                        document.getElementById("time").removeAttribute("disabled");
+                        form.render();
+                    }
+                    if (data.value == "0") {
+                        flag = 0;
+                        //$("#dateDiv").removeClass("disablEvevt");
+                        document.getElementById("date").setAttribute("disabled", "");
+                        document.getElementById("time").setAttribute("disabled", "");
+                        document.getElementById("everydaytime").removeAttribute("disabled");
+                        //$("#tree").addClass("disablEvevt");
+                        form.render();
+                    }
+                });
+                form.render();
+            });
+        }
+        ;
+    }
+
+    //保存
+    function addConference() {
+        //开启加载转圈圈动画
+        var loadingAddConference = layer.load(1, {
+            shade: [0.1, '#fff']
+        });
+        //获取页面数据
+        debugger;
+        var conferenceName = $("input[name='conferenceName']").val();
+        var conferencePlace = $("input[name='conferencePlace']").val();
+        var startdate = $("input[name='startdate']").val();
+        var enddate = $("input[name='enddate']").val();
+        var timetest = $('#timetest').val();
+        timetest=timetest.replace(/,/g,";");
+        var people_card = $("input[name='people_card']:checked").val();
+        var routon_log = $("input[name='routon_log']:checked").val();
+        var sign_in_mode = $("input[name='sign_in_mode']:checked").val();
+        var add_company = $("input[name='add_company']:checked").val();
+        var scene_register_mode = $("input[name='scene_register_mode']:checked").val();
+        var recognition_mode = $("input[name='recognition_mode']:checked").val();
+        var permission_level = $("input[name='permission_level']:checked").val();
+        var manual_pass = $("input[name='manual_pass']:checked").val();
+        var sign_list = $("input[name='sign_list']:checked").val();
+        var init_controller = $("input[name='init_controller']:checked").val();
+        var deadline = $("input[name='deadline']").val();
+        var sign_up_link = $("input[name='deadline']").val();
+        //var logo=$("#conlogo").attr('src');
+        var logo = "";
+        logo = logo.replace('data:image/jpeg;base64,', '');
+        //var register_logo=$("#register_logo").attr('src');
+        var register_logo = "";
+        register_logo = register_logo.replace('data:image/jpeg;base64,', '');
+        var conference = {};
+
+
+        conference.name = conferenceName;
+        conference.addr = conferencePlace;
+        conference.start_time = startdate;
+        conference.end_time = enddate;
+        conference.sign_deadline = deadline;
+        conference.sign_time = timetest;
+        conference.logo = logo;
+        conference.register_logo = register_logo;
+        conference.register_url = sign_up_link;
+        conference.recognittype = recognition_mode;
+        conference.term_list = list;
+        conference.sign_mode = sign_in_mode;
+        conference.show_logo = routon_log;
+        conference.add_company = add_company;
+        conference.reg_type = scene_register_mode;
+        conference.hand_allow = manual_pass;
+        conference.auth_level = permission_level;
+        conference.need_face_compare = people_card;
+        conference.is_show_sign_list = sign_list;
+        conference.business_ctrl = init_controller;
+
+
+        //获取头像
+
+        /*if (undefined !== logo && "" !== logo && "/css/img/headPhotoDefault.png" != logo) {
+            //头像没有进行人脸检测,需要过滤格式
+            photo4 = photo4.replace('data:;base64,', '');
+            photo4 = photo4.replace('data:image/jpeg;base64,', '');
+            photo4 = photo4.replace('data:image/png;base64,', '');
+            photo4 = photo4.replace('data:image/bmp;base64,', '');
+            faceInfo.face_info_base64 = photo4;
+        } else {//若不存在头像,则获取页面中头像的照片id,若有照片id,则是删除了头像
+            var photo4Id = $("#photo4").attr('picId');
+            if (photo4Id != '0') {
+                var picture = {
+                    pic_id: photo4Id,
+                    option: 2,//option为2是删除操作
+                    image_type: 1//image_type为1是头像
+                };
+                pictureList.push(picture);
+            }
+        }*/
+
+        $.ajax({//调用添加faceInfo接口
+            url: "/conferenceManage/addConference",
+            type: "post",
+            data: JSON.stringify(conference),
+            contentType: 'application/json',
+            async: false,
+            traditional: true,
+            success: function (data) {
+                var jsonData = $.parseJSON(data);
+                if (jsonData.resultCode == "0") {//添加faceInfo成功
+                    layer.alert('添加会议成功', {icon: 2, title: "提示"}, function () {
+                        window.parent.location.reload();
+                    });
+                }
+                if (jsonData.resultCode == "1") {
+                    layer.alert('添加会议失败', {icon: 2, title: "提示"}, function () {
+                        window.parent.location.reload();
+                    });
+                }
+                if (jsonData.resultCode == "2") {
+                    layer.alert('添加会议失败，会议重复', {icon: 2, title: "提示"}, function () {
+                        window.parent.location.reload();
+                    });
+                }
+                if (jsonData.resultCode == "3") {
+                    layer.alert('添加会议失败，终端指定错误', {icon: 2, title: "提示"}, function () {
+                        window.parent.location.reload();
+                    });
+                }
+            },
+            error: function () {
+                layer.alert('服务器错误,请联系管理员', {icon: 2, title: "提示"}, function (index) {
+                    layer.close(index);
+                });
+            }
+        });
+        //关闭转圈圈的加载框
+        layer.close(loadingAddConference);
+    }
+</script>
+<script type="text/javascript" src="/js/photoJS.js"></script>
+</body>
+</html>

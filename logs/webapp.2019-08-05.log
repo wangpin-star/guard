@@ -1,0 +1,140 @@
+2019-08-05  08:53:18.403 [https-jsse-nio-8443-exec-7] ERROR com.jinglun.guard.devicemanage.service.impl.DeviceServiceImpl - 终端设备查询接口调用出错
+2019-08-05  08:54:56.142 [https-jsse-nio-8443-exec-9] ERROR com.jinglun.guard.devicemanage.service.impl.DeviceServiceImpl - 终端设备查询接口调用出错
+2019-08-05  08:55:09.685 [https-jsse-nio-8443-exec-3] ERROR com.jinglun.guard.devicemanage.service.impl.DeviceServiceImpl - 终端设备查询接口调用出错
+2019-08-05  08:55:14.444 [https-jsse-nio-8443-exec-7] ERROR com.jinglun.guard.devicemanage.service.impl.DeviceServiceImpl - 终端设备查询接口调用出错
+2019-08-05  08:57:01.010 [https-jsse-nio-8443-exec-1] ERROR com.jinglun.guard.dataservice.DataUtil - Read timed out
+2019-08-05  08:57:01.026 [https-jsse-nio-8443-exec-1] ERROR com.jinglun.guard.dataservice.DataUtil - A JSONObject text must begin with '{' at character 0 of 
+2019-08-05  08:57:01.026 [https-jsse-nio-8443-exec-1] ERROR com.jinglun.guard.devicemanage.service.impl.DeviceServiceImpl - 终端设备查询接口调用出错
+2019-08-05  09:00:16.747 [https-jsse-nio-8443-exec-10] ERROR com.jinglun.guard.dataservice.DataUtil - Read timed out
+2019-08-05  09:00:16.747 [https-jsse-nio-8443-exec-10] ERROR com.jinglun.guard.dataservice.DataUtil - A JSONObject text must begin with '{' at character 0 of 
+2019-08-05  09:00:16.763 [https-jsse-nio-8443-exec-10] ERROR com.jinglun.guard.devicemanage.service.impl.DeviceServiceImpl - 终端设备查询接口调用出错
+2019-08-05  09:00:33.861 [https-jsse-nio-8443-exec-4] ERROR com.jinglun.guard.dataservice.DataUtil - Read timed out
+2019-08-05  09:00:33.877 [https-jsse-nio-8443-exec-4] ERROR com.jinglun.guard.dataservice.DataUtil - A JSONObject text must begin with '{' at character 0 of 
+2019-08-05  09:00:33.877 [https-jsse-nio-8443-exec-4] ERROR com.jinglun.guard.systemManage.service.impl.ParametercontrolServiceImpl - 公共参数接口调用出错
+2019-08-05  09:02:36.833 [https-jsse-nio-8443-exec-10] ERROR com.jinglun.guard.dataservice.DataUtil - Read timed out
+2019-08-05  09:02:36.833 [https-jsse-nio-8443-exec-10] ERROR com.jinglun.guard.dataservice.DataUtil - A JSONObject text must begin with '{' at character 0 of 
+2019-08-05  09:02:36.833 [https-jsse-nio-8443-exec-10] ERROR com.jinglun.guard.devicemanage.service.impl.DeviceServiceImpl - 终端设备查询接口调用出错
+2019-08-05  09:03:23.420 [https-jsse-nio-8443-exec-4] ERROR com.jinglun.guard.devicemanage.service.impl.DeviceServiceImpl - 终端设备查询接口调用出错
+2019-08-05  09:03:34.248 [https-jsse-nio-8443-exec-9] ERROR com.jinglun.guard.devicemanage.service.impl.DeviceServiceImpl - 终端设备查询接口调用出错
+2019-08-05  09:05:20.301 [https-jsse-nio-8443-exec-7] ERROR com.jinglun.guard.dataservice.DataUtil - Read timed out
+2019-08-05  09:05:20.316 [https-jsse-nio-8443-exec-7] ERROR com.jinglun.guard.dataservice.DataUtil - A JSONObject text must begin with '{' at character 0 of 
+2019-08-05  09:05:20.316 [https-jsse-nio-8443-exec-7] ERROR com.jinglun.guard.devicemanage.service.impl.DeviceServiceImpl - 终端设备查询接口调用出错
+2019-08-05  09:05:29.818 [https-jsse-nio-8443-exec-10] ERROR com.jinglun.guard.dataservice.DataUtil - Read timed out
+2019-08-05  09:05:29.818 [https-jsse-nio-8443-exec-10] ERROR com.jinglun.guard.dataservice.DataUtil - A JSONObject text must begin with '{' at character 0 of 
+2019-08-05  09:07:38.931 [https-jsse-nio-8443-exec-4] ERROR com.jinglun.guard.dataservice.DataUtil - Read timed out
+2019-08-05  09:07:38.931 [https-jsse-nio-8443-exec-4] ERROR com.jinglun.guard.dataservice.DataUtil - A JSONObject text must begin with '{' at character 0 of 
+2019-08-05  09:07:38.931 [https-jsse-nio-8443-exec-4] ERROR com.jinglun.guard.devicemanage.service.impl.DeviceServiceImpl - 终端设备查询接口调用出错
+2019-08-05  09:07:56.014 [https-jsse-nio-8443-exec-7] ERROR com.jinglun.guard.dataservice.DataUtil - Read timed out
+2019-08-05  09:07:56.014 [https-jsse-nio-8443-exec-7] ERROR com.jinglun.guard.dataservice.DataUtil - A JSONObject text must begin with '{' at character 0 of 
+2019-08-05  09:07:56.029 [https-jsse-nio-8443-exec-7] ERROR com.jinglun.guard.systemManage.service.impl.ParametercontrolServiceImpl - 公共参数接口调用出错
+2019-08-05  09:08:25.626 [https-jsse-nio-8443-exec-9] ERROR com.jinglun.guard.devicemanage.service.impl.DeviceServiceImpl - 终端设备查询接口调用出错
+2019-08-05  09:08:33.193 [https-jsse-nio-8443-exec-8] ERROR com.jinglun.guard.devicemanage.service.impl.DeviceServiceImpl - 终端设备查询接口调用出错
+2019-08-05  09:08:40.355 [https-jsse-nio-8443-exec-6] ERROR com.jinglun.guard.devicemanage.service.impl.DeviceServiceImpl - 终端设备查询接口调用出错
+2019-08-05  09:08:45.239 [https-jsse-nio-8443-exec-3] ERROR com.jinglun.guard.devicemanage.service.impl.DeviceServiceImpl - 终端设备查询接口调用出错
+2019-08-05  09:08:51.136 [https-jsse-nio-8443-exec-5] ERROR com.jinglun.guard.devicemanage.service.impl.DeviceServiceImpl - 终端设备查询接口调用出错
+2019-08-05  09:08:57.145 [https-jsse-nio-8443-exec-4] ERROR com.jinglun.guard.devicemanage.service.impl.DeviceServiceImpl - 终端设备查询接口调用出错
+2019-08-05  09:09:02.996 [https-jsse-nio-8443-exec-3] ERROR com.jinglun.guard.devicemanage.service.impl.DeviceServiceImpl - 终端设备查询接口调用出错
+2019-08-05  09:10:52.444 [https-jsse-nio-8443-exec-5] ERROR com.jinglun.guard.dataservice.DataUtil - Read timed out
+2019-08-05  09:10:52.444 [https-jsse-nio-8443-exec-5] ERROR com.jinglun.guard.dataservice.DataUtil - A JSONObject text must begin with '{' at character 0 of 
+2019-08-05  09:10:52.444 [https-jsse-nio-8443-exec-5] ERROR com.jinglun.guard.devicemanage.service.impl.DeviceServiceImpl - 终端设备查询接口调用出错
+2019-08-05  09:11:03.021 [https-jsse-nio-8443-exec-4] ERROR com.jinglun.guard.dataservice.DataUtil - Read timed out
+2019-08-05  09:11:03.037 [https-jsse-nio-8443-exec-4] ERROR com.jinglun.guard.dataservice.DataUtil - A JSONObject text must begin with '{' at character 0 of 
+2019-08-05  09:14:20.185 [https-jsse-nio-8443-exec-6] ERROR com.jinglun.guard.devicemanage.service.impl.DeviceServiceImpl - 终端设备查询接口调用出错
+2019-08-05  09:16:25.193 [https-jsse-nio-8443-exec-5] ERROR com.jinglun.guard.dataservice.DataUtil - Read timed out
+2019-08-05  09:16:25.208 [https-jsse-nio-8443-exec-5] ERROR com.jinglun.guard.dataservice.DataUtil - A JSONObject text must begin with '{' at character 0 of 
+2019-08-05  09:16:39.343 [https-jsse-nio-8443-exec-9] ERROR com.jinglun.guard.dataservice.DataUtil - Read timed out
+2019-08-05  09:16:39.358 [https-jsse-nio-8443-exec-9] ERROR com.jinglun.guard.dataservice.DataUtil - A JSONObject text must begin with '{' at character 0 of 
+2019-08-05  09:17:15.896 [https-jsse-nio-8443-exec-5] ERROR com.jinglun.guard.devicemanage.service.impl.DeviceServiceImpl - 终端设备查询接口调用出错
+2019-08-05  09:17:58.411 [https-jsse-nio-8443-exec-9] ERROR com.jinglun.guard.devicemanage.service.impl.DeviceServiceImpl - 终端设备查询接口调用出错
+2019-08-05  09:18:45.839 [https-jsse-nio-8443-exec-7] ERROR com.jinglun.guard.devicemanage.service.impl.DeviceServiceImpl - 终端设备查询接口调用出错
+2019-08-05  09:20:47.839 [https-jsse-nio-8443-exec-3] ERROR com.jinglun.guard.dataservice.DataUtil - Read timed out
+2019-08-05  09:20:47.855 [https-jsse-nio-8443-exec-3] ERROR com.jinglun.guard.dataservice.DataUtil - A JSONObject text must begin with '{' at character 0 of 
+2019-08-05  09:20:47.855 [https-jsse-nio-8443-exec-3] ERROR com.jinglun.guard.devicemanage.service.impl.DeviceServiceImpl - 终端设备查询接口调用出错
+2019-08-05  09:21:00.429 [https-jsse-nio-8443-exec-6] ERROR com.jinglun.guard.dataservice.DataUtil - Read timed out
+2019-08-05  09:21:00.429 [https-jsse-nio-8443-exec-6] ERROR com.jinglun.guard.dataservice.DataUtil - A JSONObject text must begin with '{' at character 0 of 
+2019-08-05  09:21:50.509 [https-jsse-nio-8443-exec-3] ERROR com.jinglun.guard.devicemanage.service.impl.DeviceServiceImpl - 终端设备查询接口调用出错
+2019-08-05  09:22:28.123 [https-jsse-nio-8443-exec-8] ERROR com.jinglun.guard.devicemanage.service.impl.DeviceServiceImpl - 终端设备查询接口调用出错
+2019-08-05  10:03:58.571 [https-jsse-nio-8443-exec-2] ERROR com.jinglun.guard.dataservice.DataUtil - Connection timed out: connect
+2019-08-05  10:03:58.571 [https-jsse-nio-8443-exec-2] ERROR com.jinglun.guard.dataservice.DataUtil - A JSONObject text must begin with '{' at character 0 of 
+2019-08-05  10:04:19.585 [https-jsse-nio-8443-exec-2] ERROR com.jinglun.guard.dataservice.DataUtil - Connection timed out: connect
+2019-08-05  10:04:19.585 [https-jsse-nio-8443-exec-2] ERROR com.jinglun.guard.dataservice.DataUtil - A JSONObject text must begin with '{' at character 0 of 
+2019-08-05  10:04:19.585 [https-jsse-nio-8443-exec-2] ERROR com.jinglun.guard.devicemanage.service.impl.DeviceServiceImpl - 终端状态接口调用出错
+2019-08-05  10:04:19.600 [https-jsse-nio-8443-exec-2] ERROR o.a.catalina.core.ContainerBase.[Tomcat].[localhost].[/].[dispatcherServlet] - Servlet.service() for servlet [dispatcherServlet] in context with path [] threw exception [Request processing failed; nested exception is java.lang.NullPointerException] with root cause
+java.lang.NullPointerException: null
+	at com.jinglun.guard.devicemanage.controller.DeviceController.queryDevicerecordStatus(DeviceController.java:522)
+	at sun.reflect.GeneratedMethodAccessor69.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(Unknown Source)
+	at java.lang.reflect.Method.invoke(Unknown Source)
+	at org.springframework.web.method.support.InvocableHandlerMethod.doInvoke(InvocableHandlerMethod.java:189)
+	at org.springframework.web.method.support.InvocableHandlerMethod.invokeForRequest(InvocableHandlerMethod.java:138)
+	at org.springframework.web.servlet.mvc.method.annotation.ServletInvocableHandlerMethod.invokeAndHandle(ServletInvocableHandlerMethod.java:102)
+	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.invokeHandlerMethod(RequestMappingHandlerAdapter.java:895)
+	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.handleInternal(RequestMappingHandlerAdapter.java:800)
+	at org.springframework.web.servlet.mvc.method.AbstractHandlerMethodAdapter.handle(AbstractHandlerMethodAdapter.java:87)
+	at org.springframework.web.servlet.DispatcherServlet.doDispatch(DispatcherServlet.java:1038)
+	at org.springframework.web.servlet.DispatcherServlet.doService(DispatcherServlet.java:942)
+	at org.springframework.web.servlet.FrameworkServlet.processRequest(FrameworkServlet.java:1005)
+	at org.springframework.web.servlet.FrameworkServlet.doPost(FrameworkServlet.java:908)
+	at javax.servlet.http.HttpServlet.service(HttpServlet.java:660)
+	at org.springframework.web.servlet.FrameworkServlet.service(FrameworkServlet.java:882)
+	at javax.servlet.http.HttpServlet.service(HttpServlet.java:741)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:231)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:166)
+	at org.apache.tomcat.websocket.server.WsFilter.doFilter(WsFilter.java:53)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:193)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:166)
+	at org.apache.shiro.web.servlet.ProxiedFilterChain.doFilter(ProxiedFilterChain.java:61)
+	at org.apache.shiro.web.servlet.AdviceFilter.executeChain(AdviceFilter.java:108)
+	at org.apache.shiro.web.servlet.AdviceFilter.doFilterInternal(AdviceFilter.java:137)
+	at org.apache.shiro.web.servlet.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:125)
+	at org.apache.shiro.web.servlet.ProxiedFilterChain.doFilter(ProxiedFilterChain.java:66)
+	at org.apache.shiro.web.servlet.AbstractShiroFilter.executeChain(AbstractShiroFilter.java:449)
+	at org.apache.shiro.web.servlet.AbstractShiroFilter$1.call(AbstractShiroFilter.java:365)
+	at org.apache.shiro.subject.support.SubjectCallable.doCall(SubjectCallable.java:90)
+	at org.apache.shiro.subject.support.SubjectCallable.call(SubjectCallable.java:83)
+	at org.apache.shiro.subject.support.DelegatingSubject.execute(DelegatingSubject.java:383)
+	at org.apache.shiro.web.servlet.AbstractShiroFilter.doFilterInternal(AbstractShiroFilter.java:362)
+	at org.apache.shiro.web.servlet.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:125)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:193)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:166)
+	at org.springframework.web.filter.RequestContextFilter.doFilterInternal(RequestContextFilter.java:99)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:107)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:193)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:166)
+	at org.springframework.web.filter.FormContentFilter.doFilterInternal(FormContentFilter.java:92)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:107)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:193)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:166)
+	at org.springframework.web.filter.HiddenHttpMethodFilter.doFilterInternal(HiddenHttpMethodFilter.java:93)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:107)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:193)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:166)
+	at org.springframework.web.filter.CharacterEncodingFilter.doFilterInternal(CharacterEncodingFilter.java:200)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:107)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:193)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:166)
+	at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:200)
+	at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:96)
+	at org.apache.catalina.authenticator.AuthenticatorBase.invoke(AuthenticatorBase.java:607)
+	at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:139)
+	at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:92)
+	at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:74)
+	at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:343)
+	at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:408)
+	at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:66)
+	at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:834)
+	at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1415)
+	at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:49)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(Unknown Source)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(Unknown Source)
+	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:61)
+	at java.lang.Thread.run(Unknown Source)
+2019-08-05  11:28:09.219 [https-jsse-nio-8443-exec-6] ERROR com.jinglun.guard.devicemanage.service.impl.DeviceServiceImpl - 终端设备查询接口调用出错
+2019-08-05  11:28:35.493 [https-jsse-nio-8443-exec-5] ERROR com.jinglun.guard.devicemanage.service.impl.DeviceServiceImpl - 终端设备查询接口调用出错
+2019-08-05  13:08:40.986 [https-jsse-nio-8443-exec-5] ERROR com.jinglun.guard.devicemanage.service.impl.DeviceServiceImpl - 终端设备查询接口调用出错
+2019-08-05  16:13:15.842 [https-jsse-nio-8443-exec-10] ERROR com.jinglun.guard.devicemanage.service.impl.DeviceServiceImpl - 终端设备查询接口调用出错
+2019-08-05  16:13:51.599 [https-jsse-nio-8443-exec-2] ERROR com.jinglun.guard.devicemanage.service.impl.DeviceServiceImpl - 终端设备查询接口调用出错
+2019-08-05  16:13:57.418 [https-jsse-nio-8443-exec-4] ERROR com.jinglun.guard.devicemanage.service.impl.DeviceServiceImpl - 终端设备查询接口调用出错
+2019-08-05  16:15:44.081 [https-jsse-nio-8443-exec-6] ERROR com.jinglun.guard.dataservice.DataUtil - Read timed out
+2019-08-05  16:15:44.097 [https-jsse-nio-8443-exec-6] ERROR com.jinglun.guard.dataservice.DataUtil - A JSONObject text must begin with '{' at character 0 of 
+2019-08-05  16:15:44.097 [https-jsse-nio-8443-exec-6] ERROR com.jinglun.guard.devicemanage.service.impl.DeviceServiceImpl - 终端设备查询接口调用出错

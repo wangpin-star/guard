@@ -1,0 +1,841 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>添加用户</title>
+<base href="/"/>
+<link rel="stylesheet" href="/layui/css/layui.css" media="all"/>
+<link rel="stylesheet" href="/layui/formSelects-v4.css" media="all"/>
+<link rel="stylesheet" href="/font-awesome/css/font-awesome.css"> 
+<link rel="stylesheet" href="/css/zTreeStyle.css"/> 
+<link rel="stylesheet" href="/css/index.css"/>                
+<style>
+.layui-form-checkbox[lay-skin="primary"] i{
+  width:18px;
+  height:18px;
+  
+}
+.layui-form-checkbox[lay-skin="primary"]{
+  padding-left: 30px;
+  
+}
+ .layui-form-select input {
+            height: 32px;
+            line-height: 32px;
+            border-radius: 4px;
+        }
+.layui-input, .layui-textarea {
+  padding-left:20px;
+  border-radius:4px;
+}
+.xm-form-checkbox > i {
+  border:1px solid #54b5ff
+}
+.xm-select-parent .xm-select {
+   min-height: 32px;
+   padding: 0 0 0 0;
+}
+.xm-select-parent .xm-input {
+  padding-left:20px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  width: 420px;
+}
+div[xm-select-skin] .xm-select-title div.xm-select-label > span {
+    border: none;
+}
+.xm-select-parent .xm-select-title div.xm-select-label > span {
+   background-color:white;
+   color:#000;
+  /*  padding: 5px 5px 2px 5px; */
+  padding: 5px 13px 5px 8px;
+}
+</style>
+</head>
+<body>
+ <form  id="show" class="layui-form" action="" style="overflow-x: auto; overflow-y: auto;">
+ <div style="width: 65%;margin-top:66px;height:400px;padding-left:30px;float: left;">
+  <div class="layui-form-item">
+    <label class='layui-form-label' style="line-height: 14px;padding-right: 11px;color: #333333;">登录名</label>
+    <img src="/css/img/required.png" style="margin-top: 11px;float: left;margin-right: 11px;">
+     <div class="layui-input-block">
+       <input type="text"  lay-verify='required' id="loginName" autocomplete="off" style="width:420px;height:32px" class="layui-input">
+     </div>
+  </div>
+
+<div class="layui-form-item" id="pwd1">
+    <label class='layui-form-label' style="line-height: 14px;padding-right: 11px;color: #333333;">登录密码</label>
+    <img src="/css/img/required.png" style="margin-top: 11px;float: left;margin-right: 11px;">
+     <div class="layui-input-block">
+       <input maxlength="16" type="password"  lay-verify='required' id="loginpass" autocomplete="off" style="width:420px;height:32px" class="layui-input">
+     </div>
+  </div>
+  
+  <div class="layui-form-item" id="pwd2">
+    <label class='layui-form-label' style="line-height: 14px;padding-right: 11px;color: #333333;">确认密码</label>
+    <img src="/css/img/required.png" style="margin-top: 11px;float: left;margin-right: 11px;">
+     <div class="layui-input-block">
+       <input maxlength="16" type="password"  lay-verify='required' id="ackpass" autocomplete="off" style="width:420px;height:32px" class="layui-input">
+     </div>
+  </div>
+  
+  <div class="layui-form-item">
+  <label class="layui-form-label" style="line-height: 14px;padding-right: 11px;color: #333333;">用户角色</label>
+      <img src="/css/img/required.png" style="margin-top: 11px;float: left;margin-right: 11px;">
+      <div class="layui-input-inline" style="width: 420px;">
+         <select id="role" xm-select="select1" xm-select-height="32px" xm-select-show-count="3" xm-select-search="" xm-select-search-type="dl">
+            <option value="">请选择</option>
+            <div th:each="roles:${rolelist}">
+                 <option th:value="${roles.role_id}" th:text="${roles.name}" ></option>
+            </div> 
+         </select>
+     </div>
+  </div>
+  
+  <div class="layui-form-item">
+    <label class="layui-form-label" style="line-height: 14px;padding-right: 11px;color: #333333;">所管辖部门</label>
+      <img src="/css/img/required.png" style="margin-top: 11px;float: left;margin-right: 11px;">
+         <div class="layui-input-inline" style="width:420px;margin-left:1px">
+             <div id="demo" class="layui-form-select select-tree">
+             </div>
+          </div>
+  </div>
+
+  
+  <div class="layui-form-item">
+  <label class="layui-form-label" style="line-height: 14px;padding-right: 32px;color: #333333;">所管辖设备</label>
+      <div class="layui-input-inline" style="width: 420px;">
+         <!-- <select id="device" lay-filter="deviceFilter" placeholder="请选择" multiple="multiple"  lay-verify="deviceReasonRequired"lay-search="" class="downlist"> -->
+           <select id="device" xm-select="select2" xm-select-height="32px" xm-select-show-count="3" xm-select-search="" xm-select-search-type="dl">
+            <div th:each="devices:${devicelist}">
+                 <!--  <option  th:if="${depart.depart_id} == ${depart_id}" th:value="${depart.depart_id}" th:text="${depart.depart_name}" selected="true"></option> -->
+                  <option th:value="${devices.term_id}" th:text="${devices.term_name}" ></option>
+              </div> 
+         </select>
+     </div>
+  </div>
+  
+  <div class="layui-form-item">
+  <label class="layui-form-label" style="line-height: 14px;padding-right: 32px;;color: #333333;">关联员工</label>
+      <div class="layui-input-inline" style="width: 420px;">
+          <select id="emp" lay-filter="empFilter" lay-verify="empRequired" lay-search>
+              <option value="">请选择</option>
+              <div th:each="employee:${emplist}">
+                <!--<option  th:if="${employee.face_id} == ${userlist.face_id}" th:value="${employee.face_id}" th:text="${employee.name}" selected="true"></option> -->
+                  <option th:value="${employee.face_id}" th:text="${employee.name}" ></option>
+              </div> 
+         </select>
+     </div>
+  </div>
+  
+<!--   <div class="layui-form-item">
+    <label class='layui-form-label' style="color: #333333;line-height: 14px;padding-right: 32px;">用户手机号</label>
+     <div class="layui-input-block">
+       <input type="text"  id="photonum" maxlength="11" onkeyup="this.value=this.value.replace(/\D/g,'')" autocomplete="off" style="width:420px;height:32px" class="layui-input">
+     </div>
+  </div> -->
+  
+  </div>
+  
+  
+  <div style="width: 30%;float: left;margin-top:34px">
+		<span style="margin-left:50px" >
+			<img class='layui-upload-img' id="photo" width='164' height='164' src="/css/img/headPhotoDefault.png"
+			   style='border-radius: 50%;border: 2px solid #d8d8d8;'/>
+		    <p style="text-align:center;margin-top:20px">用户照片</p>
+		</span>
+	</div>
+	
+	
+  <div  style="position: fixed; bottom:40px;right:40px">
+             <button type="button" id="save"  class="layui-btn layui-btn-ks">保存</button>
+             <button type="button" id="cancel" class="layui-btn layui-btn-ks">取消</button>
+  </div>
+</form>
+
+<script type="text/javascript" src="/js/jquery.min.js"></script>
+<script type="text/javascript" src="/layui/layui.js"></script>
+<script src="/js/jquery.ztree.all.js"></script>
+<script type="text/javascript" src="/js/ajaxFilter.js"></script>
+<script type="text/javascript" src="/layui/layui.js"></script>
+<script type="text/javascript" src="/layui/formSelects-v4.js"></script>
+<script type="text/javascript" th:inline="javascript">
+   var userlist=[[${userlist}]];
+   var userRole=[[${userRole}]];   //当前用户角色
+   var userDepart=[[${userDepart}]];  //当前用户部门
+   var userTerm=[[${userTerm}]];  //当前用户设备
+</script>
+<script>
+$(document).ready(function() {
+  var userId=[[${userId}]];
+  if(userId!=0){
+	  $("#pwd1").css("display","none");
+	  $("#pwd2").css("display","none");
+  }
+  var height=document.documentElement.clientHeight;
+  var h=height-80;
+  $("#show").css('height',h);
+		function changeheight(){
+			 var h1 = document.documentElement.clientHeight-80;
+			$("#show").css('height',h1);
+			var w1 = document.documentElement.clientWidth;
+			$("#show").css('width',w1);
+		}
+		window.onresize=function(){
+		    changeheight();
+		}
+layui.use(['tree','table','layer','form','element','util'], function(){
+	var $ = layui.$;
+	var layer = layui.layer;
+	var form = layui.form;
+	var element = layui.element;
+	var util = layui.util;
+	var formSelects = layui.formSelects;
+	
+	//加载部门树,点击树重新加载table
+	  $.ajax({
+	      url: "/departManage/selectDepartTree",
+	      type: "post",
+	      contentType : 'application/json',
+	      dataType: 'json',
+	      async: false,
+	      success: function(data) {
+	          var dataArr = new Array();
+	          dataArr.push(data);
+	          initSelectTree("demo", true, { "Y" : "ps", "N" : "ps" },userlist.departList,dataArr,userDepart);
+	          $(".layui-nav-item a").bind("click", function () {
+	              if (!$(this).parent().hasClass("layui-nav-itemed") && !$(this).parent().parent().hasClass("layui-nav-child")) {
+	                  $(".layui-nav-tree").find(".layui-nav-itemed").removeClass("layui-nav-itemed")
+	              }
+	          })
+	          
+	      },
+	      error: function() {
+	      	layer.alert('查询部门出错');
+	      }
+	  });
+	  var id=[];
+	  var ids=[];
+	  var list=$("#role");
+	  var flag=[[${flag}]];
+	  
+	  for(var i=0;i<userRole.length;i++){
+		  id.push(userRole[i].role_id);
+	  }
+	  for(var j=1;j<list[0].length;j++){
+		  ids.push(parseInt(list[0][j].value));
+	  }
+	  var difference=ids.filter(function(v){ return id.indexOf(v) === -1 })
+	 
+	  if(!flag){
+		  for(var i=0;i<difference.length;i++){
+			  $(".xm-select-dl").find('dd[lay-value="' + difference[i]+ '"]').addClass("xm-dis-disabled");
+			  form.render();
+		  } 
+	   }
+	  if(flag){
+		  for(var i=0;i<difference.length;i++){
+			  $(".xm-select-dl").find('dd[lay-value="' + difference[i]+ '"]').removeClass("xm-dis-disabled");
+			  form.render();
+		  } 
+	  }
+	  
+	  var term_id=[];
+	  var lists=$("#device");
+	  for(var j=0;j<lists[0].length;j++){
+		  term_id.push(parseInt(lists[0][j].value));
+	  }
+	  var differences= term_id.filter(function(v){ return userTerm.indexOf(v) === -1 })
+	  for(var i=0;i<differences.length;i++){
+		  $(".xm-select-dl").find('dd[lay-value="' + differences[i]+ '"]').addClass("xm-dis-disabled");
+		  form.render();
+	  }
+	  if(userlist!="null"){
+		 formSelects.value('select2', userlist.termList);
+		 $("#emp").find("option[value='"+userlist.face_id+"']").prop("selected",true);
+		 form.render(); 
+		 var rolelist=[];
+		 if(null!=userlist.roleList){
+		 for(var i=0;i<userlist.roleList.length;i++){
+			 rolelist.push(userlist.roleList[i].role_id);
+		   }
+		 }
+		 formSelects.value('select1',rolelist);
+		 if($("#emp").val()!=null){
+			 echo(userlist.face_id);
+		 }
+	 }
+	 form.on("select(empFilter)", function(data){
+         echo(data.value);
+      });
+	
+	 function echo(faceId){
+		 var param = {
+                 face_id: faceId,
+                 attribute: 0
+             };
+             //查询照片,优先级为:头像->比对照片->身份证照片->默认照片
+             $.ajax({
+                 url: "/employeeManage/selectFacePhoto",
+                 type: "post",
+                 data: param,
+                 async: false,
+                 success: function (data1) {
+                     var jsonData = $.parseJSON(data1);
+                     var photoBase64 = "";
+                     var faceInfo={};
+                    /*  $.ajax({
+                         url: "/employeeManage/selectFaceInfoById",
+                         type: "post",
+                         data: param,
+                         async: false,
+                         success: function (data2) {
+                        	faceInfo=data2;
+                         }
+                    }); */
+                     if (jsonData.resultCode == "0") {
+                         var headPictureList = jsonData.headPictureList;
+                         if (headPictureList.length > 0) {//若有头像,则使用头像
+                             photoBase64 = "data:image/jpg;base64," + headPictureList[0].data;
+                         } else {//若无头像,则判断有无比对照片
+                             var comparePictureList = jsonData.comparePictureList;
+                             if (comparePictureList.length > 0) {//若有比对照片,则使用比对照片的第一张
+                                 photoBase64 = "data:image/jpg;base64," + comparePictureList[0].data;
+                             } else {//若没有,则使用身份证照片
+                            	 if (faceInfo.photo_wlt != undefined &&faceInfo.photo_wlt != "") {
+                                     photoBase64 = "data:image/jpg;base64," + faceInfo.photo_wlt;
+                                 } else {//若没有身份证照片,则使用默认照片
+                                     photoBase64 = "/css/img/headPhotoDefault.png";
+                            }
+                         }
+                      }
+                     }else {//调用接口出错,查询比对照片和头像失败,只能使用身份证照片或默认
+                    	 if (faceInfo.photo_wlt != undefined && faceInfo.photo_wlt != "") {
+                            photoBase64 = "data:image/jpg;base64," + faceInfo.photo_wlt;
+                         } else {
+                            photoBase64 = "/css/img/headPhotoDefault.png";
+                         }
+                         layer.alert('查询比对照片失败,请重试!', {icon: 2, title: "提示"}, function (index) {
+                             layer.close(index);
+                         });
+                       } 
+                     //如果照片不为默认,则需要进行照片宽高比压缩
+                     if (photoBase64 != "/css/img/headPhotoDefault.png") {
+                        // $("#hidePhoto1").attr('src', photoBase64);
+                         var theImage = new Image();
+                        // theImage.src = $("#hidePhoto1").attr("src");
+                         theImage.onload = function () {
+                             var width = "164";
+                             var height = "164";
+                             if (width / height > this.width / this.height) {
+                                 var changeWidth = (this.width / this.height) * height;
+                                 $("#photo").attr("width", changeWidth);
+                             } else {
+                                 var changeHeight = (width * this.height) / this.width;
+                                 $("#photo").attr("height", changeHeight);
+                             }
+                         }
+                     }
+                     $("#photo").attr("src",photoBase64);
+                     /* $("#photonum").val(faceInfo.tel_no); */
+                 }
+             });
+	 }
+  //id div 的id，isMultiple 是否多选，chkboxType 多选框类型{"Y": "ps", "N": "s"} 详细请看ztree官网
+    function initSelectTree(id, isMultiple, chkboxType,ids,dataArr,userDepart) {
+        var setting = {
+            view: {
+                dblClickExpand: false,
+                showLine: false
+            },
+            data: {
+                simpleData: {
+                    enable: true
+                }
+            },
+            check: {
+                enable: false,
+                chkboxType: {"Y": "ps", "N": "ps"}
+            },
+            callback: {
+            	
+            	onClick: onClick,
+                onCheck: onCheck
+                
+            }
+
+        };
+        if (isMultiple) {
+            setting.check.enable = isMultiple;
+        }
+        if (chkboxType !== undefined && chkboxType != null) {
+            setting.check.chkboxType = chkboxType;
+        }
+        var html = '<div class = "layui-select-title" >' +
+            '<input id="' + id + 'Show"' + 'type = "text" title=""  placeholder = "请选择" value = "" class = "layui-input" style="width:420px;height:32px;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;" readonly>' +
+            '<i class= "layui-edge" ></i>' +
+            '</div>';
+        $("#" + id).append(html);
+        $("#" + id).parent().append('<div class="tree-content scrollbar">' +
+            '<input type="hidden" id="' + id + 'Hide" ' +
+            'name="' + $(".select-tree").attr("id") + '">' +
+            '<ul id="' + id + 'Tree" class="ztree scrollbar" style="margin-top:0;"></ul>' +
+            '</div>');
+        $("#" + id).bind("click", function () {
+        	if (event.stopPropagation) { 
+        		// 针对 Mozilla 和 Opera 
+        		event.stopPropagation(); 
+        		} 
+        		else if (window.event) { 
+        		// 针对 IE 
+        		window.event.cancelBubble = true; 
+        		}
+        	
+        	if(isIE()){
+        		window.event.returnValue = false;
+        	}else{
+        		event.preventDefault();//展开
+        	}
+           // event.stopPropagation();//阻止mousedown 事件冒泡（注意只阻止了mousedown事件）
+            //event.preventDefault();//阻止当前元素默认事件
+            if ($(this).parent().find(".tree-content").css("display") !== "none") {
+                hideMenu();
+            } else {
+                $(this).addClass("layui-form-selected");
+                var Offset = $(this).offset();
+                var width = $(this).width() - 2;
+                $(this).parent().find(".tree-content").css({
+                    left: Offset.left + "px",
+                    top: Offset.top + $(this).height() + "px"
+                }).slideDown("fast");
+                $(this).parent().find(".tree-content").css({
+                    width: width
+                });
+               // $("body").bind("mousedown", onBodyDown);
+            }
+        });
+        $.fn.zTree.init($("#" + id + "Tree"), setting, dataArr);
+        var names="";
+        var idss=""
+        var zTreeobj = $.fn.zTree.getZTreeObj(id+"Tree");
+        zTreeobj.expandAll(true);
+       /* var disabledNode = zTreeobj.getNodeByParam("id", 0);  
+        zTreeobj.setChkDisabled(disabledNode, true);*/
+        
+        if(ids!=null){
+	        for(var j=0;j<ids.length;j++){
+	        	//console.log(ids[j]);
+	          /*  for (var i = 0, l = nodes[0].children.length; i < l; i++) {
+	            	
+	        		if(ids[j]==nodes[0].children[i].id){
+	                	zTreeobj.checkNode(nodes[0].children[i]);
+	                	names+=(nodes[0].children[i].name)+",";
+	                	idss+=(nodes[0].children[i].id)+",";
+	                }
+	        	} */
+	        	var node=zTreeobj.getNodeByParam('depart_id',ids[j]);
+	        			if(node){//判断有查询到节点
+	        			zTreeobj.checkNode(node,true);
+	            		names+=(node.name)+",";
+	                	idss+=(node.depart_id)+",";
+	        	}
+	        	var strn=names.substring(0,names.length-1);
+	        	var stri=idss.substring(0,idss.length-1);
+	        }
+	        $("#" + id + "Show").attr("value",strn);
+	        $("#" + id + "Show").attr("title",strn);
+	        $("#" + id + "Hide").attr("value",stri);
+        }
+        var node_id=[];
+        var nodes = zTreeobj.transformToArray(zTreeobj.getNodes()); 
+        var count=0;
+        if(nodes!=null&&userDepart!=null){
+        	 for(var i=0;i<nodes.length;i++){ 
+        		 node_id.push(nodes[i].depart_id);
+             }
+        	 var difference= node_id.filter(function(v){ return userDepart.indexOf(v) === -1 })
+        	 for(var i=0;i<difference.length;i++){ 
+        		 for(var j=0;j<nodes.length;j++){
+        			 if(nodes[j].depart_id!=0&&nodes[j].depart_id==difference[i]){
+        				 count++;
+        				 zTreeobj.setChkDisabled(nodes[j], true);
+        			 }
+        		 }
+             }
+        }
+    }
+
+    function beforeClick(treeId, treeNode) {
+        var check = (treeNode && !treeNode.isParent);
+        if (!check) 
+        alert("只能选择部门");
+        return check;
+    }
+    function isIE() { //ie?  
+        if (!!window.ActiveXObject || "ActiveXObject" in window)  
+            { return true; }  
+        else  
+            { return false; }  
+    }
+    function onClick(event, treeId, treeNode) {
+        var zTree = $.fn.zTree.getZTreeObj(treeId);
+        if (zTree.setting.check.enable == true) {
+            zTree.checkNode(treeNode, !treeNode.checked, false)
+            assignment(treeId, zTree.getCheckedNodes(),treeNode);
+        } else {
+            assignment(treeId, zTree.getSelectedNodes(),treeNode);
+            hideMenu();
+        }
+    }
+
+    function onCheck(event, treeId, treeNode) {
+    	var zTree = $.fn.zTree.getZTreeObj(treeId);
+        assignment(treeId, zTree.getCheckedNodes(),treeNode);
+    }
+
+    function hideMenu() {
+        $(".select-tree").removeClass("layui-form-selected");
+        $(".tree-content").fadeOut("fast");
+        $("body").unbind("mousedown", onBodyDown);
+    }
+
+    function assignment(treeId, nodes,treeNode) {
+    	var names = "";
+        var ids = "";
+        for (var i = 0, l = nodes.length; i < l; i++) {
+            if(nodes[i].level!=0){
+            	names += nodes[i].name + ",";
+                ids += nodes[i].depart_id + ",";
+            }
+        	
+        }
+        if (names.length > 0) {
+            names = names.substring(0, names.length - 1);
+            ids = ids.substring(0, ids.length - 1);
+        }
+        treeId = treeId.substring(0, treeId.length - 4);
+        $("#" + treeId + "Show").attr("value", names);
+        $("#" + treeId + "Show").attr("title", names);
+        $("#" + treeId + "Hide").attr("value", ids);
+        deviceSearch(treeNode);
+        
+    }
+    function deviceSearch(treeNode){
+    	var flag=0;
+    	var treeId="demo";
+    	if(treeNode.checked==true){
+    	   var ids= $("#" + treeId + "Hide").attr("value");
+    	}
+    	if(treeNode.checked==false){
+    		var ids=treeNode.depart_id;
+    	}
+    	var dept_name=$("#demoShow").attr("value");
+    	/* if(dept_name==""){
+    		layer.alert("请选择部门",{icon: 0,title:"提示"},function (index) {
+                layer.close(index);
+            });
+    	}
+    	else{ */
+    		$.ajax({ 
+    	        url:"/userManage/termQuery",
+    			type:'get',
+    			data:{
+    				'ids':ids
+    				  },
+    			async:false,	
+    			success: function(data) {
+    					var termId=[];
+        				for(var i=0;i<data.length;i++){
+        					termId.push(data[i].term_id)
+        				}
+        				if(treeNode.checked==true){
+        					formSelects.value('select2', termId,true);
+        				}
+        				else{
+        					formSelects.value('select2', termId,false);
+        				}
+    				
+    			},
+    			error: function() {
+    				layer.alert("联动出错",{icon:2,title:"提示"},function(){
+    		            window.parent.location.reload();//刷新父页面
+    		        });
+    	        }
+    		});
+    	//}
+    	//return flag;
+    }
+
+    function onBodyDown(event) {
+        if ($(event.target).parents(".tree-content").html() == null) {
+            hideMenu();
+        }
+    }
+    
+    
+    $('#cancel').on('click',function(){
+		parent.layer.closeAll();
+	});
+	
+	$('#save').on('click',function(){
+		var loginName=$("#loginName").val();
+		var loginpass=$("#loginpass").val();
+		var ackpass=$("#ackpass").val();
+		var rolelist=formSelects.value('select1', 'valStr');
+		var departlist=$("#demoHide").attr("value");
+	/* 	console.log(departlist); */
+		var devicelist=formSelects.value('select2', 'valStr');
+		var emplist=$("#emp").val();
+		var phonenum=$("#photonum").val();
+		if(loginName==""){
+			 layer.msg('请输入登录名',{icon: 0,anim:6,time:1000}, function(index){
+		 			$("#loginName").focus();
+					layer.close(index);
+				});
+			 
+			 return false;
+		 }
+		if(userId==0){
+			if(loginpass==""){
+				 layer.msg('请输入密码 ',{icon: 0,anim:6,time:1000}, function(index){
+			 			$("#loginpass").focus();
+						layer.close(index);
+					});
+				 
+				 return false;
+			 }
+			if(ackpass==""){
+				 layer.msg('请确认密码',{icon: 0,anim:6,time:1000}, function(index){
+			 			$("#ackpass").focus();
+						layer.close(index);
+					});
+				 
+				 return false;
+			 }
+			if (loginpass.length<6) {
+				layer.msg('登录密码不能少于6位',{icon: 0,anim:6,time:1000}, function(index){
+		 			$("#loginpass").focus();
+					layer.close(index);
+				});
+		        return false;
+		    }
+			if (ackpass.length<6) {
+				layer.msg('确认密码不能少于6位',{icon: 0,anim:6,time:1000}, function(index){
+		 			$("#ackpass").focus();
+					layer.close(index);
+				});
+		        return false;
+		    }
+			if(loginpass!=ackpass){
+				layer.msg('两次密码不一致，请确认密码',{icon: 0,anim:6,time:1000}, function(index){
+		 			$("#ackpass").focus();
+					layer.close(index);
+				});
+			 
+			 return false;
+			}
+		}
+		if(rolelist==""){
+			layer.msg('请选择角色',{icon: 0,anim:6,time:1000}, function(index){
+	 			$("#select1").focus();
+				layer.close(index);
+			});
+		 
+		 return false;
+		}
+		if($("#demoShow").attr("value")==""){
+			layer.msg('请选择管辖部门',{icon: 0,anim:6,time:1000}, function(index){
+	 			$("#demoShow").focus();
+				layer.close(index);
+			});
+		 
+		 return false;
+		}
+	 	/* if(phonenum!= ""){
+			  reg = /0?(13|14|15|16|17|18|19)[0-9]{9}/;
+	          if (!reg.test(phonenum)) {
+				layer.msg('请输入正确手机号',{icon: 0,anim:6,time:1000}, function(index){
+		 			$("#photonum").focus();
+					layer.close(index);
+				});
+			 
+			   return false;
+            }
+		} */
+	 	
+	 	var roleLists=[];
+	 	roleLists=rolelist.split(",");
+	 	  $.ajax({
+	 		url: "/roleManage/QueryRole",
+	         type: "post",
+	         async:false,
+	   	     data:JSON.stringify(roleLists),
+	   	     dataType:"json",
+	   	     contentType : 'application/json',
+	         success: function(result) {
+	        	 if(result!=null){
+	        		 if(departlist!=""){
+		        		 var departList=[];
+		 	     	 	departList=departlist.split(",");
+	        		 }
+	 	     	 	if(devicelist!=""){
+	 	     	 		var termList=[];
+		 	     	 	termList=devicelist.split(",");
+	 	     	 	}
+	 	     		 var params={};
+	 	     		 params.user_name=loginName;
+	 	     		 params.user_password=loginpass;
+	 	     		 params.roleList=result;
+	 	     		 params.departList=departList;
+	 	     		 params.termList=termList;
+	 	     		 params.face_id=emplist;
+	 	     		 $.ajax({
+		 	   	         url: "/userManage/addUser?userId="+userId,
+		 	   	         type: "post",
+		 	   	         async:false,
+		 	   	         data:JSON.stringify(params),
+		 	   	         dataType:"json",
+		 	   	         contentType : 'application/json',
+		 	   	         success: function(result) {
+		 	   					if(result==0){
+		 	   						if(userId!=0){
+		 	   							layer.alert('修改成功', {icon: 1,title:"提示"},function(index){
+		 	   								window.parent.location.reload();
+		 	   								layer.close(index);
+		 	   							});
+		 	   						}
+		 	   						else{
+		 	   							layer.alert('添加成功', {icon: 1,title:"提示"},function(index){
+		 	   								window.parent.location.reload();
+		 	   							    layer.close(index);
+		 	   						   });
+		 	   						}
+		 	   					}
+		 	   					if(result==1){
+		 	   						if(userId!=0){
+		 	   							layer.alert('修改失败,用户名重复', {icon: 0,title:"提示"},function(index){
+		 	   								window.parent.location.reload();
+		 	   								layer.close(index);
+		 	   							});
+		 	   						}
+		 	   						else{
+		 	   							layer.alert('添加失败,用户名重复', {icon: 0,title:"提示"},function(index){
+		 	   								window.parent.location.reload();
+		 	   							    layer.close(index);
+		 	   						   });
+		 	   						}
+		 	   					}
+		 	   	         },
+		 	   	         error: function() {
+		 	   	        	 if(userId!=0){
+		 	   						layer.alert('修改失败', {icon: 2,title:"提示"},function(index){
+		 	   							window.parent.location.reload();
+		 	   							layer.close(index);
+		 	   						});
+		 	   					}
+		 	   					else{
+		 	   						layer.alert('添加失败', {icon: 2,title:"提示"},function(index){
+		 	   							window.parent.location.reload();
+		 	   						    layer.close(index);
+		 	   					   });
+		 	   					}
+		 	   	         }
+		 	   	     });
+	        	 }
+	        	 else{
+						layer.alert('失败', {icon: 1,title:"提示"},function(index){
+							window.parent.location.reload();
+						    layer.close(index);
+					   });
+					} 
+	         },
+	         error: function() {
+					layer.alert('保存失败', {icon: 2,title:"提示"},function(index){
+						window.parent.location.reload();
+						layer.close(index);
+					});
+                 }
+	 	  });
+	        	 
+	        	/*  if(result!=null){
+	        		 var departList=[];
+	 	     	 	departList=departlist.split(",");
+	 	     	 	var termList=[];
+	 	     	 	termList=devicelist.split(",");
+	 	     		 var params={};
+	 	     		 params.user_name=loginName;
+	 	     		 params.user_password=loginpass;
+	 	     		 params.roleList=result;
+	 	     		 params.departList=departList;
+	 	     		 params.termList=termList;
+	 	     		 params.face_id=emplist;
+	 	     		 $.ajax({
+		 	   	         url: "/userManage/addUser?userId="+userId,
+		 	   	         type: "post",
+		 	   	         async:false,
+		 	   	         data:JSON.stringify(params),
+		 	   	         dataType:"json",
+		 	   	         contentType : 'application/json',
+		 	   	         success: function(result) {
+		 	   					if(result==0){
+		 	   						if(userId!=0){
+		 	   							layer.alert('修改成功', {icon: 1,title:"提示"},function(index){
+		 	   								window.parent.location.reload();
+		 	   								layer.close(index);
+		 	   							});
+		 	   						}
+		 	   						else{
+		 	   							layer.alert('添加成功', {icon: 1,title:"提示"},function(index){
+		 	   								window.parent.location.reload();
+		 	   							    layer.close(index);
+		 	   						   });
+		 	   						}
+		 	   					}
+		 	   					if(result==1){
+		 	   						if(userId!=0){
+		 	   							layer.alert('修改失败', {icon: 1,title:"提示"},function(index){
+		 	   								window.parent.location.reload();
+		 	   								layer.close(index);
+		 	   							});
+		 	   						}
+		 	   						else{
+		 	   							layer.alert('添加失败', {icon: 1,title:"提示"},function(index){
+		 	   								window.parent.location.reload();
+		 	   							    layer.close(index);
+		 	   						   });
+		 	   						}
+		 	   					}
+		 	   	         },
+		 	   	         error: function() {
+		 	   	        	 if(userId!=0){
+		 	   						layer.alert('修改失败', {icon: 2,title:"提示"},function(index){
+		 	   							window.parent.location.reload();
+		 	   							layer.close(index);
+		 	   						});
+		 	   					}
+		 	   					else{
+		 	   						layer.alert('添加失败', {icon: 2,title:"提示"},function(index){
+		 	   							window.parent.location.reload();
+		 	   						    layer.close(index);
+		 	   					   });
+		 	   					}
+		 	   	         }
+		 	   	     });
+	        	 }
+	        	 else{
+						layer.alert('失败', {icon: 1,title:"提示"},function(index){
+							window.parent.location.reload();
+						    layer.close(index);
+					   });
+					} */
+        /*  
+	        	 	
+	 	 )}; */
+	  });
+   });
+});	
+</script>
+
+</body>
+</html>

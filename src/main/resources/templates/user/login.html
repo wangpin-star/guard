@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Cache-Control" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <title>人脸门禁智能管理平台</title>
+
+    <style>
+        input {
+            border: none;
+            height: 44px;
+
+            font-size: 16px;
+            width: 285px;
+            font-family: "Microsoft YaHei";
+            border-bottom: 1px solid #b8b7b7;
+        }
+
+        input::-ms-clear {
+            display: none;
+        }
+
+        input::-ms-reveal {
+            display: none;
+        }
+
+        .top52 {
+            margin-top: 52.5px;
+        }
+    </style>
+    <base href="/"/>
+    <link href="/css/login.css" type="text/css" rel="stylesheet">
+</head>
+<body>
+
+<!--<div class="login" id="usernameLoginDiv" style="padding: 0;background-image: url('/css/img/usernameLoginBackground.png')">-->
+<div class="login" id="usernameLoginDiv" style="padding: 0;background-color: white;">
+    <!--<div style="height: 76px;width: 100%;position: relative;">
+        <div style="float: right;width: 68px;height: 68px;">
+            <div onmouseover="changeImg(this,2)" onmouseout="changeImg(this,1)"
+                 onmousedown="changeImg(this,3)" onmouseup="changeImg(this,2)"
+                 style="padding: 14px;">
+                <img style="cursor:pointer;" imgName="faceLogin" src="/css/img/faceLogin1.png" onclick="changeToFaceLogin();">
+            </div>
+        </div>
+        <div onclick="changeToFaceLogin();" style="width: 136px;height: 26px;line-height: 26px;position: absolute;top: 20px;right: 66px;background-image: url('/css/img/loginTip.png');background-repeat: no-repeat;text-align: center;cursor:pointer;"><span style="color: white;">刷脸快捷登录</span></div>
+    </div>-->
+    <!--
+        <div style="text-align:center;font-size:26px;font-family:Microsoft YaHei;">人脸门禁智能管理平台</div>
+    -->
+    <div style="text-align:center;padding-top: 68px;font-size:26px;font-family:Microsoft YaHei;">人脸门禁智能管理平台</div>
+
+    <form id="login-form" style=" margin-top:45px;padding-left: 40px;padding-bottom: 40px;" method="post"
+          onsubmit="return validator()"
+          th:action="@{/login/authen}">
+        <div style="position: relative;margin-left:20px">
+            <input id="name" name="name" placeholder="请输入用户名" type="text"
+                   style="outline: none;padding-left:50px;" autocomplete="off">
+            <img style="border: none; position:absolute;left:0px;top:8px;"
+                 src="/images/login/account.png" id="left_n"/>
+        </div>
+
+
+        <hr class="hr15" style="margin-top: 10px;">
+        <div style="position: relative;margin-left:20px" class="code">
+            <input id="password" name="password" placeholder="请输入密码" type="password" oncopy="return false"
+                   onpaste="return false"
+                   style="outline: none;padding-left:50px;" autocomplete="off">
+            <img style="border: none; position:absolute;left:0px;top:8px"
+                 src="/images/login/password.png" id="left_p"/>
+        </div>
+
+        <hr class="hr15" style="margin-top: 10px;">
+
+
+        <div style="position: relative;margin-left:20px" class="code">
+            <input name="securitycode" id="securitycode" placeholder="请输入验证码" type="text"
+                   style="outline: none;padding-left:50px;" autocomplete="off"/>
+            <img style="border: none; height: 40px;width: 120px;position:absolute;left:220px; top:1px;cursor:pointer"
+                 src="/graphics" id="verifyCodeImage" onClick="getSecurityCode();"/>
+
+            <img style="border: none; position:absolute;left:0px;top:8px"
+                 src="/images/login/securitycode.png" id="left_s"/>
+        </div>
+
+
+        <hr class="hr15" style="margin-top: 49px;">
+        <button type="submit">登录</button>
+    </form>
+
+
+</div>
+
+<div class="login" id="faceLoginDiv"
+     style="position: relative;display: none;text-align: center;padding: 0;background-image: url('/css/img/faceLoginBackground.png')">
+    <div style="height: 76px;width: 100%;position: relative;">
+        <div style="float: right;width: 68px;height: 68px;">
+            <div onmouseover="changeImg(this,2)" onmouseout="changeImg(this,1)"
+                 onmousedown="changeImg(this,3)" onmouseup="changeImg(this,2)"
+                 style="padding: 14px;">
+                <img style="cursor:pointer;" imgName="usernameLogin" src="/css/img/usernameLogin1.png"
+                     onclick="changeToUsernameLogin();">
+            </div>
+        </div>
+        <div onclick="changeToUsernameLogin();"
+             style="width: 136px;height: 26px;line-height: 26px;position: absolute;top: 20px;right: 66px;background: url('/css/img/loginTip.png') no-repeat;text-align: center;cursor:pointer;">
+            <span style="color: white;">用户名密码登录</span></div>
+    </div>
+    <div id="webcam" style="transform:scale(1.4375);margin-top: 52.5px;display: none;z-index: 1;"></div>
+    <button id="makeVideo" onclick="makeVideo()" style="display: none;">打开摄像头</button>
+    <video id="video1" width="460">
+        您的浏览器不支持 HTML5 video 标签。
+    </video>
+    <img id="faceBorder" src="/css/img/takePhoto.png" width="460" height="345"
+         style="position: absolute;top: 76px;left: 0;z-index: 99;">
+    <canvas id="canvas" width="460" height="345" style="display: none;"></canvas>
+    <canvas id="canvasIE" width="320" height="240" style="display: none;"></canvas>
+    <button id="takePhotoButton" class='layui-btn' type="button" onclick="capture()"
+            style="margin-left: 0;position: absolute;bottom: 20px;left: 60px;">比对
+    </button>
+    <img id="base64image" width="460" height="345" style="display: none;"/>
+</div>
+
+
+<script type="text/javascript" src="/js/jquery.min.js"></script>
+<script src="/js/jquery.webcam.js"></script>
+<script type="text/javascript" src="/layui/layui.js"></script>
+<script type="text/javascript">
+    layui.use(['layer'], function () {
+        var layer = layui.layer;
+    });
+
+    var ifFirstToFaceLogin = true;
+    var myVideo = document.getElementById("video1");
+    var canvas = document.getElementById("canvas");
+    var context = canvas.getContext("2d");
+    var pos = 0;
+    var ctx = null;
+    var image = [];
+
+    function changeToFaceLogin() {
+        $("#usernameLoginDiv").hide();
+        $("#faceLoginDiv").show();
+        if (ifFirstToFaceLogin) {
+            ifFirstToFaceLogin = false;
+            if (ifIE()) {
+                var fls = flashChecker();
+                if (!fls.h) {
+                    layui.use(['layer'], function () {
+                        var layer = layui.layer;
+                        layer.confirm('检测到您的浏览器未安装Flash插件,如不安装则无法使用拍照功能!是否下载并安装?', {
+                            btn: ['是', '否'],
+                            icon: 3,
+                            title: "提示"
+                        }, function (index) {
+                            document.location.href = '/employeeManage/downloadPlugin?pluginName=flash';
+                            layer.close(index);
+                        });
+                    });
+                } else {
+                    $("#video1").hide();
+                    $("#webcam").show();
+                    $("#takePhotoButton").addClass('top52');
+                    $("#faceBorder").hide();
+                    var canvas = document.getElementById("canvasIE");
+                    if (canvas.getContext) {
+                        ctx = canvas.getContext("2d");
+                        ctx.clearRect(0, 0, 320, 240);
+                        var img = new Image();
+                        img.onload = function () {
+                            ctx.drawImage(img, 129, 89);
+                        };
+                        image = ctx.getImageData(0, 0, 320, 240);
+                    }
+                    $(document).ready(function () {
+                        jQuery("#webcam").webcam({
+                            width: 320,
+                            height: 240,
+                            mode: "callback",
+                            swffile: "/jscam_canvas_only.swf",
+                            onTick: function (remain) {
+                            },
+                            onSave: function (data) {
+                                var col = data.split(";");
+                                var img = image;
+                                for (var i = 0; i < 320; i++) {
+                                    var tmp = parseInt(col[i]);
+                                    try {
+                                        img.data[pos + 0] = (tmp >> 16) & 0xff;
+                                    } catch (e) {
+                                        console.log(e.message);
+                                    }
+                                    img.data[pos + 1] = (tmp >> 8) & 0xff;
+                                    img.data[pos + 2] = tmp & 0xff;
+                                    img.data[pos + 3] = 0xff;
+                                    pos += 4;
+                                }
+                                if (pos >= 4 * 320 * 240) {
+                                    ctx.putImageData(img, 0, 0);
+                                    var base64image = canvas.toDataURL("image/png");
+                                    faceLogin(base64image);
+                                    pos = 0;
+                                }
+                            },
+
+                            onCapture: function () {
+                                webcam.save();
+                                // Show a flash for example
+                            },
+
+                            debug: function (type, string) {
+                                //alert('type:' + type + ',string:' + string);
+                                layui.use(['layer'], function () {
+                                    var layer = layui.layer;
+                                    if (type == "error" && string == "No camera was detected.") {
+                                        layer.alert("检测到您的设备未安装摄像头", {
+                                            end: function () {
+                                                parent.layer.closeAll();
+                                            }
+                                        });
+                                    }
+                                });
+                            },
+
+                            onLoad: function () {
+                                // Page load
+                            }
+
+                        });
+                        window.addEventListener("load", function () {
+
+
+                        }, false);
+                    });
+                }
+            } else {
+                if (navigator.mediaDevices === undefined) {
+                    navigator.mediaDevices = {};
+                }
+                if (navigator.mediaDevices.getUserMedia === undefined) {
+                    navigator.mediaDevices.getUserMedia = function (constraints) {
+                        var getUserMedia = navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
+                        if (!getUserMedia) {
+                            return Promise.reject(new Error('getUserMedia is not implemented in this browser'));
+                        }
+                        return new Promise(function (resolve, reject) {
+                            getUserMedia.call(navigator, constraints, resolve, reject);
+                        });
+                    }
+                }
+                window.URL = (window.URL || window.webkitURL || window.mozURL || window.msURL);
+                $("#makeVideo").click();
+            }
+        }
+    }
+
+    function changeToUsernameLogin() {
+        $("#faceLoginDiv").hide();
+        $("#usernameLoginDiv").show();
+    }
+
+    function capture() {
+        if (ifIE()) {
+            webcam.capture();
+        } else {
+            context.drawImage(myVideo, 0, 0, canvas.width, canvas.height);
+            var base64image = canvas.toDataURL("image/jpeg");
+            faceLogin(base64image);
+        }
+    }
+
+    var mediaOpts = {
+        audio: false,
+        video: true,
+    }
+
+    function successFunc(stream) {
+        //var video = document.querySelector('video');
+        if ("srcObject" in myVideo) {
+            myVideo.srcObject = stream
+        } else {
+            myVideo.src = window.URL && window.URL.createObjectURL(stream) || stream
+        }
+        myVideo.play();
+    }
+
+    function errorFunc(err) {
+        layui.use(['layer'], function () {
+            var layer = layui.layer;
+            if (err.name == "NotFoundError") {
+                layer.alert("检测到您的设备未安装摄像头", {
+                    end: function () {
+                        parent.layer.closeAll();
+                    }
+                });
+            }
+        });
+    }
+
+    function makeVideo() {
+        if (navigator.getUserMedia) {
+            //调用用户媒体设备，访问摄像头
+            navigator.getUserMedia(mediaOpts, successFunc, errorFunc);
+        } else {
+            alert("you exploer isn't support to access media device");
+        }
+    }
+
+    function ifIE() {
+        var ua = navigator.userAgent.toLowerCase();
+        if (ua.indexOf('trident') > -1) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    //检测flash
+    function flashChecker() {
+        //是否安装了flash
+        var hasFlash = 0;
+        //flash版本
+        var flashVersion = 0;
+        //是否IE浏览器
+        if (ifIE()) {
+            try {
+                var swf = new ActiveXObject('ShockwaveFlash.ShockwaveFlash');
+            } catch (e) {
+            }
+            if (swf) {
+                hasFlash = 1;
+                VSwf = swf.GetVariable("$version");
+                flashVersion = parseInt(VSwf.split(" ")[1].split(",")[0]);
+            }
+        } else {
+            if (navigator.plugins && navigator.plugins.length > 0) {
+                try {
+                    var swf = navigator.plugins["Shockwave Flash"];
+                } catch (e) {
+                }
+                if (swf) {
+                    hasFlash = 1;
+                    var words = swf.description.split(" ");
+                    for (var i = 0; i < words.length; ++i) {
+                        if (isNaN(parseInt(words[i])))
+                            continue;
+                        flashVersion = parseInt(words[i]);
+                    }
+                }
+            }
+        }
+        return {
+            h: hasFlash,
+            v: flashVersion
+        };
+    }
+
+
+    function faceLogin(imgBase64) {
+        //过滤base64格式
+        imgBase64 = imgBase64.replace('data:image/jpeg;base64,', '');
+        imgBase64 = imgBase64.replace('data:;base64,', '');
+        imgBase64 = imgBase64.replace('data:image/png;base64,', '');
+        imgBase64 = imgBase64.replace('data:image/bmp;base64,', '');
+        var param = {
+            imgBase64: imgBase64
+        };
+        $.ajax({
+            url: "/faceLogin",
+            type: "post",
+            data: param,
+            async: false,
+            success: function (data) {
+                if (data == -3) {
+                    layer.alert('未检测到人脸', {icon: 2, title: "提示"}, function (index) {
+                        layer.close(index);
+                    });
+                }
+                if (data == -2) {
+                    layer.alert('人脸宽度小于200', {icon: 2, title: "提示"}, function (index) {
+                        layer.close(index);
+                    });
+                }
+                if (data == -1) {
+                    layer.alert('您未登记', {icon: 2, title: "提示"}, function (index) {
+                        layer.close(index);
+                    });
+                }
+                if (data == 0) {
+                    window.location.href = "/main";
+                }
+            },
+            error: function () {
+                layer.alert('服务器开小差了', {icon: 2, title: "提示"}, function (index) {
+                    layer.close(index);
+                });
+            }
+        });
+    }
+
+    //图标的鼠标移入/移出/点击切换图标
+    function changeImg(obj, status) {
+        var imgName = $(obj).find("img").attr("imgName");
+        $(obj).find("img").attr("src", "/css/img/" + imgName + status + ".png");
+    }
+
+    //验证登录输入
+    function validator() {     //账号密码登录验证
+        var myreg = /^[1][3,4,5,7,8][0-9]{9}$/;
+        if ($("#name").val().length == 0) {
+            layer.msg('请输入用户名', {icon: 0, anim: 6, time: 1000}, function (index) {
+                $("#name").focus();
+                //$("#name").css("background","url(../images/login/account_error.png) no-repeat");
+                $('#left_n').attr('src', '/images/login/account_error.png');
+                $("#name").css("border-bottom", "1px solid #f55366");
+                layer.close(index);
+            });
+            return false;
+        }
+        if ($("#password").val().length == 0) {
+            layer.msg('请输入密码', {icon: 0, anim: 6, time: 1000}, function (index) {
+                $("#password").focus();
+                //$("#password").css("background","url(../images/login/password_error.png) no-repeat");
+                $('#left_p').attr('src', '/images/login/password_error.png');
+                $("#password").css("border-bottom", "1px solid #f55366");
+                layer.close(index);
+            });
+            return false;
+        }
+
+        if ($("#securitycode").val().length == 0) {
+            layer.msg('请输入验证码', {icon: 0, anim: 6, time: 1000}, function (index) {
+                $("#securitycode").focus();
+                //$("#securitycode").css("background","url(../images/login/securitycode_error.png) no-repeat");
+                $('#left_s').attr('src', '/images/login/securitycode_error.png');
+                $("#securitycode").css("border-bottom", "1px solid #f55366");
+                layer.close(index);
+            });
+            return false;
+        }
+
+        return true;
+    }
+
+
+    //获取图形验证码
+    function getSecurityCode() {
+        $("#verifyCodeImage").get(0).src = '/graphics?' + Math.random();
+    }
+
+    /*$("#changesecuritycode").click(function() {
+        getSecurityCode();
+    });
+
+    //点击图片生成验证码
+    $("#securitycode ~ img").click(function() {
+        getSecurityCode();
+    });*/
+</script>
+
+<script type="text/javascript">
+    layui.use(['layer'], function () {
+        var layer = layui.layer;
+        $(document).ready(function () {
+
+            /*if (self != top) {
+                parent.window.location.replace(window.location.href);
+            }*/
+            /* if (window !=window.parent){
+                window.parent.location.reload(true);
+            } */
+            $("#name").focus(function () {
+                //$("#name").css("background","url(../images/login/account_on.png) no-repeat");
+                $('#left_n').attr('src', '/images/login/account_on.png');
+                $("#name").css("border-bottom", "1px solid #54b5ff");
+            });
+            $("#name").blur(function () {
+                //$("#name").css("background","url(../images/login/account.png) no-repeat");
+                $('#left_n').attr('src', '/images/login/account.png');
+                $("#name").css("border-bottom", "1px solid #b8b7b7");
+            });
+
+            $("#password").focus(function () {
+                //$("#password").css("background","url(../images/login/password_on.png) no-repeat");
+                $('#left_p').attr('src', '/images/login/password_on.png');
+                $("#password").css("border-bottom", "1px solid #54b5ff");
+            });
+            $("#password").blur(function () {
+                //$("#password").css("background","url(../images/login/password.png) no-repeat");
+                $('#left_p').attr('src', '/images/login/password.png');
+                $("#password").css("border-bottom", "1px solid #b8b7b7");
+            });
+
+            $("#securitycode").focus(function () {
+                //$("#securitycode").css("background","url(../images/login/idcode_on.png) no-repeat");
+                $('#left_s').attr('src', '/images/login/securitycode_on.png');
+                $("#securitycode").css("border-bottom", "1px solid #54b5ff");
+            });
+            $("#securitycode").blur(function () {
+                //$("#securitycode").css("background","url(../images/login/idcode.png) no-repeat");
+                //$('#id').attr('src','a.png');
+                $('#left_s').attr('src', '/images/login/securitycode.png');
+                $("#securitycode").css("border-bottom", "1px solid #b8b7b7");
+            });
+            var loginResults = [
+                true,
+                "此用户不存在 ",
+                "获取用户信息失败",
+                "密码错误",
+                "用户已禁用",
+                "您输入的验证码不对，请重新输入。",
+                "验证码已失效或还未获取验证码，请重新输入。",
+                "您的密码是原始密码",
+                "登录后请修改密码",
+                "修改成功，请重新登录！",
+                "服务器未连接，请联系管理员",
+                "用户已登录",
+                "修改密码错误！"];
+            var loginResult = [[${loginResult}]];
+             if (loginResult==null){
+                if (self != top && parent.window.location != window.location.href) {
+                    layer.alert('登陆超时,请重新登陆', {
+                        icon: 0, title: '提示', end: function () {
+                            var top = getTopWinow();
+                            top.location.href = '/';
+                        }
+                    });
+                }
+
+                function getTopWinow() {
+                    var p = window;
+                    while (p !== p.parent) {
+                        p = p.parent;
+                    }
+                    return p;
+                }
+            } 
+            if (loginResult != ""
+                && parseInt(loginResult) != NaN) {
+                if (loginResults[parseInt(loginResult)] == true) {
+                    location.href = "";
+                } else if (typeof loginResults[parseInt(loginResult)] == "string") {
+                    //alert();   //登录错误信息提示
+                    layer.alert(loginResults[parseInt(loginResult)], {icon: 0}, function (index) {
+                        //do something
+                        window.parent.location.href = '/login';
+                        // location.reload();
+                        $("#name").focus();
+                        layer.close(index);
+
+                    });
+                }
+            }
+
+
+        });
+    });
+
+
+</script>
+</body>
+</html>

@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>访客详情</title>
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <base href="/"/>
+  <link rel="stylesheet" href="/layui/css/layui.css">
+	<link rel="stylesheet" href="/font-awesome/css/font-awesome.css">
+  <style>
+	.layui-input{
+	    outline:none;
+        background:transparent;
+        border:none;
+        outline:medium;
+        font-size:14;
+        font-family:"Microsoft YaHei",微软雅黑;
+	}
+	.layui-form-item{
+		margin-bottom:8px;
+	}
+  </style>
+</head>
+<body>
+<br /> 
+<form class="layui-form" action="">
+	<div style="width: 65%;margin-top: 10px;margin-left: 20px;float: left;">
+	  <div class="layui-form-item">
+	    <label class="layui-form-label" style="color: #333333;">姓名</label>
+	    <div class="layui-input-block" style="padding:0px 0px 0px 14px;">
+	      <input type="text" name="title" class="layui-input" style="color: #999999;" th:value="${visitordetails.visitor_name}" disabled="disabled">
+	    </div>
+	  </div>
+	  <div class="layui-form-item">
+	    <label class="layui-form-label" style="color: #333333;">性别</label>
+	    <div class="layui-input-block" style="padding:0px 0px 0px 14px;">
+	      <span th:if="${visitordetails.visitor_sex}==1">
+			<input type="text" name="title" class="layui-input" style="color: #999999;" th:value="男" disabled="disabled">
+		  </span>
+	      <span th:if="${visitordetails.visitor_sex}==2">
+			<input type="text" name="title" class="layui-input" style="color: #999999;" th:value="女" disabled="disabled">
+		  </span>
+		  <span th:if="${visitordetails.visitor_sex}==0">
+			<input type="text" name="title" class="layui-input" style="color: #999999;" th:value="男" disabled="disabled">
+		  </span>
+	    </div>
+	  </div>
+	  <!-- <div class="layui-form-item">
+	    <label class="layui-form-label">性别：</label>
+	    <div class="layui-input-block">
+	      <span th:if="${visitordetails.visitor_sex}==1">
+			<input type="radio" name="sex" value="1" title="男" checked="">
+	        <input type="radio" name="sex" value="2" title="女">
+		  </span>
+	      <span th:if="${visitordetails.visitor_sex}==2">
+			<input type="radio" name="sex" value="1" title="男">
+	        <input type="radio" name="sex" value="2" title="女" checked="">
+		  </span>
+		  <span th:if="${visitordetails.visitor_sex}==0">
+			<input type="radio" name="sex" value="1" title="男" checked="">
+	        <input type="radio" name="sex" value="2" title="女">
+		  </span>
+	    </div>
+	  </div> -->
+	  <div class="layui-form-item">
+	    <label class="layui-form-label" style="color: #333333;">身份证号</label>
+	    <div class="layui-input-block" style="padding:0px 0px 0px 14px;">
+	      <input type="text" name="title" class="layui-input" style="color: #999999;" th:value="${visitordetails.visitor_idcard}" disabled="disabled">
+	    </div>
+	  </div>
+	  <div class="layui-form-item">
+	    <label class="layui-form-label" style="color: #333333;">手机号</label>
+	    <div class="layui-input-block" style="padding:0px 0px 0px 14px;">
+	      <input type="text" name="title" class="layui-input" style="color: #999999;" th:value="${visitordetails.visitor_tel}" disabled="disabled">
+	    </div>
+	  </div>
+	  <div class="layui-form-item">
+	    <label class="layui-form-label" style="color: #333333;">家庭地址</label>
+	    <div class="layui-input-block" style="padding:0px 0px 0px 14px;">
+	      <input type="text" id="address" name="title" class="layui-input" style="overflow: hidden;text-overflow: ellipsis;white-space: nowrap;width: 400px;color: #999999;" th:value="${visitordetails.visitor_address}" disabled="disabled">
+	    </div>
+	  </div>
+	  <div class="layui-form-item">
+	    <label class="layui-form-label" style="color: #333333;">公司名称</label>
+	    <div class="layui-input-block" style="padding:0px 0px 0px 14px;">
+	      <input type="text" name="title" class="layui-input" style="color: #999999;" th:value="${visitordetails.visitor_company}" disabled="disabled">
+	    </div>
+	  </div>
+	  <div class="layui-form-item">
+	    <label class="layui-form-label" style="color: #333333;">职位</label>
+	    <div class="layui-input-block" style="padding:0px 0px 0px 14px;">
+	      <input type="text" name="title" class="layui-input" style="color: #999999;" th:value="${visitordetails.visitor_postion}" disabled="disabled">
+	    </div>
+	  </div>
+	  <div class="layui-form-item">
+	    <label class="layui-form-label" style="color: #333333;">来访事由</label>
+	    <div class="layui-input-block" style="padding:0px 0px 0px 14px;">
+	      <input type="text" name="title" class="layui-input" style="color: #999999;" th:value="${visitordetails.visitor_content}" disabled="disabled">
+	    </div>
+	  </div>
+	  <div class="layui-form-item">
+	    <label class="layui-form-label" style="color: #333333;">来访时间</label>
+	    <div class="layui-input-block" style="padding:0px 0px 0px 14px;">
+	      <input type="text" id="time" name="time" class="layui-input" style="width: 400px;color: #999999;" th:value="${visitordetails.visitor_time}" disabled="disabled">
+	    </div>
+	  </div>
+	  <div class="layui-form-item">
+	    <label class="layui-form-label" style="color: #333333;">访问部门</label>
+	    <div class="layui-input-block" style="padding:0px 0px 0px 14px;">
+	      <input type="text" name="title" class="layui-input" style="color: #999999;" th:value="${visitordetails.visitor_departname}" disabled="disabled">
+	    </div>
+	  </div>
+	  <div class="layui-form-item">
+	    <label class="layui-form-label" style="color: #333333;">被访人</label>
+	    <div class="layui-input-block" style="padding:0px 0px 0px 14px;">
+	      <input type="text" name="title" class="layui-input" style="color: #999999;" th:value="${visitordetails.employee_name}" disabled="disabled">
+	    </div>
+	  </div>
+	  <div class="layui-form-item">
+	    <label class="layui-form-label" style="color: #333333;white-space:nowrap">被访人手机号</label>
+	    <div class="layui-input-block" style="padding:0px 0px 0px 14px;">
+	      <input type="text" name="title" class="layui-input" style="color: #999999;" th:value="${visitordetails.employee_tel}" disabled="disabled">
+	    </div>
+	  </div>
+	  <div class="layui-form-item">
+	    <label class="layui-form-label" style="color: #333333;">权限设备</label>
+	    <div class="layui-input-block" style="padding:0px 0px 0px 14px;">
+	      <span th:if="${visitordetails.termlength}>1">
+			<input type="text" id="term" name="title" class="layui-input" style="overflow: hidden;text-overflow: ellipsis;white-space: nowrap;width: 450px;color: #999999;" disabled="disabled">
+	        <div id="auto_div" style="bottom:30px;left:20px;border:1px solid #e2e2e2;border-radius: 5px;display: none;background-color: #efefef;position: absolute;z-index:1;">
+            </div>
+	        <button type="button" class="select-on layui-btn" onmousedown="secound(this)" onmouseup="first(this)" onclick="change()"
+                  style="position:absolute;left:100px;top:8px;padding:0 0px;mborder: none;width:22px;height: 22px;line-height: 22px;background-color: #ffffff;color: black;" id="rightClick">
+        		  <img imgName="operation" id="operation" src="/css/img/openup.png"></img></button>
+		  </span>
+		  <span th:if="${visitordetails.termlength}==1">
+			<input type="text" id="term" name="title" class="layui-input" style="overflow: hidden;text-overflow: ellipsis;white-space: nowrap;width: 450px;color: #999999;" th:value="${visitordetails.term_permit}" disabled="disabled">
+		  </span>
+	      <!-- <input type="text" id="term" name="title" class="layui-input" style="overflow: hidden;text-overflow: ellipsis;white-space: nowrap;width: 100px;color: #999999;" th:value="${visitordetails.term_permit}" disabled="disabled">
+	      <div id="auto_div" style="width:100px;height:100px;border:1px solid #e2e2e2;display: none;background-color: #e2e2e2;position: absolute;z-index:1;">
+          </div>
+	      <button type="button" class="select-on layui-btn" onmousedown="secound(this)" onmouseup="first(this)" onclick="change()"
+                  style="position:absolute;left:100px;top:8px;padding:0 0px;mborder: none;width:22px;height: 22px;line-height: 22px;background-color: #ffffff;color: black;" id="rightClick">
+        		  <img imgName="operation" id="operation" src="/css/img/right.png"></img></button> -->
+	    </div>
+	  </div>
+	</div>
+	<div style="width: 30%;float: left;margin-top: 15px;text-align:center;">
+		<span th:if="${visitordetails.visitor_photo}==null">
+			<li style="width:164; height:164">
+				<img class='layui-upload-img' id="photo" width='164' height='164' src="/css/img/headPhotoDefault.png"/>
+		    	<p style="text-align:center;">头像</p>
+			</li>
+		</span>
+		<span th:if="${visitordetails.visitor_photo}!=null">
+			<li style="width:164; height:164">
+				<img class='layui-upload-img' id="photo" width='164' height='164' style='border-radius: 50%;border: 2px solid #d8d8d8;'/>
+		    	<p style="text-align:center;">头像</p>
+			</li>
+		</span>
+		<!-- <li style="width:102; height:126">
+			<img class='layui-upload-img' id="photo" width='102' height='126'/>
+		    <p style="text-align:center;">头像</p>
+		</li> -->
+	</div>
+	<!-- <div style="width: 100%;left:420px;top:730px;position: absolute;">
+          <span th:if="${visitordetails.status}==0">
+			<button class="layui-btn layui-btn-normal" id="edit">编辑</button>
+		    <button class="layui-btn layui-btn-normal" id="close">关闭</button>
+		  </span>
+	      <span th:if="${visitordetails.status}!=0">
+		    <button class="layui-btn layui-btn-normal" id="close">关闭</button>
+		  </span>
+    </div> --> 
+</form>
+
+          
+<script src="/js/jquery.min.js"></script>
+<script src="/layui/layui.js"></script>
+<script type="text/javascript" src="/js/ajaxFilter.js"></script>
+<script>
+layui.use(['form','layer'], function(){
+  var form = layui.form;
+  $("#edit").on('click', function () {
+	  var face_id = [[${face_id}]];
+	  var book_id = [[${book_id}]];
+	  var employee_id = [[${employee_id}]];
+	  var depart_id = [[${depart_id}]];
+	  var bat_id = [[${bat_id}]];
+	  var reason_id = [[${reason_id}]];
+	  var visit_time = "[[${visit_time}]]";
+	  var expire_time = "[[${expire_time}]]";
+	  
+	  var layer = layui.layer,$=layui.$;
+      var index = parent.layer.getFrameIndex(window.name);
+	  parent.layer.close(index);
+	  
+	  parent.layer.open({
+          type:2,//类型
+          area:['600px','790px'],//定义宽和高
+          title: '编辑',
+          shadeClose: false,
+          shade:[0.2, '#000000'],
+          content:'/visitorManage/toVisitorRegisterDetail?&face_id='+face_id+'&book_id='+book_id+'&employee_id='+employee_id
+        		  +'&depart_id='+depart_id+'&visit_time='+visit_time+'&expire_time='+expire_time+'&bat_id='+bat_id+'&reason_id='+reason_id
+      });
+  });
+  
+  $("#close").on('click', function () {
+      parent.layer.closeAll();
+  });
+  
+
+});
+
+
+$(document).ready(function(){
+	var data = "[[${visitordetails.visitor_photo}]]";
+	if(data!=""){
+		$("#photo").attr('src','data:image/jpeg;base64,' + data);
+        var theImage = new Image();
+        theImage.src = $("#photo").attr("src");
+        theImage.onload = function(){
+           var width = "164";
+           var height = "164";
+           if (width / height > this.width / this.height) {
+              var changeWidth = (this.width / this.height) * height;
+              $("#photo").attr("width",changeWidth);
+           } else {
+              var changeHeight = (width * this.height) / this.width;
+              $("#photo").attr("height",changeHeight);
+          }
+        }
+		
+		//$("#photo").attr('src','data:image/jpeg;base64,' + data);
+	}
+	var address = "[[${visitordetails.visitor_address}]]";
+	$("#address").attr('title',address);
+	
+	var term = "[[${visitordetails.term_permit}]]";
+	var termlist = term.split(",");
+	if(termlist.length>1){
+		$("#term").attr('value',termlist[0]+'...');
+	}
+	//$("#term").attr('title',term); 
+	
+});
+
+function change(){
+	var x = document.getElementById("operation").getAttribute("src");
+
+    if (x=="/css/img/openup.png"){
+        document.getElementById("operation").src="/css/img/closedown.png";
+        
+        var term = "[[${visitordetails.term_permit}]]";
+    	var termlist = term.split(",");
+    	var photo = "[[${visitordetails.term_permitmode}]]";
+    	var photolist = photo.split(",");
+        AutoComplete("auto_div",  termlist, photolist);
+        
+        for (i in termlist) {
+        	/* var img = document.createElement('img');//创建一个标签
+            img.setAttribute('src','/css/img/online.png');//给标签定义src链接 
+            document.getElementById(''+i).appendChild(img);//放到指定的id里 */
+           
+            var div = document.getElementById(''+i);
+            var wordNode = termlist[i];
+            div.innerHTML = div.innerHTML+'&nbsp;&nbsp;&nbsp;<span style="font-size:14px;color:#333333;">'+wordNode+'</span>'; 
+        }
+        
+    }
+    else{
+        document.getElementById("operation").src="/css/img/openup.png";
+        $("#auto_div").hide();
+    }
+}
+
+function secound(obj){
+    obj.src="/css/img/closedown.png";
+}
+
+function first(obj){
+    obj.src="/css/img/openup.png";
+}
+
+function AutoComplete(auto, mylist,photolist) {
+        var autoNode = $("#" + auto);   //缓存对象（弹出框）
+        autoNode.empty();
+        for (i in mylist) {
+        	var wordNode = mylist[i];   //弹出框里的每一条内容
+        	var photomode = photolist[i];
+        	
+        	var newDivNode = $("<div>").attr("id", i);
+        	newDivNode.attr("style", "height:25px;margin-top:10px;margin-left:10px;margin-bottom:10px;");
+        	var imgDivNode = $("<img>").attr("id", "img"+i);
+        	//1.14T，2.facecheck动态，3.iDR系列，4.未知
+        	if(photomode==1){
+        		imgDivNode.attr('src','/css/img/14T.png');
+        	}else if(photomode==2){
+        		imgDivNode.attr('src','/css/img/facecheck.png');
+        	}else if(photomode==3){
+        		imgDivNode.attr('src','/css/img/iDR.png');
+        	}else{
+        		imgDivNode.attr('src','/css/img/unknow.png');
+        	}
+        	
+        	imgDivNode.appendTo(newDivNode); 
+        	newDivNode.appendTo(autoNode); 
+            
+        	/* var newDivNode = $("<div>").attr("id", i);    //设置每个节点的id值
+            //newDivNode.attr("style", "font:14px/25px arial;height:25px;padding:0 8px;cursor: pointer;");
+            newDivNode.attr("style", "font:14px/25px arial;height:25px;padding:1 8px;"); 
+            newDivNode.html(wordNode).appendTo(autoNode);  //追加到弹出框*/
+            
+            if (mylist.length > 0) {    //如果返回值有内容就显示出来
+                autoNode.show();
+            } else {               //服务器端无内容返回 那么隐藏弹出框
+                autoNode.hide();
+                //弹出框隐藏的同时，高亮节点索引值也变成-1
+                highlightindex = -1;
+            }
+        }
+}
+
+</script>
+
+</body>
+</html>

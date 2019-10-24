@@ -1,0 +1,931 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>嘉宾管理</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport"
+          content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi"/>
+    <base href="/"/>
+    <link rel="stylesheet" href="/layui/css/layui.css">
+    <!-- <link rel="stylesheet" href="/layui2.5.4/css/layui.css" media="all"> -->
+    <link rel="stylesheet" href="/font-awesome/css/font-awesome.css">
+</head>
+<style type="text/css">
+    .layui-tree li {
+        overflow: unset;
+    }
+
+    .layui-table-view {
+        margin: 0;
+    }
+
+    .layui-input:hover {
+        border-color: #54b5ff !important;
+    }
+
+    .layui-table, .layui-table-view {
+        margin: 0
+    }
+
+    .layui-table-body {
+        margin-bottom: 14px;
+    }
+
+    .layui-btn2 {
+        display: inline-block;
+        height: 38px;
+        line-height: 38px;
+        padding: 0 18px;
+        background-image: url(/css/img/upload1.png);
+        white-space: nowrap;
+        text-align: center;
+        font-size: 14px;
+        border: none;
+        border-radius: 2px;
+        cursor: pointer
+    }
+
+    .layui-btn2:hover {
+        background-image: url(/css/img/upload2.png);
+    }
+
+    .layui-btn2:active {
+        background-image: url(/css/img/upload3.png);
+    }
+
+    .layui-table th {
+        font-weight: bold;
+    }
+
+    .button2 {
+        width: 80px;
+        height: 30px;
+        line-height: 30px;
+        color: #ffffff;
+        font-size: 14px;
+        border: none;
+        border-radius: 4px;
+        background-color: #54b5ff;
+        cursor: pointer;
+        margin-right: 30px;
+        padding: 0;
+    }
+
+    .button2 :hover {
+        background-color: #77c4ff;
+    }
+
+    .button2 :active {
+        background-color: #4a96ec;
+    }
+
+    .layui-table-view .layui-table td, .layui-table-view .layui-table th {
+        padding: 2px 0 !important;
+    }
+
+    .layui-table-cell a {
+        margin-bottom: 2px;
+    }
+
+    .layui-input, .layui-select, .layui-textarea {
+        height: 30px;
+        line-height: 30px;
+        border-width: 1px;
+        border-style: solid;
+        background-color: #fff;
+        border-radius: 2px
+    }
+
+    body {
+        font-family: \5FAE\8F6F\96C5\9ED1 !important;
+    }
+</style>
+<body>
+
+<!--start:搜索+员工功能按钮-->
+<div style="width:100%;height:46px;background-color: #f2f2f2;margin-bottom: 16px;">
+    <form class="layui-form">
+        <div style="margin-bottom: 8px;">
+            <div class="layui-inline" style="margin-top:8px;margin-left: 30px;width: 12.5%;">
+                <input class="layui-input" style="height: 30px;line-height: 30px;" id="searchContent"
+                       placeholder="搜索...">
+            </div>
+            <button type="button" onmouseover="changeImg(this,2)" onmouseout="changeImg(this,1)"
+                    onmousedown="changeImg(this,3)" onmouseup="changeImg(this,2)" class="select-on layui-btn layui-btn"
+                    style="padding:0 0px;border: none;height: 30px;line-height: 30px;background-color: #f2f2f2;color: black;margin-top: 4px;"
+                    id="doSearch"><img imgName="searchImg" src="/css/img/searchImg1.png"> </img></button>
+            <div style="margin-top:8px;float:right;">
+                <!-- <button onclick="batchUploadOpen()" type="button" onmouseover="changeImg(this,2)"
+                        onmouseout="changeImg(this,1)" onmousedown="changeImg(this,3)" onmouseup="changeImg(this,2)"
+                        class="layui-btn1"
+                        style="border: none;height: 30px;line-height: 30px;background-color: #f2f2f2;"><img
+                        imgName="batchUploadImg" style="margin-bottom: 3px;" src="/css/img/batchUploadImg1.png"> </img>批量上传
+                </button> -->
+                <button type="button" onmouseover="changeImg(this,2)" onmouseout="changeImg(this,1)"
+                        onmousedown="changeImg(this,3)" onmouseup="changeImg(this,2)" class="select-on  layui-btn1"
+                        style="border: none;height: 30px;line-height: 30px;background-color: #f2f2f2;" id="addGroup">
+                    <a href="/guest/toGroupManage"><i class="layui-icon" style="font-size: 20px">&#xe613;</i>分组管理</a>
+                </button>
+                <button type="button" onmouseover="changeImg(this,2)" onmouseout="changeImg(this,1)"
+                        onmousedown="changeImg(this,3)" onmouseup="changeImg(this,2)" class="select-on  layui-btn1"
+                        style="border: none;height: 30px;line-height: 30px;background-color: #f2f2f2;" id="addEmployee">
+                    <img imgName="addGuestImg" style="margin-bottom: 8px;" src="/css/img/addGuestImg1.png"> </img>添加嘉宾
+                </button>
+            </div>
+        </div>
+    </form>
+</div>
+<!--end:搜索+员工功能按钮-->
+<!--start:左侧部门树+右侧员工列表-->
+<div style="margin-top:16px;width:100%">
+    <div id="listhe" class="" style="width:100%;box-sizing: border-box;">
+        <table class="layui-hide" id="guestList" lay-filter="guestList"></table>
+    </div>
+</div>
+<!--end:左侧部门树+右侧员工列表-->
+<!--start:批量导入-->
+<div id="batchUploadDiv" style="display:none;">
+    <div style="margin-top: 10px;margin-left: 544px;height: 30px;">
+        <button type="button" class="button2" id="download" style="width: 100px;">下载批量模板</button>
+    </div>
+    <div style="height: 40px;margin-top: 10px;">
+        <label style="margin-left:10px;float: left;margin-top: 6px">文件：</label>
+        <div class="layui-inline" style="position: relative;float: left">
+            <input type="text" style="margin-left: 18px;float: left;width:400px;height:32px;line-height: 32px;"
+                   id="filename" class="layui-input" disabled="disabled">
+            <button onmouseover="changeImg(this,2)" onmouseout="changeImg(this,1)" onmousedown="changeImg(this,3)"
+                    onmouseup="changeImg(this,2)" class="select-on layui-btn"
+                    style=" position:absolute;right:2px;top:4px;padding:0 0px;mborder: none;width:22px;height: 22px;line-height: 22px;background-color: #ffffff;color: black;"
+                    id="clear"><img imgName="clearImg" src="/css/img/clearImg1.png"> </img></button>
+        </div>
+        <button onmouseover="changeImg(this,2)" onmouseout="changeImg(this,1)" onmousedown="changeImg(this,3)"
+                onmouseup="changeImg(this,2)" class="select-on  layui-btn1"
+                style="float:left;margin-left:10px;border: none;height: 30px;line-height: 30px;background-color: #ffffff;"
+                id="choose-file"><img imgName="file" style="margin-bottom: 3px;" src="/css/img/file1.png"> </img>
+        </button>
+        <button class="button2" id="upload-file" style="width: 100px;margin-right: 0">开始上传</button>
+    </div>
+    <div style="margin-left:30px;float: left;margin-top: 40px">
+        <label>检验Excel进度</label>
+        <div style="width: 620px;height:20px;margin-top:14px;margin-right: 30px;"
+             class='layui-progress layui-progress-big' lay-filter='Exceldemo' lay-showPercent='true'>
+            <div class='layui-progress-bar' lay-percent='0%'></div>
+        </div>
+    </div>
+    <div style="margin-left:30px;float: left;margin-top: 30px">
+        <label>上传进度</label>
+        <div style="width: 620px;height:20px;margin-top:30px;margin-top:14px;margin-right: 30px;"
+             class='layui-progress layui-progress-big' lay-filter='uploaddemo' lay-showPercent='true'>
+            <div class='layui-progress-bar' lay-percent='0%'></div>
+        </div>
+    </div>
+    <div style="margin-left:30px;float: left;margin-top: 30px">
+        <label>当前进度</label>
+        <div>
+            <label id='progress'></label>
+        </div>
+    </div>
+</div>
+<!--end:批量导入-->
+<img id="hidePhoto1" style="display: none;">
+<script type="text/html" id="barDemo">
+    <a class="layui-btn layui-btn-xs" lay-event="detail">详情</a>
+    <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+</script>
+<script type="text/javascript" src="/js/jquery.min.js"></script>
+<script type="text/javascript" src="/layui/layui.js"></script>
+<!-- <script src="/layui2.5.4/layui.js" charset="utf-8"></script> -->
+<script type="text/javascript" src="/js/ajaxFilter.js"></script>
+<script>
+    $(function () {
+        //把父页面的导航条高亮调整为员工管理
+        window.parent.$("#toGuestManageLi").siblings("li").removeClass("layui-this");
+        window.parent.$("#toGuestManageLi").addClass("layui-this");
+        
+    });
+
+    //图标的鼠标移入/移出/点击切换图标
+    function changeImg(obj, status) {
+        var imgName = $(obj).find("img").attr("imgName");
+        $(obj).find("img").attr("src", "/css/img/" + imgName + status + ".png");
+    }
+
+    function change() {
+        if ($("#auto_div").is(":hidden")) {
+            $("#auto_div").show();
+            $("#operation").attr("src", "/css/img/closedown.png");
+        } else {
+            $("#auto_div").hide();
+            $("#operation").attr("src", "/css/img/openup.png");
+        }
+    }
+
+    //是否正在上传标记
+    var upload_file_flag = false;
+
+    //点击"批量上传"按钮弹框
+    function batchUploadOpen() {
+        layer.open({
+            type: 1,
+            title: '上传文件',
+            shadeClose: false,
+            shade: [0.2, '#000000'],
+            skin: 'layui-layer-rim',
+            area: ['700px', '380px'],
+            content: $("#batchUploadDiv"),
+            cancel: function (index, layero) {//点击弹框右上关闭事件
+                if (upload_file_flag == true) {//如果正在上传,则需要提示
+                    layer.open({
+                        title: '提示'
+                        , content: '上传未完成，是否停止上传'
+                        , btn: ['确认停止', '取消']
+                        , yes: function (index, layero) {
+                            $.ajax({
+                                url: "/employeeManage/cancelupload",
+                                type: "post",
+                                success: function (data) {
+                                    layer.close(index);
+                                    window.location.reload();
+                                }
+                            })
+                        }
+                        , btn2: function (index, layero) {
+                            layer.close(index);
+                        }
+                    });
+                } else {
+                    layer.close(index);
+                    window.location.reload();
+                }
+                return false;
+            }
+        });
+    }
+
+    layui.use(['form', 'tree', 'table', 'upload', 'layer', 'element'], function () {
+        var layer = layui.layer;//layui弹层
+        var element = layui.element; //Tab的切换功能，切换事件监听等，需要依赖element模块
+        var upload = layui.upload;//layui上传控件
+        var form = layui.form;//layui表单控件
+
+        var choose_file_flag = false;//是否已选择文件标记
+        var uploadMsg = "";//"上传中"加载层的变量,此加载层的开启和关闭在不同方法中,所以需要定义为全局
+        var intelval1 = "";//定时查询后台效验excel格式进度的变量,开启和关闭此定时器在不同方法中,需要定义为全局
+        var fileIndex = "";
+        var files = "";
+        //员工导入文件上传控件
+        var uploadListIns = upload.render({
+            elem: '#choose-file'//绑定选择文件按钮
+            , url: '/employeeManage/upload'//上传的后台URL
+            , accept: 'file'
+            , acceptMime: '.zip'//选择文件时过滤的格式
+            , auto: false//自动上传关闭
+            , exts: 'zip'//支持的格式
+            , multiple: true
+            , choose: function (obj) {//选择文件之后的事件
+                delete files[fileIndex];
+                //开启加载层提示
+                var msg = layer.load(0, {
+                    content: '正在读取本地文件', success: function (layero) {
+                        layero.find('.layui-layer-content').css('padding-left', '40px');
+                    }
+                });
+                files = obj.pushFile();
+                //读取本地文件
+                obj.preview(function (index, file, result) {
+                    fileIndex = index;
+                    $('#filename').val(file.name);//显示要上传的文件名
+                    if (file.name.length > 0) {
+                        choose_file_flag = true;//选择文件成功
+                    }
+                    layer.close(msg);
+                    $('#clear').on('click', function () {//点击删除按钮清除记录
+                        delete files[fileIndex];
+                        $('#filename').val("");
+                        choose_file_flag = false;
+                        uploadListIns.config.elem.next()[0].value = '';
+                    });
+                });
+            }
+            , bindAction: '#upload-file'//绑定上传按钮,点击此按钮会执行/employeeManage/upload
+            , before: function (input) {//执行/employeeManage/upload之前时点的事件
+                if (choose_file_flag) {
+                    upload_file_flag = true;//把标记改为正在上传
+                    uploadMsg = layer.load(0, {
+                        content: '上传中', success: function (layero) {//开启上传中加载层
+                            layero.find('.layui-layer-content').css('padding-left', '40px');
+                        }
+                    });
+                    //初始化进度条组件
+                    element.render('progress');
+                    //开启定时查询后台效验excel格式进度
+                    intelval1 = setInterval(function () {
+                        $.ajax({
+                            url: "/employeeManage/excelprogress",
+                            type: "post",
+                            async: true,
+                            success: function (data) {
+                                //查询进度后把结果渲染在进度条中
+                                var num = data.num;
+                                var sum = data.sum;
+                                element.progress('Exceldemo', data.progress + '%');
+                            }
+                        })
+                    }, 100);//每100毫秒执行一次
+                }
+            }
+            , done: function (res) {//  /employeeManage/upload返回结果回调事件
+                layer.close(uploadMsg);//关闭上传中的加载层
+                clearInterval(intelval1);//清除定时任务
+                uploadListIns.config.elem.next()[0].value = '';//清空上传的缓存
+                if (res.code == 200 && res.checkcode == 200) {//效验通过
+                    //手动把效验excel的进度条变为100%,因为定时任务是100毫秒,会有误差
+                    element.progress('Exceldemo', '100%');
+                    //开始查询上传进度的定时任务
+                    var intelval2 = setInterval(function () {
+                        //执行ajax
+                        $.ajax({
+                            url: "/employeeManage/uploadprogress",
+                            type: "post",
+                            async: true,
+                            success: function (data) {
+                                var num = data.num;
+                                var sum = data.sum;
+                                element.progress('uploaddemo', data.progress + '%');
+                                $("#progress").text(num + "/" + sum);
+                            }
+                        })
+                    }, 100);
+                    //执行上传
+                    $.ajax({
+                        url: "/employeeManage/read",
+                        type: "post",
+                        async: true,
+                        success: function (data) {
+                            //清除定时
+                            clearInterval(intelval2);
+                            if (data == 0) {//上传成功
+                                if (res.emptyCount == 0) {//没有空行数据
+                                    layer.alert("批量上传员工信息成功！", {
+                                        icon: 1, title: "提示", end: function () {
+                                            document.location.href = '/employeeManage/toEmployeeManage';
+                                        }
+                                    });
+                                } else {//有空行数据需要提示空行的条数
+                                    layer.alert("批量上传员工信息成功！共有" + res.totalCount + "条数据,其中" + res.emptyCount + "条为空数据", {
+                                        icon: 1, title: "提示", end: function () {
+                                            document.location.href = '/employeeManage/toEmployeeManage';
+                                        }
+                                    });
+                                }
+                            } else {//上传失败
+                                layer.alert("批量上传员工信息失败！请检查第" + data + "行数据或照片是否符合模板规定！", {
+                                    icon: 2, title: "提示", end: function () {
+                                        document.location.href = '/employeeManage/toEmployeeManage';
+                                    }
+                                });
+                            }
+                        },
+                        error: function () {
+                            clearInterval(intelval2);
+                            layer.alert("批量上传员工信息失败！", {icon: 2, title: "提示"}, function (index) {
+                                $.ajax({
+                                    url: "/employeeManage/delete",
+                                    type: "post",
+                                    async: false,
+                                    success: function () {
+                                        document.location.href = '/employeeManage/toEmployeeManage';
+                                        layer.close(index);
+                                    },
+                                    error: function () {
+                                        document.location.href = '/employeeManage/toEmployeeManage';
+                                        layer.close(index);
+                                    }
+                                });
+                            });
+                        }
+                    });
+                } else if (res.code == 200 && res.checkcode == 100) {//效验不通过,给出相应提示
+                    layer.alert(res.checkmsg, {
+                        icon: 2,
+                        title: '提示',
+                        end: function () {
+                            //删除文件
+                            delete files[fileIndex];
+                            //把文件名清除
+                            $('#filename').val("");
+                            //把标识位改为未选择文件
+                            choose_file_flag = false;
+                            //把标识位改为未正在上传
+                            upload_file_flag = false;
+                            //按钮恢复可点击
+                            $("#upload-file").removeAttr('disabled');
+                            $("#upload-file").removeClass('layui-disabled');
+                            $("#upload-file").css('background-color', '#54b5ff');
+                            $("#clear").removeAttr('disabled');
+                            $("#clear").removeClass('layui-disabled');
+                            $("#choose-file").removeAttr('disabled');
+                            $("#choose-file").removeClass('layui-disabled');
+                            //把效验excel的进度条设置为0
+                            element.progress('Exceldemo', '0');
+                        }
+                    });
+                }
+            }
+        });
+
+        $('#upload-file').click(function () {
+            //判断选择文件的标识位
+            if (choose_file_flag == false) {
+                layer.alert("请选择文件!", {
+                    icon: 0, title: "提示", end: function (index) {
+                        layer.close(index);
+                    }
+                });
+            } else {
+                //把上传/选择/删除的按钮置灰并且不让点击
+                $("#upload-file").attr('disabled', "disabled");
+                $("#upload-file").addClass('layui-disabled');
+                $("#upload-file").css('background-color', '#c8c8c8');
+                $("#clear").attr('disabled', "disabled");
+                $("#clear").addClass('layui-disabled');
+                $("#choose-file").attr('disabled', "disabled");
+                $("#choose-file").addClass('layui-disabled');
+            }
+        });
+    });
+</script>
+<script>
+    layui.use(['tree', 'table', 'layer', 'form', 'upload'], function () {
+        var $ = layui.$;
+        var table = layui.table;
+        var layer = layui.layer;
+        var form = layui.form;
+        var parentHeight = document.documentElement.clientHeight;
+        var height = parentHeight - 75;
+        $("#treehe").css("height", height);
+        //加载员工列表
+        table.render({
+            elem: '#guestList'
+            , url: '/employeeManage/selectEmployeeList'
+            , title: '嘉宾列表'
+            , height: height
+            , limit: 30
+            , cols: [
+                [
+                      {field: 'name', title: '姓名'}
+                    , {field: 'employee_id', title: '公司'}
+                    , {field: 'sex', title: '职位', templet: '#sex'}
+                    , {field: 'tel_no', title: '电话',width:200}
+                    , {field: 'pic_num', title: '比对照片', templet: '#photoNum',width:200}
+                    , {fixed: 'right', title: '操作', toolbar: '#barDemo', width:350}
+                ]
+            ]
+            , page: true
+        });
+
+        //监听行双击事件
+        table.on('rowDouble(guestList)', function (obj) {
+            toDetail(obj);
+        });
+
+        //监听行工具事件
+        table.on('tool(guestList)', function (obj) {
+            var data = obj.data;
+            if (obj.event === 'del') {	//删除嘉宾
+                layer.confirm('是否确认删除该嘉宾信息？', {icon: 3, title: "提示"}, function (index) {
+                    var faceId = obj.data.face_id;
+                    $.ajax({
+                        url: "/employeeManage/leaveEmployee",
+                        type: "post",
+                        data: {faceId: faceId},
+                        async: false,
+                        success: function () {
+                            obj.del();
+                            layer.closeAll();
+                            layer.alert("删除嘉宾信息成功！", {icon: 1, title: "提示"}, function (index) {
+                                document.location.href = '/employeeManage/toEmployeeManage';
+                                layer.close(index);
+                            })
+                        },
+                        error: function () {
+                            layer.closeAll();
+                            layer.alert("删除嘉宾信息失败！", {icon: 2, title: "提示"}, function (index) {
+                                document.location.href = '/guest/showGuest';
+                                layer.close(index);
+                            });
+                        }
+                    });
+                    layer.close(index);
+                });
+            } else if (obj.event === 'edit') {	//编辑嘉宾信息
+                //弹框高度为该页面高度的0.95
+                var parentHeight = document.documentElement.clientHeight;
+                var height = parentHeight * 0.95;
+                var face_id = data.face_id;
+                layer.open({
+                    type: 2,
+                    title: '修改嘉宾',
+                    shadeClose: false,
+                    shade: [0.2, '#000000'],
+                    area: ['1060px', height + 'px'],
+                    content: '/guest/toAddGuest?faceId=' + face_id,
+                    cancel: function (index, layero) {
+                        var body = layer.getChildFrame('body', index);
+                        if (body.find("#ifWriteFlag").val() != "0") {
+                            layer.confirm('嘉宾信息未修改完毕,是否退出?', {btn: ['是', '否'], icon: 3, title: "提示"}, function (index1) {
+                                layer.close(index);
+                                layer.close(index1);
+                            }, function (index1) {
+                                layer.close(index1);
+                            });
+                        } else {
+                            layer.close(index);
+                        }
+                        return false;
+                    }
+                });
+            } else if (obj.event === 'detail') {
+                toDetail(obj);
+            }
+        });
+
+        //嘉宾详情
+        function toDetail(obj) {
+            //开启转圈圈加载层
+            var loadingtoDetail = layer.load(1, {
+                shade: [0.1, '#fff']
+            });
+            var faceId = obj.data.face_id;
+            var param = {
+                face_id: faceId,
+                attribute: 0
+            };
+            //查询照片,优先级为:头像->比对照片->身份证照片->默认照片
+            $.ajax({
+                url: "/employeeManage/selectFacePhoto",
+                type: "post",
+                data: param,
+                async: false,
+                success: function (data1) {
+                    var jsonData = $.parseJSON(data1);
+                    var photoBase64 = "";
+                    if (jsonData.resultCode == "0") {
+                        var headPictureList = jsonData.headPictureList;
+                        if (headPictureList.length > 0) {//若有头像,则使用头像
+                            photoBase64 = "data:image/jpg;base64," + headPictureList[0].data;
+                        } else {//若无头像,则判断有无比对照片
+                            var comparePictureList = jsonData.comparePictureList;
+                            if (comparePictureList.length > 0) {//若有比对照片,则使用比对照片的第一张
+                                photoBase64 = "data:image/jpg;base64," + comparePictureList[0].data;
+                            } else {//若没有,则使用身份证照片
+                                if (obj.data.photo_wlt != undefined && obj.data.photo_wlt != "") {
+                                    photoBase64 = "data:image/jpg;base64," + obj.data.photo_wlt;
+                                } else {//若没有身份证照片,则使用默认照片
+                                    photoBase64 = "/css/img/headPhotoDefault.png";
+                                }
+                            }
+                        }
+                    } else {//调用接口出错,查询比对照片和头像失败,只能使用身份证照片或默认
+                        if (obj.data.photo_wlt != undefined && obj.data.photo_wlt != "") {
+                            photoBase64 = "data:image/jpg;base64," + obj.data.photo_wlt;
+                        } else {
+                            photoBase64 = "/css/img/headPhotoDefault.png";
+                        }
+                        layer.alert('查询比对照片失败,请重试!', {icon: 2, title: "提示"}, function (index) {
+                            layer.close(index);
+                        });
+                    }
+                    //如果照片不为默认,则需要进行照片宽高比压缩
+                    if (photoBase64 != "/css/img/headPhotoDefault.png") {
+                        $("#hidePhoto1").attr('src', photoBase64);
+                        var theImage = new Image();
+                        theImage.src = $("#hidePhoto1").attr("src");
+                        theImage.onload = function () {
+                            var width = "164";
+                            var height = "164";
+                            if (width / height > this.width / this.height) {
+                                var changeWidth = (this.width / this.height) * height;
+                                $("#detailPhoto").attr("width", changeWidth);
+                            } else {
+                                var changeHeight = (width * this.height) / this.width;
+                                $("#detailPhoto").attr("height", changeHeight);
+                            }
+                        }
+                    }
+                    var leaderId = obj.data.leader_id;
+                    var faceInfo = {
+                        face_id: leaderId,
+                        attribute: 0
+                    };
+                    //查询领导
+                    $.ajax({
+                        url: "/employeeManage/selectFaceInfoByParam",
+                        type: "post",
+                        data: faceInfo,
+                        async: false,
+                        success: function (data2) {
+                            var leaderName = data2;
+                            //查询设备权限
+                            $.ajax({
+                                url: "/employeeManage/facePermitQuery",
+                                type: "post",
+                                data: param,
+                                async: false,
+                                success: function (data3) {
+                                    var termHTML = "";
+                                    if (data3 == "") {
+                                        termHTML = "<input type='text' value='暂未设置' class='layui-input' style='color: #999999 !important;border: none;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;padding-left: 25px;height: 32px;line-height: 32px;' disabled>";
+                                    } else if (data3.termLength == 1) {
+                                        termHTML = "<input type='text' value='" + data3.termName + "' class='layui-input' style='color: #999999 !important;border: none;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;padding-left: 25px;height: 32px;line-height: 32px;' disabled>";
+                                    } else if (data3.termLength > 1) {
+                                        var autoDivHTML = "";
+                                        var termNameArr = data3.termName.split(",");
+                                        var termModeArr = data3.termMode.split(",");
+                                        for (i in termNameArr) {
+                                            var termName = termNameArr[i];   //弹出框里的每一条内容
+                                            var termMode = termModeArr[i];
+                                            var termIconSrc = "";
+                                            //1.14T，2.facecheck动态，3.iDR系列，4.未知
+                                            if (termMode == 1) {
+                                                termIconSrc = '/css/img/14T.png';
+                                            } else if (termMode == 2) {
+                                                termIconSrc = '/css/img/facecheck.png';
+                                            } else if (termMode == 3) {
+                                                termIconSrc = '/css/img/iDR.png';
+                                            } else {
+                                                termIconSrc = '/css/img/unknow.png';
+                                            }
+                                            autoDivHTML += "<div id='0' style='height:25px;margin-top:10px;margin-left:10px;margin-bottom:10px;'><img id='img0' src='" + termIconSrc + "'>&nbsp;&nbsp;&nbsp;<span style='font-size:14px;color:#333333;'>" + termName + "</span></div>";
+                                        }
+                                        termHTML = "<input type='text' id='term' name='title' class='layui-input' style='color: #999999 !important;border: none;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;padding-left: 25px;height: 32px;line-height: 32px;' disabled='disabled' value='" + termNameArr[0] + "'>" +
+                                            "        <div id='auto_div' style='bottom:30px;left:20px;border:1px solid #e2e2e2;border-radius: 5px;display: none;background-color: #efefef;position: absolute;z-index:1;'>" +
+                                            autoDivHTML +
+                                            "        </div>" +
+                                            "        <button type='button' class='select-on layui-btn' onclick='change()' style='position:absolute;left:100px;top:4px;border: none;width:22px;height: 22px;line-height: 22px;background-color: #ffffff;color: black;'>" +
+                                            "        <img id='operation' src='/css/img/openup.png' /></button>";
+                                    }
+                                    var empName = obj.data.name;
+                                    if (empName == "") {
+                                        empName = "暂未设置";
+                                    }
+                                    var sex = obj.data.sex;
+                                    if (sex == "") {
+                                        sex = "暂未设置";
+                                    } else if (sex == "1") {
+                                        sex = "男";
+                                    } else if (sex == "2") {
+                                        sex = "女";
+                                    }
+                                    var nation = obj.data.nation;
+                                    if (nation == "" || nation == undefined) {
+                                        nation = "暂未设置";
+                                    }
+                                    var addr = obj.data.addr;
+                                    if (addr == "" || addr == undefined) {
+                                        addr = "暂未设置";
+                                    }
+                                    var idcard = obj.data.idcard;
+                                    if (idcard == "" || idcard == undefined) {
+                                        idcard = "暂未设置";
+                                    }
+                                    var employee_id = obj.data.employee_id;
+                                    if (employee_id == "" || employee_id == undefined) {
+                                        employee_id = "暂未设置";
+                                    }
+                                    var empcard = obj.data.empcard;
+                                    if (empcard == "" || empcard == undefined) {
+                                        empcard = "暂未设置";
+                                    }
+                                    var departName = obj.data.departName;
+                                    if (departName == "" || departName == undefined) {
+                                        departName = "暂未设置";
+                                    }
+                                    var position = obj.data.position;
+                                    if (position == "" || position == undefined) {
+                                        position = "暂未设置";
+                                    }
+                                    var nick_name = obj.data.nick_name;
+                                    if (nick_name == "" || nick_name == undefined) {
+                                        nick_name = "暂未设置";
+                                    }
+                                    var tel_no = obj.data.tel_no;
+                                    if (tel_no == "") {
+                                        tel_no = "暂未设置";
+                                    }
+                                    var detailHTML = "<form class='layui-form' action=''>" +
+                                        "  <div style='float: left;width: 100%;height: 38px;'></div>" +
+                                        "  <div style='float: left;width: 5%;height: 100px;'></div>" +
+                                        "  <div style='float: left;width: 60%;height: 230px;'>" +
+                                        "  <div class='layui-form-item' style='margin-bottom: 14px;'>" +
+                                        "    <label class='layui-form-label' style='color: #333333;line-height: 14px;'>姓名</label>" +
+                                        "    <div class='layui-input-block' style='width: 200px;min-height: 32px;'>" +
+                                        "      <input type='text' value='" + empName + "' class='layui-input' title='" + empName + "' style='color: #999999 !important;border: none;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;padding-left: 25px;height: 32px;line-height: 32px;' disabled>" +
+                                        "    </div>" +
+                                        "  </div>" + "  " +
+                                        "  <div class='layui-form-item' style='margin-bottom: 14px;'>" +
+                                        "    <label class='layui-form-label' style='color: #333333;line-height: 14px;'>性别</label>" +
+                                        "    <div class='layui-input-inline' style='width: 100px;'>" +
+                                        "      <input type='text' value='" + sex + "' class='layui-input' style='color: #999999 !important;border: none;padding-left: 25px;height: 32px;line-height: 32px;' disabled>" +
+                                        "    </div>" +
+                                        "   </div>" +
+                                        "	<div class='layui-form-item' style='margin-bottom: 14px;'>" +
+                                        "    <label class='layui-form-label' style='color: #333333;line-height: 14px;'>民族</label>" +
+                                        "    <div class='layui-input-inline' style='width: 100px;'>" +
+                                        "      <input type='text' value='" + nation + "' class='layui-input' style='color: #999999 !important;border: none;padding-left: 25px;height: 32px;line-height: 32px;' disabled>" +
+                                        "    </div>" +
+                                        "  </div>" +
+                                        "  <div class='layui-form-item' style='margin-bottom: 14px;'>" +
+                                        "    <label class='layui-form-label' style='color: #333333;line-height: 14px;'>手机号</label>" +
+                                        "    <div class='layui-input-block' style='width: 200px;min-height: 32px;'>" +
+                                        "      <input type='text' value='" + tel_no + "' class='layui-input' style='color: #999999 !important;border: none;padding-left: 25px;height: 32px;line-height: 32px;' disabled>" +
+                                        "    </div>" +
+                                        "  </div>" +
+                                        "  <div class='layui-form-item' style='margin-bottom: 14px;'>" +
+                                        "    <label class='layui-form-label' style='color: #333333;line-height: 14px;'>身份证号</label>" +
+                                        "    <div class='layui-input-block' style='width: 200px;min-height: 32px;'>" +
+                                        "      <input type='text' value='" + idcard + "' class='layui-input' style='color: #999999 !important;border: none;padding-left: 25px;height: 32px;line-height: 32px;' disabled>" +
+                                        "    </div>" +
+                                        "  </div>" +
+                                        "  </div>" +
+                                        "  <div style='float: left;width: 168px;height: 168px;text-align: center;line-height: 168px;'>" +
+                                        "  		<img id='detailPhoto' src='" + photoBase64 + "' width='164' height='164' style='border-radius: 50%;border: 2px solid #d8d8d8;'/>" +
+                                        "  </div>" +
+                                        "	<div style='float: left;width: 95%;height: 308px;margin-left: 5%;'>" +
+                                        "  <div class='layui-form-item' style='margin-bottom: 14px;'>" +
+                                        "    <label class='layui-form-label' style='color: #333333;line-height: 14px;'>地址</label>" +
+                                        "    <div class='layui-input-block' style='width: 440px;min-height: 32px;'>" +
+                                        "      <input type='text' value='" + addr + "' class='layui-input' title='" + addr + "' style='color: #999999 !important;border: none;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;padding-left: 25px;height: 32px;line-height: 32px;' disabled>" +
+                                        "    </div>" +
+                                        "  </div>" +
+                                        "  <div class='layui-form-item' style='margin-bottom: 14px;'>" +
+                                        "    <label class='layui-form-label' style='color: #333333;line-height: 14px;'>部门</label>" +
+                                        "    <div class='layui-input-block' style='width: 440px;min-height: 32px;'>" +
+                                        "      <input type='text' value='" + departName + "' class='layui-input' style='color: #999999 !important;border: none;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;padding-left: 25px;height: 32px;line-height: 32px;' disabled>" +
+                                        "    </div>" +
+                                        "  </div>" +
+                                        "  <div class='layui-form-item' style='margin-bottom: 14px;'>" +
+                                        "    <label class='layui-form-label' style='color: #333333;line-height: 14px;'>职位</label>" +
+                                        "    <div class='layui-input-block' style='width: 440px;min-height: 32px;'>" +
+                                        "      <input type='text' value='" + position + "' class='layui-input' title='" + position + "' style='color: #999999 !important;border: none;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;padding-left: 25px;height: 32px;line-height: 32px;' disabled>" +
+                                        "    </div>" +
+                                        "  </div>" +
+                                        "  <div class='layui-form-item' style='margin-bottom: 14px;'>" +
+                                        "    <label class='layui-form-label' style='color: #333333;line-height: 14px;'>上级领导</label>" +
+                                        "    <div class='layui-input-block' style='width: 440px;min-height: 32px;'>" +
+                                        "      <input type='text' value='" + leaderName + "' class='layui-input' style='color: #999999 !important;border: none;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;padding-left: 25px;height: 32px;line-height: 32px;' disabled>" +
+                                        "    </div>" +
+                                        "  </div>" +
+                                        "  <div class='layui-form-item' style='margin-bottom: 14px;'>" +
+                                        "    <label class='layui-form-label' style='color: #333333;line-height: 14px;'>昵称</label>" +
+                                        "    <div class='layui-input-block' style='width: 440px;min-height: 32px;'>" +
+                                        "      <input type='text' value='" + nick_name + "' class='layui-input' title='" + nick_name + "'  style='color: #999999 !important;border: none;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;padding-left: 25px;height: 32px;line-height: 32px;' disabled>" +
+                                        "    </div>" +
+                                        "  </div>" +
+                                        "  <div class='layui-form-item' style='margin-bottom: 14px;'>" +
+                                        "    <label class='layui-form-label' style='color: #333333;line-height: 14px;'>工号</label>" +
+                                        "    <div class='layui-input-block' style='width: 440px;min-height: 32px;'>" +
+                                        "      <input type='text' value='" + employee_id + "' class='layui-input' title='" + employee_id + "' style='color: #999999 !important;border: none;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;padding-left: 25px;height: 32px;line-height: 32px;' disabled>" +
+                                        "    </div>" +
+                                        "  </div>" +
+                                        "  <div class='layui-form-item' style='margin-bottom: 14px;'>" +
+                                        "    <label class='layui-form-label' style='color: #333333;line-height: 14px;'>工牌号</label>" +
+                                        "    <div class='layui-input-block' style='width: 440px;min-height: 32px;'>" +
+                                        "      <input type='text' value='" + empcard + "' class='layui-input' title='" + empcard + "' style='color: #999999 !important;border: none;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;padding-left: 25px;height: 32px;line-height: 32px;' disabled>" +
+                                        "    </div>" +
+                                        "  </div>" +
+                                        "  <div class='layui-form-item' style='margin-bottom: 0;'>" +
+                                        "    <label class='layui-form-label' style='color: #333333;line-height: 14px;'>权限设备</label>" +
+                                        "    <div class='layui-input-block' style='width: 440px;min-height: 32px;'>" +
+                                        termHTML +
+                                        "    </div>" +
+                                        "  </div>" +
+                                        "	</div>" +
+                                        "</form>";
+
+                                    var parentHeight = document.documentElement.clientHeight;
+                                    var height = parentHeight * 0.82;
+                                    layer.open({
+                                        type: 1,
+                                        title: '详情',
+                                        area: ['600px', height + 'px'], //宽高
+                                        content: detailHTML,
+                                        shadeClose: false,
+                                        shade: [0.2, '#000000'],
+                                        success: function (layero, index) {
+                                            //关闭转圈圈加载层
+                                            layer.close(loadingtoDetail);
+                                        }
+                                    });
+                                }
+                            });
+                        }
+                    });
+                }
+            });
+        }
+
+        form.on("select", function () {
+            doSearch();
+        });
+
+        $("#doSearch").on('click', function () {
+            doSearch();
+        });
+
+        document.onkeydown = function (e) { // 回车提交表单
+            var theEvent = window.event || e;
+            var code = theEvent.keyCode || theEvent.which;
+            if (code == 13) {
+                doSearch();
+            }
+        };
+
+        function containSpecial(s) {
+            var containSpecial = RegExp("^$|[^`~!@#$%^&*()_+<>?:\"{},.\\/\\\\;'[\\]·！#￥（——）：；“”‘、，|《。》？、【】[\\]]+$");
+            for(var i=0;i<s.length;i++){
+                if (!containSpecial.test(s.charAt(i))) {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        function doSearch() {
+            var photoNumStatus = $("#photoNumStatus").val();
+            var searchContent = $('#searchContent').val();
+            searchContent=searchContent.trim();
+            //根据比对照片的数量及搜索内容进行查询
+            if (!containSpecial(searchContent)) {
+                layer.msg('搜索条件不能含有特殊字符', {icon: 0, anim: 6});
+            }else {
+                table.reload('guestList', {
+                    where: {
+                        photoNum: photoNumStatus,
+                        searchContent: searchContent
+                    }
+                    , page: {
+                        curr: 1 //重新从第 1 页开始
+                    }
+                });
+            }
+        }
+
+        //下载导入模板
+        $("#download").on('click', function () {
+            document.location.href = '/employeeManage/download';
+        });
+
+        //添加嘉宾
+        $("#addEmployee").click(function () {
+            var parentHeight = document.documentElement.clientHeight;
+            var height = parentHeight * 0.95;
+            layer.open({
+                type: 2,
+                title: '添加嘉宾',
+                shadeClose: false,
+                shade: [0.2, '#000000'],
+                area: ['1060px', height + "px"],
+                content: '/guest/toAddGuest',
+                cancel: function (index, layero) {//点击右上角X按钮
+                    //获取弹框页面
+                    var body = layer.getChildFrame('body', index);
+                    //查看页面是否有操作过,如果有则给出提示
+                    if (body.find("#ifWriteFlag").val() != "0") {
+                        layer.confirm('嘉宾未添加完毕,是否退出?', {btn: ['是', '否'], icon: 3, title: "提示"}, function (index1) {
+                            layer.close(index);
+                            layer.close(index1);
+                        }, function (index1) {
+                            layer.close(index1);
+                        });
+                    } else {
+                        layer.close(index);
+                    }
+                    return false;
+                }
+            });
+        });
+
+    });
+</script>
+<script type="text/html" id="sex">
+    {{#  if(d.sex == 1){ }}
+    男
+    {{#  } else if(d.sex == 2){ }}
+    女
+    {{#  } else{}}
+    暂未设置
+    {{#  } }}
+</script>
+<script type="text/html" id="photoNum">
+    {{#  if(d.pic_num > 0){ }}
+    已添加{{d.pic_num}}张
+    {{#  } else{}}
+    未添加
+    {{#  } }}
+</script>
+</body>
+</html>
